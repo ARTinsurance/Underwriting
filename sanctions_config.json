@@ -1,0 +1,48 @@
+{
+  "sanctions_config": {
+    "description": "Configuration file for Sanctions Check Program - Cross-platform compatible",
+    "excel_configuration": {
+      "input_file": "company_names.xlsx",
+      "sheet_name": "Sheet1",
+      "company_names_column": "A",
+      "results_column": "D",
+      "status_column": "C"
+    },
+    "output_configuration": {
+      "output_directory": "results",
+      "audit_log_format": "csv",
+      "audit_log_prefix": "sanctions_audit_log",
+      "word_document": "sanctions_results.docx"
+    },
+    "api_endpoints": {
+      "ofac_search": "https://sanctionssearch.ofac.treas.gov/api/sanctionsearch/",
+      "uk_sanctions": "https://search-uk-sanctions-list.service.gov.uk/",
+      "eu_sanctions": "https://webgate.ec.europa.eu/cftsunilateral/"
+    },
+    "timeout_settings": {
+      "timeout_seconds": 30,
+      "screenshot_delay_ms": 2000,
+      "retry_count": 3,
+      "retry_delay_ms": 2000
+    },
+    "outlook_configuration": {
+      "email_notification_enabled": false,
+      "email_recipient": "compliance@company.com",
+      "email_subject_template": "Sanctions Check Report - {DATE}",
+      "auto_send": false
+    },
+    "audit_logging": {
+      "enabled": true,
+      "log_file_path": "sanctions_check.log",
+      "log_level": "INFO",
+      "include_computer_info": true,
+      "include_username": true
+    },
+    "deployment": {
+      "requires_python": false,
+      "requires_special_installation": false,
+      "operating_systems_supported": ["Windows", "macOS", "Linux"],
+      "excel_versions_supported": ["2019", "2021", "Microsoft 365"]
+    }
+  }
+}
