@@ -269,8 +269,7 @@
     .hifleet-frame-wrap {
       border: 1px solid var(--line);
       border-radius: 8px;
-      height: 360px;
-      margin-bottom: 14px;
+      height: 500px;
       overflow: hidden;
     }
 
@@ -761,24 +760,24 @@
           <span class="badge review" id="vesselSourceState">Awaiting live refresh</span>
         </div>
         <div class="panel-body">
-          <div class="map" id="shipMap" aria-label="Vessel map">
-            <div class="route-line"></div>
-            <div class="map-caption">Positions are loaded from stored vessel data. Connect HiFleet export/API data to refresh live positions.</div>
+          <div class="hifleet-frame-wrap">
+            <iframe class="hifleet-frame" src="https://hifleet.com/" title="HiFleet vessel tracking" loading="lazy"></iframe>
           </div>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-header">
-          <h2>Live HiFleet</h2>
+          <h2>Vessels & Source Data</h2>
           <a class="source-link" href="https://hifleet.com/" target="_blank" rel="noreferrer">Open HiFleet</a>
         </div>
         <div class="panel-body">
-          <div class="hifleet-frame-wrap">
-            <iframe class="hifleet-frame" src="https://hifleet.com/" title="HiFleet vessel tracking" loading="lazy"></iframe>
+          <div class="map" id="shipMap" aria-label="Stored vessel position reference">
+            <div class="route-line"></div>
+            <div class="map-caption">Stored vessel reference points for screening context.</div>
           </div>
 
-          <h2 style="font-size:15px;margin:0 0 10px;">Vessels & Source Data</h2>
+          <h2 style="font-size:15px;margin:14px 0 10px;">Vessels & Source Data</h2>
           <div class="ship-list" id="shipList"></div>
           <div class="ship-detail" id="shipDetail"></div>
 
