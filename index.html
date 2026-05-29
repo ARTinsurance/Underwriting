@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sanctions Screening Checklist</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-alt: #eef3f7;
+      --line: #d8e0e7;
+      --text: #1b2733;
+      --muted: #647386;
+      --primary: #0f6b57;
+      --primary-dark: #0a4d3f;
+      --danger: #b42318;
+      --warning: #b54708;
+      --ok: #087443;
+      --focus: #1b73e8;
+      --shadow: 0 10px 28px rgba(27, 39, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.45 Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 38px;
+      padding: 8px 12px;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(27, 115, 232, 0.25);
+      outline-offset: 1px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      align-items: center;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .brand {
+      min-width: 220px;
+    }
+
+    .brand h1 {
+      font-size: 19px;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .brand p {
+      color: var(--muted);
+      margin: 3px 0 0;
+    }
+
+    .metrics {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, minmax(92px, 1fr));
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .metric {
+      background: var(--surface-alt);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-alt);
+    }
+
+    .btn-danger {
+      background: #fff5f3;
+      border-color: #f5c7c1;
+      color: var(--danger);
+    }
+
+    .workspace {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(240px, 0.9fr) minmax(420px, 1.5fr) minmax(300px, 1fr);
+      padding: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-header {
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      padding: 14px;
+    }
+
+    .panel-header h2 {
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .panel-body {
+      padding: 14px;
+    }
+
+    .entity-tools {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      min-height: 38px;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .entity-list {
+      display: grid;
+      gap: 8px;
+      max-height: calc(100vh - 260px);
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .entity {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 5px;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .entity.active {
+      border-color: var(--primary);
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+
+    .entity-title {
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .entity-meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 12px;
+      gap: 6px;
+    }
+
+    .badge {
+      align-items: center;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 700;
+      min-height: 24px;
+      padding: 3px 8px;
+    }
+
+    .badge.pending {
+      background: #eef3f7;
+      color: #475569;
+    }
+
+    .badge.clear {
+      background: #e9f8ef;
+      color: var(--ok);
+    }
+
+    .badge.review {
+      background: #fff7e8;
+      color: var(--warning);
+    }
+
+    .badge.match {
+      background: #fff1ef;
+      color: var(--danger);
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .check-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .check-head {
+      align-items: start;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: auto 1fr auto;
+    }
+
+    .check-head input {
+      height: 18px;
+      margin-top: 3px;
+      min-height: 18px;
+      width: 18px;
+    }
+
+    .check-title strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .check-title span {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .source-link {
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
+    .evidence-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: minmax(120px, 0.8fr) 1fr;
+      margin-top: 10px;
+    }
+
+    .decision-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .decision-strip {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 14px;
+    }
+
+    .decision-option {
+      align-items: center;
+      background: var(--surface-alt);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: flex;
+      gap: 8px;
+      min-height: 48px;
+      padding: 8px;
+    }
+
+    .decision-option input {
+      min-height: 18px;
+      width: 18px;
+    }
+
+    .audit-log {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-alt);
+      color: var(--muted);
+      font-size: 12px;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 22px;
+      text-align: center;
+    }
+
+    @media (max-width: 1120px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .metrics {
+        max-width: none;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .workspace {
+        grid-template-columns: 300px 1fr;
+      }
+
+      .decision-panel {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .metrics,
+      .workspace,
+      .decision-grid,
+      .decision-strip,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace {
+        padding: 10px;
+      }
+
+      .topbar {
+        padding: 12px;
+      }
+
+      .entity-list {
+        max-height: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Sanctions Screening Checklist</h1>
+        <p>OFAC, UK, EU, evidence capture, and audit export</p>
+      </div>
+      <section class="metrics" aria-label="Screening status">
+        <div class="metric"><span>Total</span><strong id="metricTotal">0</strong></div>
+        <div class="metric"><span>Clear</span><strong id="metricClear">0</strong></div>
+        <div class="metric"><span>Review</span><strong id="metricReview">0</strong></div>
+        <div class="metric"><span>Match</span><strong id="metricMatch">0</strong></div>
+      </section>
+      <div class="actions">
+        <button class="btn-secondary" id="loadSample" type="button">Load Sample</button>
+        <button class="btn-secondary" id="exportCsv" type="button">Export CSV</button>
+        <button class="btn-danger" id="resetAll" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Entity Queue</h2>
+          <span class="badge pending" id="queueCount">0 pending</span>
+        </div>
+        <div class="panel-body">
+          <div class="entity-tools">
+            <input id="entityName" placeholder="Company or vessel name" aria-label="Company or vessel name">
+            <button class="btn-primary" id="addEntity" type="button">Add</button>
+          </div>
+          <div class="field">
+            <label for="bulkEntities">Bulk paste</label>
+            <textarea id="bulkEntities" placeholder="Paste one entity per line"></textarea>
+            <button class="btn-secondary" id="addBulk" type="button">Add pasted entities</button>
+          </div>
+          <div class="entity-list" id="entityList" aria-label="Entities to screen"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 id="currentTitle">Select an entity</h2>
+          <span class="badge pending" id="currentStatus">Pending</span>
+        </div>
+        <div class="panel-body">
+          <div class="decision-grid">
+            <div class="field">
+              <label for="entityType">Entity type</label>
+              <select id="entityType">
+                <option>Company</option>
+                <option>Vessel</option>
+                <option>Individual</option>
+                <option>Owner / Manager</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="riskLevel">Risk level</label>
+              <select id="riskLevel">
+                <option>Standard</option>
+                <option>High</option>
+                <option>Enhanced due diligence</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="checklist" id="checklist"></div>
+        </div>
+      </section>
+
+      <section class="panel decision-panel">
+        <div class="panel-header">
+          <h2>Decision & Audit</h2>
+          <span id="saveState" class="badge clear">Saved locally</span>
+        </div>
+        <div class="decision-strip" role="radiogroup" aria-label="Screening decision">
+          <label class="decision-option"><input type="radio" name="decision" value="clear"> Clear</label>
+          <label class="decision-option"><input type="radio" name="decision" value="review"> Review</label>
+          <label class="decision-option"><input type="radio" name="decision" value="match"> Match</label>
+        </div>
+        <div class="panel-body">
+          <div class="field">
+            <label for="reviewer">Reviewer</label>
+            <input id="reviewer" placeholder="Name or initials">
+          </div>
+          <div class="field">
+            <label for="notes">Reviewer notes</label>
+            <textarea id="notes" placeholder="Record rationale, escalation owner, or next action"></textarea>
+          </div>
+          <button class="btn-primary" id="completeEntity" type="button">Complete current screening</button>
+
+          <h2 style="font-size:15px;margin:18px 0 10px;">Recent Audit Entries</h2>
+          <div class="audit-log">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Entity</th>
+                  <th>Decision</th>
+                  <th>Sources</th>
+                </tr>
+              </thead>
+              <tbody id="auditRows"></tbody>
+            </table>
+            <div class="empty" id="auditEmpty">No completed screenings yet.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sources = [
+      {
+        key: "ofac",
+        name: "OFAC Sanctions Search",
+        detail: "US Treasury SDN and consolidated sanctions screening",
+        url: "https://sanctionssearch.ofac.treas.gov/"
+      },
+      {
+        key: "uk",
+        name: "UK Sanctions List",
+        detail: "UK consolidated list search and designation evidence",
+        url: "https://search-uk-sanctions-list.service.gov.uk/"
+      },
+      {
+        key: "eu",
+        name: "EU Financial Sanctions",
+        detail: "EU consolidated financial sanctions source",
+        url: "https://webgate.ec.europa.eu/cfs/public/#/screening"
+      },
+      {
+        key: "internal",
+        name: "Internal / Counterparty Records",
+        detail: "Known aliases, beneficial ownership, vessel manager, or prior notes",
+        url: "#"
+      }
+    ];
+
+    const sampleEntities = [
+      "TRANSFAR SHIPPING PTE",
+      "TRANSFAR BANGKOK HOLDINGS",
+      "BERNHARD SCHULTE",
+      "DUBAI TOWER",
+      "M-Trans"
+    ];
+
+    const state = JSON.parse(localStorage.getItem("sanctionsChecklist") || "{}");
+    state.entities ||= [];
+    state.activeId ||= "";
+    state.audit ||= [];
+    state.reviewer ||= "";
+
+    const els = {
+      entityName: document.getElementById("entityName"),
+      bulkEntities: document.getElementById("bulkEntities"),
+      entityList: document.getElementById("entityList"),
+      checklist: document.getElementById("checklist"),
+      currentTitle: document.getElementById("currentTitle"),
+      currentStatus: document.getElementById("currentStatus"),
+      entityType: document.getElementById("entityType"),
+      riskLevel: document.getElementById("riskLevel"),
+      reviewer: document.getElementById("reviewer"),
+      notes: document.getElementById("notes"),
+      saveState: document.getElementById("saveState"),
+      auditRows: document.getElementById("auditRows"),
+      auditEmpty: document.getElementById("auditEmpty")
+    };
+
+    function createEntity(name) {
+      return {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+        name: name.trim(),
+        type: "Company",
+        risk: "Standard",
+        decision: "pending",
+        notes: "",
+        updatedAt: new Date().toISOString(),
+        checks: Object.fromEntries(sources.map(source => [source.key, {
+          done: false,
+          result: "No match",
+          evidence: ""
+        }]))
+      };
+    }
+
+    function activeEntity() {
+      return state.entities.find(entity => entity.id === state.activeId) || state.entities[0];
+    }
+
+    function save() {
+      localStorage.setItem("sanctionsChecklist", JSON.stringify(state));
+      els.saveState.textContent = "Saved locally";
+      els.saveState.className = "badge clear";
+    }
+
+    function dirty() {
+      els.saveState.textContent = "Unsaved changes";
+      els.saveState.className = "badge review";
+      window.clearTimeout(dirty.timer);
+      dirty.timer = window.setTimeout(() => {
+        save();
+        render();
+      }, 250);
+    }
+
+    function statusLabel(decision) {
+      if (decision === "clear") return "Clear";
+      if (decision === "review") return "Review";
+      if (decision === "match") return "Match";
+      return "Pending";
+    }
+
+    function renderMetrics() {
+      const counts = state.entities.reduce((memo, entity) => {
+        memo[entity.decision] = (memo[entity.decision] || 0) + 1;
+        return memo;
+      }, {});
+      document.getElementById("metricTotal").textContent = state.entities.length;
+      document.getElementById("metricClear").textContent = counts.clear || 0;
+      document.getElementById("metricReview").textContent = counts.review || 0;
+      document.getElementById("metricMatch").textContent = counts.match || 0;
+      document.getElementById("queueCount").textContent = `${counts.pending || 0} pending`;
+    }
+
+    function renderEntities() {
+      els.entityList.innerHTML = "";
+      if (!state.entities.length) {
+        els.entityList.innerHTML = '<div class="empty">Add entities to begin screening.</div>';
+        return;
+      }
+
+      state.entities.forEach(entity => {
+        const complete = Object.values(entity.checks).filter(check => check.done).length;
+        const button = document.createElement("button");
+        button.className = `entity ${entity.id === state.activeId ? "active" : ""}`;
+        button.type = "button";
+        button.innerHTML = `
+          <span class="entity-title">${escapeHtml(entity.name)}</span>
+          <span class="entity-meta">
+            <span class="badge ${entity.decision}">${statusLabel(entity.decision)}</span>
+            <span>${complete}/${sources.length} sources</span>
+            <span>${escapeHtml(entity.risk)}</span>
+          </span>
+        `;
+        button.addEventListener("click", () => {
+          state.activeId = entity.id;
+          save();
+          render();
+        });
+        els.entityList.appendChild(button);
+      });
+    }
+
+    function renderCurrent() {
+      const entity = activeEntity();
+      if (!entity) {
+        els.currentTitle.textContent = "Select an entity";
+        els.currentStatus.textContent = "Pending";
+        els.checklist.innerHTML = '<div class="empty">No active entity selected.</div>';
+        return;
+      }
+
+      state.activeId = entity.id;
+      els.currentTitle.textContent = entity.name;
+      els.currentStatus.textContent = statusLabel(entity.decision);
+      els.currentStatus.className = `badge ${entity.decision}`;
+      els.entityType.value = entity.type;
+      els.riskLevel.value = entity.risk;
+      els.reviewer.value = state.reviewer;
+      els.notes.value = entity.notes;
+      document.querySelectorAll('input[name="decision"]').forEach(input => {
+        input.checked = input.value === entity.decision;
+      });
+
+      els.checklist.innerHTML = "";
+      sources.forEach(source => {
+        const check = entity.checks[source.key];
+        const item = document.createElement("article");
+        item.className = "check-item";
+        item.innerHTML = `
+          <div class="check-head">
+            <input data-source="${source.key}" data-field="done" type="checkbox" ${check.done ? "checked" : ""} aria-label="${source.name} completed">
+            <div class="check-title">
+              <strong>${source.name}</strong>
+              <span>${source.detail}</span>
+            </div>
+            <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">Open source</a>
+          </div>
+          <div class="evidence-grid">
+            <div class="field">
+              <label>Result</label>
+              <select data-source="${source.key}" data-field="result">
+                ${["No match", "Possible match", "Confirmed match", "Source unavailable"].map(value => `
+                  <option ${value === check.result ? "selected" : ""}>${value}</option>
+                `).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Evidence / Reference</label>
+              <input data-source="${source.key}" data-field="evidence" value="${escapeAttr(check.evidence)}" placeholder="Search term, list ID, screenshot file, or note">
+            </div>
+          </div>
+        `;
+        els.checklist.appendChild(item);
+      });
+    }
+
+    function renderAudit() {
+      els.auditRows.innerHTML = "";
+      els.auditEmpty.style.display = state.audit.length ? "none" : "block";
+      state.audit.slice(-12).reverse().forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${escapeHtml(new Date(entry.completedAt).toLocaleString())}</td>
+          <td>${escapeHtml(entry.name)}</td>
+          <td><span class="badge ${entry.decision}">${statusLabel(entry.decision)}</span></td>
+          <td>${entry.sourcesComplete}/${sources.length}</td>
+        `;
+        els.auditRows.appendChild(row);
+      });
+    }
+
+    function render() {
+      renderMetrics();
+      renderEntities();
+      renderCurrent();
+      renderAudit();
+    }
+
+    function addEntities(names) {
+      const cleanNames = names.map(name => name.trim()).filter(Boolean);
+      cleanNames.forEach(name => state.entities.push(createEntity(name)));
+      if (!state.activeId && state.entities.length) state.activeId = state.entities[0].id;
+      save();
+      render();
+    }
+
+    function completeCurrent() {
+      const entity = activeEntity();
+      if (!entity) return;
+      const sourcesComplete = Object.values(entity.checks).filter(check => check.done).length;
+      entity.updatedAt = new Date().toISOString();
+      state.audit.push({
+        completedAt: entity.updatedAt,
+        name: entity.name,
+        decision: entity.decision,
+        reviewer: state.reviewer,
+        sourcesComplete,
+        notes: entity.notes
+      });
+      save();
+      render();
+    }
+
+    function exportCsv() {
+      const header = [
+        "timestamp", "entity", "type", "risk", "decision", "reviewer", "sources_complete",
+        "ofac_result", "uk_result", "eu_result", "internal_result", "notes"
+      ];
+      const rows = state.entities.map(entity => {
+        const complete = Object.values(entity.checks).filter(check => check.done).length;
+        return [
+          entity.updatedAt, entity.name, entity.type, entity.risk, entity.decision, state.reviewer, complete,
+          entity.checks.ofac.result, entity.checks.uk.result, entity.checks.eu.result,
+          entity.checks.internal.result, entity.notes
+        ].map(csvCell).join(",");
+      });
+      const blob = new Blob([[header.join(","), ...rows].join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `sanctions-screening-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    function csvCell(value) {
+      return `"${String(value ?? "").replace(/"/g, '""')}"`;
+    }
+
+    document.getElementById("addEntity").addEventListener("click", () => {
+      addEntities([els.entityName.value]);
+      els.entityName.value = "";
+    });
+
+    els.entityName.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("addEntity").click();
+      }
+    });
+
+    document.getElementById("addBulk").addEventListener("click", () => {
+      addEntities(els.bulkEntities.value.split(/\n+/));
+      els.bulkEntities.value = "";
+    });
+
+    document.getElementById("loadSample").addEventListener("click", () => addEntities(sampleEntities));
+    document.getElementById("exportCsv").addEventListener("click", exportCsv);
+    document.getElementById("resetAll").addEventListener("click", () => {
+      if (!confirm("Reset all local checklist data?")) return;
+      localStorage.removeItem("sanctionsChecklist");
+      state.entities = [];
+      state.activeId = "";
+      state.audit = [];
+      state.reviewer = "";
+      save();
+      render();
+    });
+
+    document.getElementById("completeEntity").addEventListener("click", completeCurrent);
+
+    document.addEventListener("input", event => {
+      const entity = activeEntity();
+      if (!entity) return;
+
+      const target = event.target;
+      if (target.dataset.source) {
+        const check = entity.checks[target.dataset.source];
+        check[target.dataset.field] = target.type === "checkbox" ? target.checked : target.value;
+      } else if (target.id === "entityType") {
+        entity.type = target.value;
+      } else if (target.id === "riskLevel") {
+        entity.risk = target.value;
+      } else if (target.id === "reviewer") {
+        state.reviewer = target.value;
+      } else if (target.id === "notes") {
+        entity.notes = target.value;
+      } else if (target.name === "decision") {
+        entity.decision = target.value;
+      }
+      entity.updatedAt = new Date().toISOString();
+      dirty();
+    });
+
+    if (!state.entities.length) {
+      addEntities(sampleEntities.slice(0, 2));
+    } else {
+      render();
+    }
+  </script>
+</body>
+</html>
