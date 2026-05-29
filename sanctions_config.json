@@ -2,7 +2,7 @@
   "sanctions_config": {
     "description": "Configuration file for Sanctions Check Program - Cross-platform compatible",
     "excel_configuration": {
-      "input_file": "company_names.xlsx",
+      "input_file": "company_names.csv",
       "sheet_name": "Sheet1",
       "company_names_column": "A",
       "results_column": "D",

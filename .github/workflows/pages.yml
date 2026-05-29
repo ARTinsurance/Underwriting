@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - github-pages-sanctions-site
   workflow_dispatch:
 
 permissions:

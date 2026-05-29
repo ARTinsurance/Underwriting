@@ -10,10 +10,15 @@ import json
 import time
 import platform
 import logging
+import csv
 from pathlib import Path
 from datetime import datetime
-from typing import List, Tuple, Optional
-import pandas as pd
+from typing import List, Optional
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 # Configure logging
 logging.basicConfig(
@@ -45,13 +50,17 @@ class SanctionsChecker:
         try:
             if os.path.exists(config_file):
                 with open(config_file, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    return self._normalize_config(json.load(f))
         except Exception as e:
             logger.error(f"Failed to load config: {e}")
         
         # Default configuration
+        return self._default_config()
+
+    def _default_config(self) -> dict:
+        """Default flat configuration used by the runner."""
         return {
-            "excel_input": "company_names.xlsx",
+            "input_file": "company_names.csv",
             "output_dir": "results",
             "word_output": "sanctions_results.docx",
             "uk_sanctions_url": "https://search-uk-sanctions-list.service.gov.uk/",
@@ -62,6 +71,33 @@ class SanctionsChecker:
             "email_recipient": "",
             "log_file": "sanctions_check.log"
         }
+
+    def _normalize_config(self, raw_config: dict) -> dict:
+        """Accept both the documented nested JSON and the runner's flat format."""
+        config = self._default_config()
+        nested = raw_config.get("sanctions_config", raw_config)
+
+        excel_config = nested.get("excel_configuration", {})
+        output_config = nested.get("output_configuration", {})
+        api_endpoints = nested.get("api_endpoints", {})
+        timeout_settings = nested.get("timeout_settings", {})
+        outlook_config = nested.get("outlook_configuration", {})
+        audit_config = nested.get("audit_logging", {})
+
+        config.update({
+            "input_file": nested.get("input_file") or nested.get("excel_input") or excel_config.get("input_file") or config["input_file"],
+            "sheet_name": excel_config.get("sheet_name", "Sheet1"),
+            "output_dir": nested.get("output_dir") or output_config.get("output_directory") or config["output_dir"],
+            "word_output": output_config.get("word_document", config["word_output"]),
+            "uk_sanctions_url": api_endpoints.get("uk_sanctions", config["uk_sanctions_url"]),
+            "ofac_url": api_endpoints.get("ofac_search", config["ofac_url"]),
+            "timeout": timeout_settings.get("timeout_seconds", config["timeout"]),
+            "screenshot_delay": timeout_settings.get("screenshot_delay_ms", 2000) / 1000,
+            "email_notification": outlook_config.get("email_notification_enabled", config["email_notification"]),
+            "email_recipient": outlook_config.get("email_recipient", config["email_recipient"]),
+            "log_file": audit_config.get("log_file_path", config["log_file"])
+        })
+        return config
     
     def _get_project_root(self) -> Path:
         """Get project root directory"""
@@ -71,33 +107,72 @@ class SanctionsChecker:
         """Convert to relative path from project root"""
         return self._get_project_root() / file_path
     
-    def read_excel(self, excel_path: Optional[str] = None) -> List[str]:
+    def read_input_file(self, input_path: Optional[str] = None) -> List[str]:
         """
-        Read company names from Excel
+        Read company names from CSV, TXT, or Excel.
         Uses relative paths for cross-desktop compatibility
         """
         try:
-            if excel_path is None:
-                excel_path = self.config.get("excel_input", "company_names.xlsx")
+            if input_path is None:
+                input_path = self.config.get("input_file", "company_names.csv")
             
-            full_path = self._get_relative_path(excel_path)
+            full_path = self._get_relative_path(input_path)
             
             if not full_path.exists():
-                logger.error(f"Excel file not found: {full_path}")
+                logger.error(f"Input file not found: {full_path}")
+                return []
+
+            suffix = full_path.suffix.lower()
+            if suffix == ".csv":
+                company_names = self._read_csv(full_path)
+            elif suffix in (".txt", ".list"):
+                company_names = self._read_text(full_path)
+            elif suffix in (".xls", ".xlsx"):
+                company_names = self._read_excel(full_path)
+            else:
+                logger.error(f"Unsupported input file type: {suffix}")
                 return []
             
-            df = pd.read_excel(full_path)
-            company_names = df.iloc[:, 0].dropna().tolist()
-            
-            logger.info(f"Successfully read {len(company_names)} companies from {excel_path}")
+            logger.info(f"Successfully read {len(company_names)} companies from {input_path}")
             self.log_entries.append(f"[{datetime.now()}] Read {len(company_names)} companies")
             
             return company_names
             
         except Exception as e:
             logger.error(f"Error reading Excel: {e}")
-            self.log_entries.append(f"[ERROR] Failed to read Excel: {e}")
+            self.log_entries.append(f"[ERROR] Failed to read input file: {e}")
             return []
+
+    def read_excel(self, excel_path: Optional[str] = None) -> List[str]:
+        """Backward-compatible wrapper for older callers."""
+        return self.read_input_file(excel_path)
+
+    def _read_csv(self, full_path: Path) -> List[str]:
+        """Read entity names from the first CSV column."""
+        with open(full_path, newline='', encoding='utf-8-sig') as csv_file:
+            rows = list(csv.reader(csv_file))
+
+        if rows and rows[0] and rows[0][0].strip().lower() in {"company", "company name", "entity", "entity name", "name"}:
+            rows = rows[1:]
+
+        return [row[0].strip() for row in rows if row and row[0].strip()]
+
+    def _read_text(self, full_path: Path) -> List[str]:
+        """Read one entity name per line."""
+        return [
+            line.strip()
+            for line in full_path.read_text(encoding='utf-8-sig').splitlines()
+            if line.strip()
+        ]
+
+    def _read_excel(self, full_path: Path) -> List[str]:
+        """Read entity names from the first Excel column when pandas/openpyxl is available."""
+        if pd is None:
+            logger.error("Excel input requires pandas and openpyxl. Use company_names.csv for no-dependency runs.")
+            return []
+
+        df = pd.read_excel(full_path, sheet_name=self.config.get("sheet_name", "Sheet1"))
+        return [str(value).strip() for value in df.iloc[:, 0].dropna().tolist() if str(value).strip()]
     
     def create_output_dir(self) -> Path:
         """Create output directory if not exists"""
@@ -137,8 +212,11 @@ class SanctionsChecker:
                 output_dir = self.create_output_dir()
                 log_path = output_dir / f"audit_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
             
-            df_log = pd.DataFrame(self.results)
-            df_log.to_csv(log_path, index=False, encoding='utf-8')
+            fieldnames = ["timestamp", "entity_name", "search_result", "status", "os_type"]
+            with open(log_path, 'w', newline='', encoding='utf-8') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(self.results)
             
             logger.info(f"Audit log exported: {log_path}")
             return True
@@ -246,8 +324,8 @@ def main():
     # Create output directory
     output_dir = checker.create_output_dir()
     
-    # Read company names from Excel
-    companies = checker.read_excel()
+    # Read company names from CSV, TXT, or Excel
+    companies = checker.read_input_file()
     
     if not companies:
         logger.error("No companies to process. Exiting.")

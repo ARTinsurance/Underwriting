@@ -1,10 +1,13 @@
 # Underwriting - Sanctions Check Automation
 
-## ✅ Project Complete: Sanctions Automation System v2.0
+## Current Status
 
-**Current Status**: Production Ready  
-**Delivery Date**: April 24, 2024  
-**Quality**: Enterprise Grade ⭐⭐⭐⭐⭐
+This repository contains two usable sanctions screening surfaces:
+
+- `index.html` - a static sanctions checklist website for GitHub Pages.
+- `sanctions_checker_improved.py` - a local audit-log runner for CSV, TXT, or Excel inputs.
+
+The default runnable input is `company_names.csv`, so a fresh clone can run without first creating an Excel workbook.
 
 ---
 
@@ -18,6 +21,44 @@ Automates daily sanctions checks by searching:
 Results are logged, audited, and can trigger Outlook notifications - all without requiring Python installation on user desktops.
 
 ---
+
+## Website Preview and GitHub Pages
+
+The website is a single static page at `index.html`. It provides:
+
+- Entity queue for companies, vessels, individuals, and owners/managers
+- OFAC, UK, EU, and internal-record checklist sections
+- Evidence/reference fields for each source
+- Clear, Review, and Match decisions
+- Local browser saving and CSV export
+
+### Run Locally
+
+```bash
+python -m http.server 4173
+```
+
+Open:
+
+```text
+http://127.0.0.1:4173/index.html
+```
+
+### Publish With GitHub Pages
+
+This branch includes `.github/workflows/pages.yml`. After pushing the branch:
+
+```bash
+git push -u origin github-pages-sanctions-site
+```
+
+Open a pull request into `main`. When the workflow runs successfully, GitHub Pages should serve the site at:
+
+```text
+https://artinsurance.github.io/Underwriting/
+```
+
+If Pages is not enabled yet, set the repository Pages source to **GitHub Actions** in repository settings.
 
 ## 🚀 Quick Start (Choose One)
 
@@ -34,9 +75,12 @@ Results are logged, audited, and can trigger Outlook notifications - all without
 **Best for**: Technical staff, Mac/Linux users, advanced features
 
 ```
-1. Run: ./run_sanctions_check.sh (Mac/Linux) or run_sanctions_check.bat (Windows)
-2. Both scripts handle environment setup automatically
+1. Review or edit company_names.csv
+2. Run: python sanctions_checker_improved.py
+3. Results are written to results/audit_log_*.csv
 ```
+
+For Excel input, update `sanctions_config.json` to point to an `.xlsx` file and install `pandas` plus `openpyxl`.
 
 ---
 
@@ -48,6 +92,8 @@ Results are logged, audited, and can trigger Outlook notifications - all without
 | **SanctionsCheck_VBA.bas** | Excel macro code | All (via Excel) |
 | **sanctions_checker_improved.py** | Python version | Technical staff |
 | **sanctions_config.json** | Configuration | IT/Admin |
+| **company_names.csv** | Sample/default screening input | All |
+| **index.html** | GitHub Pages checklist website | All |
 
 ### Documentation
 | Document | Who Should Read | Time |
