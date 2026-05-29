@@ -60,6 +60,14 @@ https://artinsurance.github.io/Underwriting/
 
 If Pages is not enabled yet, set the repository Pages source to **GitHub Actions** in repository settings.
 
+Alternative branch-source setup:
+
+1. Use the pushed `gh-pages` branch.
+2. In GitHub, open **Settings > Pages**.
+3. Set **Source** to **Deploy from a branch**.
+4. Select branch `gh-pages` and folder `/ (root)`.
+5. Save and wait for GitHub to publish the site.
+
 ## 🚀 Quick Start (Choose One)
 
 ### Option 1: Excel VBA Macro ⭐ RECOMMENDED

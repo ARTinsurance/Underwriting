@@ -157,6 +157,180 @@
       padding: 16px;
     }
 
+    .tabs {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+    }
+
+    .tab {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--muted);
+      min-height: 36px;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: grid;
+    }
+
+    .dashboard {
+      gap: 16px;
+      grid-template-columns: minmax(360px, 1.4fr) minmax(300px, 0.9fr);
+      padding: 16px;
+    }
+
+    .map-panel {
+      min-height: 560px;
+      position: relative;
+    }
+
+    .map {
+      background:
+        linear-gradient(rgba(15, 107, 87, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 107, 87, 0.08) 1px, transparent 1px),
+        linear-gradient(145deg, #dbe9ef 0%, #eef6f1 46%, #cfdfe7 100%);
+      background-size: 40px 40px, 40px 40px, cover;
+      border-radius: 8px;
+      height: 500px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .route-line {
+      border-top: 2px dashed rgba(15, 107, 87, 0.55);
+      height: 0;
+      left: 15%;
+      position: absolute;
+      top: 55%;
+      transform: rotate(-13deg);
+      transform-origin: left center;
+      width: 70%;
+    }
+
+    .ship-marker {
+      align-items: center;
+      background: #ffffff;
+      border: 2px solid var(--primary);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      display: flex;
+      height: 34px;
+      justify-content: center;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 34px;
+    }
+
+    .ship-marker::after {
+      border-bottom: 7px solid transparent;
+      border-left: 11px solid var(--primary);
+      border-top: 7px solid transparent;
+      content: "";
+      display: block;
+      margin-left: 3px;
+    }
+
+    .ship-marker.active {
+      border-color: var(--danger);
+    }
+
+    .ship-marker.active::after {
+      border-left-color: var(--danger);
+    }
+
+    .map-caption {
+      bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      left: 12px;
+      position: absolute;
+    }
+
+    .ship-list {
+      display: grid;
+      gap: 10px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .hifleet-frame-wrap {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      height: 360px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .hifleet-frame {
+      border: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .ship-row {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .ship-row.active {
+      border-color: var(--primary);
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+
+    .ship-detail {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 12px;
+    }
+
+    .source-status {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .source-status-row {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto;
+      padding: 8px 10px;
+    }
+
+    .match-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .match-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
     .panel {
       background: var(--surface);
       border: 1px solid var(--line);
@@ -430,6 +604,10 @@
         grid-template-columns: 300px 1fr;
       }
 
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
       .decision-panel {
         grid-column: 1 / -1;
       }
@@ -438,6 +616,8 @@
     @media (max-width: 760px) {
       .metrics,
       .workspace,
+      .dashboard,
+      .ship-detail,
       .decision-grid,
       .decision-strip,
       .evidence-grid {
@@ -478,7 +658,12 @@
       </div>
     </header>
 
-    <main class="workspace">
+    <nav class="tabs" aria-label="Website sections">
+      <button class="tab active" id="screeningTab" type="button">Sanctions Checklist</button>
+      <button class="tab" id="dashboardTab" type="button">Ship Dashboard</button>
+    </nav>
+
+    <main class="workspace view active" id="screeningView">
       <section class="panel">
         <div class="panel-header">
           <h2>Entity Queue</h2>
@@ -525,6 +710,7 @@
           </div>
 
           <div class="checklist" id="checklist"></div>
+          <div class="match-list" id="autoMatches"></div>
         </div>
       </section>
 
@@ -567,6 +753,41 @@
         </div>
       </section>
     </main>
+
+    <main class="dashboard view" id="dashboardView">
+      <section class="panel map-panel">
+        <div class="panel-header">
+          <h2>HiFleet Vessel Location Dashboard</h2>
+          <span class="badge review" id="vesselSourceState">Awaiting live refresh</span>
+        </div>
+        <div class="panel-body">
+          <div class="map" id="shipMap" aria-label="Vessel map">
+            <div class="route-line"></div>
+            <div class="map-caption">Positions are loaded from stored vessel data. Connect HiFleet export/API data to refresh live positions.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Live HiFleet</h2>
+          <a class="source-link" href="https://hifleet.com/" target="_blank" rel="noreferrer">Open HiFleet</a>
+        </div>
+        <div class="panel-body">
+          <div class="hifleet-frame-wrap">
+            <iframe class="hifleet-frame" src="https://hifleet.com/" title="HiFleet vessel tracking" loading="lazy"></iframe>
+          </div>
+
+          <h2 style="font-size:15px;margin:0 0 10px;">Vessels & Source Data</h2>
+          <div class="ship-list" id="shipList"></div>
+          <div class="ship-detail" id="shipDetail"></div>
+
+          <h2 style="font-size:15px;margin:18px 0 10px;">Sanctions Dataset Status</h2>
+          <div class="source-status" id="sourceStatus"></div>
+        </div>
+      </section>
+    </main>
+
   </div>
 
   <script>
@@ -605,6 +826,10 @@
       "M-Trans"
     ];
 
+    let sanctionsData = { generated_at: "", sources: [], records: [] };
+    let vesselData = { generated_at: "", source: "", vessels: [] };
+    let activeVessel = "";
+
     const state = JSON.parse(localStorage.getItem("sanctionsChecklist") || "{}");
     state.entities ||= [];
     state.activeId ||= "";
@@ -616,6 +841,7 @@
       bulkEntities: document.getElementById("bulkEntities"),
       entityList: document.getElementById("entityList"),
       checklist: document.getElementById("checklist"),
+      autoMatches: document.getElementById("autoMatches"),
       currentTitle: document.getElementById("currentTitle"),
       currentStatus: document.getElementById("currentStatus"),
       entityType: document.getElementById("entityType"),
@@ -624,7 +850,16 @@
       notes: document.getElementById("notes"),
       saveState: document.getElementById("saveState"),
       auditRows: document.getElementById("auditRows"),
-      auditEmpty: document.getElementById("auditEmpty")
+      auditEmpty: document.getElementById("auditEmpty"),
+      dashboardTab: document.getElementById("dashboardTab"),
+      screeningTab: document.getElementById("screeningTab"),
+      dashboardView: document.getElementById("dashboardView"),
+      screeningView: document.getElementById("screeningView"),
+      shipMap: document.getElementById("shipMap"),
+      shipList: document.getElementById("shipList"),
+      shipDetail: document.getElementById("shipDetail"),
+      sourceStatus: document.getElementById("sourceStatus"),
+      vesselSourceState: document.getElementById("vesselSourceState")
     };
 
     function createEntity(name) {
@@ -669,6 +904,135 @@
       if (decision === "review") return "Review";
       if (decision === "match") return "Match";
       return "Pending";
+    }
+
+    async function loadStaticData() {
+      try {
+        const [sanctionsResponse, vesselsResponse] = await Promise.all([
+          fetch("data/sanctions_snapshot.json", { cache: "no-store" }),
+          fetch("data/vessels.json", { cache: "no-store" })
+        ]);
+        if (sanctionsResponse.ok) sanctionsData = await sanctionsResponse.json();
+        if (vesselsResponse.ok) vesselData = await vesselsResponse.json();
+      } catch (error) {
+        sanctionsData.status = "unavailable";
+      }
+      renderDashboard();
+      render();
+    }
+
+    function setView(view) {
+      const dashboard = view === "dashboard";
+      els.dashboardTab.classList.toggle("active", dashboard);
+      els.screeningTab.classList.toggle("active", !dashboard);
+      els.dashboardView.classList.toggle("active", dashboard);
+      els.screeningView.classList.toggle("active", !dashboard);
+    }
+
+    function renderDashboard() {
+      renderVessels();
+      renderSourceStatus();
+    }
+
+    function renderVessels() {
+      const vessels = vesselData.vessels || [];
+      if (!activeVessel && vessels.length) activeVessel = vessels[0].name;
+      els.shipList.innerHTML = "";
+      els.shipMap.querySelectorAll(".ship-marker").forEach(marker => marker.remove());
+
+      if (!vessels.length) {
+        els.shipList.innerHTML = '<div class="empty">No vessel positions stored yet.</div>';
+        els.shipDetail.innerHTML = "";
+        return;
+      }
+
+      vessels.forEach(vessel => {
+        const marker = document.createElement("button");
+        marker.className = `ship-marker ${vessel.name === activeVessel ? "active" : ""}`;
+        marker.type = "button";
+        marker.title = vessel.name;
+        marker.style.left = `${lonToX(vessel.lon)}%`;
+        marker.style.top = `${latToY(vessel.lat)}%`;
+        marker.addEventListener("click", () => {
+          activeVessel = vessel.name;
+          renderVessels();
+        });
+        els.shipMap.appendChild(marker);
+
+        const row = document.createElement("button");
+        row.className = `ship-row ${vessel.name === activeVessel ? "active" : ""}`;
+        row.type = "button";
+        row.innerHTML = `
+          <strong>${escapeHtml(vessel.name)}</strong>
+          <span class="entity-meta">
+            <span>${escapeHtml(vessel.status || "Unknown")}</span>
+            <span>${escapeHtml(vessel.last_seen || "No timestamp")}</span>
+          </span>
+        `;
+        row.addEventListener("click", () => {
+          activeVessel = vessel.name;
+          renderVessels();
+        });
+        els.shipList.appendChild(row);
+      });
+
+      const vessel = vessels.find(item => item.name === activeVessel) || vessels[0];
+      els.shipDetail.innerHTML = [
+        ["Latitude", vessel.lat],
+        ["Longitude", vessel.lon],
+        ["Speed", vessel.speed_kn == null ? "Pending" : `${vessel.speed_kn} kn`],
+        ["Course", vessel.course == null ? "Pending" : `${vessel.course} deg`],
+        ["IMO", vessel.imo || "Pending"],
+        ["MMSI", vessel.mmsi || "Pending"]
+      ].map(([label, value]) => `
+        <div class="metric"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>
+      `).join("");
+
+      const isSeed = String(vesselData.source || "").toLowerCase().includes("seed");
+      els.vesselSourceState.textContent = isSeed ? "Seed data" : "Live data loaded";
+      els.vesselSourceState.className = `badge ${isSeed ? "review" : "clear"}`;
+    }
+
+    function renderSourceStatus() {
+      const sources = sanctionsData.sources || [];
+      if (!sources.length) {
+        els.sourceStatus.innerHTML = '<div class="empty">No sanctions data snapshot loaded.</div>';
+        return;
+      }
+      els.sourceStatus.innerHTML = sources.map(source => `
+        <div class="source-status-row">
+          <div>
+            <strong>${escapeHtml(source.name)}</strong>
+            <span class="entity-meta">${escapeHtml(source.records || 0)} records · ${escapeHtml(source.last_modified || sanctionsData.generated_at || "No timestamp")}</span>
+          </div>
+          <span class="badge ${source.status === "ok" ? "clear" : "review"}">${escapeHtml(source.status)}</span>
+        </div>
+      `).join("");
+    }
+
+    function lonToX(lon) {
+      const value = Number(lon);
+      if (!Number.isFinite(value)) return 50;
+      return Math.max(4, Math.min(96, ((value + 180) / 360) * 100));
+    }
+
+    function latToY(lat) {
+      const value = Number(lat);
+      if (!Number.isFinite(value)) return 50;
+      return Math.max(4, Math.min(96, ((90 - value) / 180) * 100));
+    }
+
+    function findSanctionsMatches(name) {
+      const target = normalizeName(name);
+      if (!target || !(sanctionsData.records || []).length) return [];
+      return sanctionsData.records.filter(record => {
+        const candidate = normalizeName(record.name);
+        return candidate === target || candidate.includes(target) || target.includes(candidate);
+      }).slice(0, 20);
+    }
+
+    function normalizeName(value) {
+      return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
     }
 
     function renderMetrics() {
@@ -764,6 +1128,27 @@
         `;
         els.checklist.appendChild(item);
       });
+
+      const matches = findSanctionsMatches(entity.name);
+      if (matches.length) {
+        els.autoMatches.innerHTML = `
+          <h2 style="font-size:15px;margin:6px 0 4px;">Stored Data Matches</h2>
+          ${matches.map(match => `
+            <div class="match-row">
+              <strong>${escapeHtml(match.name)}</strong>
+              <span class="entity-meta">
+                <span>${escapeHtml(match.source_name)}</span>
+                <span>${escapeHtml(match.program || "No program")}</span>
+                <span>${escapeHtml(match.reference || "No reference")}</span>
+              </span>
+            </div>
+          `).join("")}
+        `;
+      } else {
+        els.autoMatches.innerHTML = `
+          <div class="empty">No exact stored-data match for this entity in the current snapshot.</div>
+        `;
+      }
     }
 
     function renderAudit() {
@@ -880,6 +1265,8 @@
     });
 
     document.getElementById("completeEntity").addEventListener("click", completeCurrent);
+    els.dashboardTab.addEventListener("click", () => setView("dashboard"));
+    els.screeningTab.addEventListener("click", () => setView("screening"));
 
     document.addEventListener("input", event => {
       const entity = activeEntity();
@@ -909,6 +1296,8 @@
     } else {
       render();
     }
+
+    loadStaticData();
   </script>
 </body>
 </html>

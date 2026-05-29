@@ -1,0 +1,25 @@
+name: Update sanctions data
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Refresh sanctions snapshot
+        run: python scripts/update_sanctions_data.py
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update sanctions data snapshot"
+          file_pattern: data/sanctions_snapshot.json data/raw/*

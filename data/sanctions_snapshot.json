@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-05-29T09:20:09Z",
+  "status": "empty",
+  "sources": [
+    {
+      "key": "ofac_sdn",
+      "name": "OFAC SDN List",
+      "url": "https://www.treasury.gov/ofac/downloads/sdn.xml",
+      "raw_file": "data/raw/ofac_sdn.xml",
+      "records": 0,
+      "status": "error",
+      "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "duration_seconds": 0.05
+    },
+    {
+      "key": "ofac_consolidated",
+      "name": "OFAC Consolidated non-SDN List",
+      "url": "https://www.treasury.gov/ofac/downloads/consolidated/cons_advanced.xml",
+      "raw_file": "data/raw/ofac_consolidated.xml",
+      "records": 0,
+      "status": "error",
+      "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "duration_seconds": 0.0
+    },
+    {
+      "key": "uk",
+      "name": "UK Sanctions List",
+      "url": "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.csv",
+      "raw_file": "data/raw/uk_sanctions_list.csv",
+      "records": 0,
+      "status": "error",
+      "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "duration_seconds": 0.0
+    },
+    {
+      "key": "eu",
+      "name": "EU Consolidated Financial Sanctions List",
+      "url": "https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content",
+      "raw_file": "data/raw/eu_financial_sanctions.xml",
+      "records": 0,
+      "status": "error",
+      "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "duration_seconds": 0.0
+    },
+    {
+      "key": "eu_local_pdf",
+      "name": "Local EU PDF reference",
+      "url": "制裁自动化/20250708-European UnionConsolidated Financial Sanctions List.pdf",
+      "records": 0,
+      "status": "reference_only",
+      "bytes": 16194258,
+      "sha256": "2b4c0aaf9a411e3bb80e7f3f3759ed9a5f8d658acc79dee43bda83864e23bf6c"
+    }
+  ],
+  "records": []
+}

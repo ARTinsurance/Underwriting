@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-05-29T00:00:00Z",
+  "source": "Seeded from existing screening entities. Replace with HiFleet export/API data when credentials are available.",
+  "vessels": [
+    {
+      "name": "DUBAI TOWER",
+      "imo": "",
+      "mmsi": "",
+      "lat": 25.2048,
+      "lon": 55.2708,
+      "status": "Needs HiFleet refresh",
+      "speed_kn": null,
+      "course": null,
+      "last_seen": "Pending live source",
+      "history": [
+        { "lat": 25.2048, "lon": 55.2708, "time": "Pending live source" }
+      ]
+    },
+    {
+      "name": "M-Trans",
+      "imo": "",
+      "mmsi": "",
+      "lat": 1.3521,
+      "lon": 103.8198,
+      "status": "Needs HiFleet refresh",
+      "speed_kn": null,
+      "course": null,
+      "last_seen": "Pending live source",
+      "history": [
+        { "lat": 1.3521, "lon": 103.8198, "time": "Pending live source" }
+      ]
+    }
+  ]
+}
