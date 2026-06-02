@@ -4,8 +4,10 @@
   "vessels": [
     {
       "name": "DUBAI TOWER",
-      "imo": "",
-      "mmsi": "",
+      "imo": "9433066",
+      "mmsi": "636024582",
+      "registered_owner": "Transfar Shipping Pte Ltd",
+      "ownership_source": "https://www.econdb.com/maritime/vessels/636024582/DUBAI%20TOWER/",
       "lat": 25.2048,
       "lon": 55.2708,
       "status": "Needs HiFleet refresh",
@@ -13,13 +15,51 @@
       "course": null,
       "last_seen": "Pending live source",
       "history": [
-        { "lat": 25.2048, "lon": 55.2708, "time": "Pending live source" }
-      ]
+        {
+          "lat": 25.2048,
+          "lon": 55.2708,
+          "time": "Pending live source"
+        }
+      ],
+      "sanctions": {
+        "checked_at": "2026-06-02T08:45:09Z",
+        "status": "clear",
+        "sources": {
+          "ofac": {
+            "sanctioned": false,
+            "matches": []
+          },
+          "uk": {
+            "sanctioned": false,
+            "matches": []
+          },
+          "eu": {
+            "sanctioned": false,
+            "matches": []
+          }
+        },
+        "subjects": [
+          {
+            "role": "vessel",
+            "name": "DUBAI TOWER",
+            "status": "clear",
+            "matches": []
+          },
+          {
+            "role": "registered_owner",
+            "name": "Transfar Shipping Pte Ltd",
+            "status": "clear",
+            "matches": []
+          }
+        ]
+      }
     },
     {
       "name": "M-Trans",
       "imo": "",
       "mmsi": "",
+      "registered_owner": "",
+      "ownership_source": "Pending reliable vessel identity / owner source",
       "lat": 1.3521,
       "lon": 103.8198,
       "status": "Needs HiFleet refresh",
@@ -27,8 +67,39 @@
       "course": null,
       "last_seen": "Pending live source",
       "history": [
-        { "lat": 1.3521, "lon": 103.8198, "time": "Pending live source" }
-      ]
+        {
+          "lat": 1.3521,
+          "lon": 103.8198,
+          "time": "Pending live source"
+        }
+      ],
+      "sanctions": {
+        "checked_at": "2026-06-02T08:45:09Z",
+        "status": "clear",
+        "sources": {
+          "ofac": {
+            "sanctioned": false,
+            "matches": []
+          },
+          "uk": {
+            "sanctioned": false,
+            "matches": []
+          },
+          "eu": {
+            "sanctioned": false,
+            "matches": []
+          }
+        },
+        "subjects": [
+          {
+            "role": "vessel",
+            "name": "M-Trans",
+            "status": "clear",
+            "matches": []
+          }
+        ]
+      }
     }
-  ]
+  ],
+  "sanctions_checked_at": "2026-06-02T08:45:09Z"
 }

@@ -24,13 +24,14 @@ Results are logged, audited, and can trigger Outlook notifications - all without
 
 ## Website Preview and GitHub Pages
 
-The website is a single static page at `index.html`. It provides:
+The website is a single static Sanctions Screening Checklist at `index.html`. It provides:
 
 - Entity queue for companies, vessels, individuals, and owners/managers
 - OFAC, UK, EU, and internal-record checklist sections
 - Evidence/reference fields for each source
 - Clear, Review, and Match decisions
 - Local browser saving and CSV export
+- Ship dashboard with stored vessel positions and sanctions dataset status
 
 ### Run Locally
 

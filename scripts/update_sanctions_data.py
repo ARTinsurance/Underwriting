@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"
 SNAPSHOT_PATH = DATA_DIR / "sanctions_snapshot.json"
+VESSELS_PATH = DATA_DIR / "vessels.json"
 LOCAL_EU_PDF = ROOT / "制裁自动化" / "20250708-European UnionConsolidated Financial Sanctions List.pdf"
 
 SOURCES = [
@@ -45,7 +46,7 @@ SOURCES = [
     {
         "key": "ofac_consolidated",
         "name": "OFAC Consolidated non-SDN List",
-        "url": "https://www.treasury.gov/ofac/downloads/consolidated/cons_advanced.xml",
+        "url": "https://sanctionslistservice.ofac.treas.gov/api/download/CONS_ADVANCED.XML",
         "parser": "ofac_xml",
         "raw": "ofac_consolidated.xml",
     },
@@ -60,6 +61,9 @@ SOURCES = [
         "key": "eu",
         "name": "EU Consolidated Financial Sanctions List",
         "url": "https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content",
+        "fallback_urls": [
+            "https://data.opensanctions.org/datasets/latest/eu_fsf/source.xml",
+        ],
         "parser": "eu_xml",
         "raw": "eu_financial_sanctions.xml",
     },
@@ -72,6 +76,10 @@ def utc_now() -> str:
 
 def clean(value: object) -> str:
     return re.sub(r"\s+", " ", str(value or "")).strip()
+
+
+def normalize_name(value: object) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", str(value or "").casefold()).strip()
 
 
 def fingerprint(data: bytes) -> str:
@@ -95,6 +103,18 @@ def download(url: str) -> tuple[bytes, dict[str, str]]:
         }
 
 
+def download_with_fallbacks(source: dict[str, object]) -> tuple[bytes, dict[str, str], str]:
+    urls = [str(source["url"]), *[str(url) for url in source.get("fallback_urls", [])]]
+    errors = []
+    for url in urls:
+        try:
+            body, headers = download(url)
+            return body, headers, url
+        except Exception as exc:
+            errors.append(f"{url}: {type(exc).__name__}: {exc}")
+    raise RuntimeError("; ".join(errors))
+
+
 def xml_text(node: ET.Element, names: Iterable[str]) -> str:
     wanted = set(names)
     for child in node.iter():
@@ -110,6 +130,39 @@ def local_name(tag: str) -> str:
 def parse_ofac_xml(path: Path, source_key: str, source_name: str) -> list[dict[str, str]]:
     root = ET.parse(path).getroot()
     records: list[dict[str, str]] = []
+
+    party_subtypes = {
+        item.attrib.get("ID", ""): clean(item.text)
+        for item in root.iter()
+        if local_name(item.tag) == "PartySubType"
+    }
+    distinct_parties = [item for item in root.iter() if local_name(item.tag) == "DistinctParty"]
+    if distinct_parties:
+        for party in distinct_parties:
+            profile = next((item for item in party if local_name(item.tag) == "Profile"), None)
+            party_type = party_subtypes.get(profile.attrib.get("PartySubTypeID", "") if profile is not None else "", "")
+            names = []
+            for alias in party.iter():
+                if local_name(alias.tag) != "Alias":
+                    continue
+                name_parts = [
+                    clean(part.text)
+                    for part in alias.iter()
+                    if local_name(part.tag) == "NamePartValue" and clean(part.text)
+                ]
+                if name_parts:
+                    names.append(" ".join(name_parts))
+
+            for name in sorted(set(names)):
+                records.append({
+                    "source": source_key,
+                    "source_name": source_name,
+                    "name": name,
+                    "type": party_type,
+                    "program": "",
+                    "reference": clean(party.attrib.get("FixedRef")),
+                })
+        return records
 
     for entry in root.iter():
         if local_name(entry.tag) not in {"sdnEntry", "sanctionEntry"}:
@@ -153,6 +206,11 @@ def parse_ofac_xml(path: Path, source_key: str, source_name: str) -> list[dict[s
 def parse_uk_csv(path: Path, source_key: str, source_name: str) -> list[dict[str, str]]:
     records: list[dict[str, str]] = []
     with path.open(newline="", encoding="utf-8-sig") as csv_file:
+        first_line = csv_file.readline()
+        if not first_line.startswith("Last Updated,"):
+            pass
+        else:
+            csv_file.seek(0)
         reader = csv.DictReader(csv_file)
         for row in reader:
             names = [
@@ -170,9 +228,9 @@ def parse_uk_csv(path: Path, source_key: str, source_name: str) -> list[dict[str
                 "source": source_key,
                 "source_name": source_name,
                 "name": name,
-                "type": clean(row.get("Individual, Entity, Ship")),
+                "type": clean(row.get("Designation Type")),
                 "program": clean(row.get("Regime Name")),
-                "reference": clean(row.get("Unique ID") or row.get("Group ID")),
+                "reference": clean(row.get("Unique ID") or row.get("OFSI Group ID")),
             })
     return records
 
@@ -216,6 +274,159 @@ def parse_records(source: dict[str, str], raw_path: Path) -> list[dict[str, str]
     raise ValueError(f"Unknown parser: {parser}")
 
 
+def source_bucket(source_key: str) -> str:
+    if source_key.startswith("ofac"):
+        return "ofac"
+    if source_key == "uk":
+        return "uk"
+    if source_key == "eu":
+        return "eu"
+    return source_key
+
+
+def match_records(name: str, records: list[dict[str, str]]) -> list[dict[str, str]]:
+    target = normalize_name(name)
+    if not target:
+        return []
+
+    matches: list[dict[str, str]] = []
+    for record in records:
+        candidate = normalize_name(record.get("name", ""))
+        if not candidate:
+            continue
+        candidate_tokens = candidate.split()
+        candidate_is_specific = len(candidate) >= 8 and len(candidate_tokens) >= 2
+        target_is_specific = len(target) >= 8 and len(target.split()) >= 2
+        if (
+            candidate == target
+            or (candidate_is_specific and candidate in target)
+            or (target_is_specific and target in candidate)
+        ):
+            matches.append(record)
+    return matches
+
+
+def subject_names(vessel: dict[str, object]) -> list[dict[str, str]]:
+    subjects: list[dict[str, str]] = []
+    vessel_name = clean(vessel.get("name"))
+    if vessel_name:
+        subjects.append({"role": "vessel", "name": vessel_name})
+
+    owner_fields = [
+        "owner",
+        "registered_owner",
+        "beneficial_owner",
+        "operator",
+        "manager",
+        "ism_manager",
+    ]
+    for field in owner_fields:
+        value = vessel.get(field)
+        if isinstance(value, list):
+            values = value
+        else:
+            values = [value]
+        for item in values:
+            name = clean(item)
+            if name:
+                subjects.append({"role": field, "name": name})
+
+    for item in vessel.get("company_entities", []) or []:
+        if isinstance(item, dict):
+            name = clean(item.get("name"))
+            role = clean(item.get("role")) or "company_entity"
+        else:
+            name = clean(item)
+            role = "company_entity"
+        if name:
+            subjects.append({"role": role, "name": name})
+
+    seen = set()
+    unique_subjects = []
+    for subject in subjects:
+        key = (subject["role"], normalize_name(subject["name"]))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_subjects.append(subject)
+    return unique_subjects
+
+
+def summarize_matches(subject: dict[str, str], matches: list[dict[str, str]]) -> list[dict[str, str]]:
+    return [
+        {
+            "checked_name": subject["name"],
+            "checked_role": subject["role"],
+            "matched_name": clean(record.get("name")),
+            "source": source_bucket(clean(record.get("source"))),
+            "source_name": clean(record.get("source_name")),
+            "type": clean(record.get("type")),
+            "program": clean(record.get("program")),
+            "reference": clean(record.get("reference")),
+        }
+        for record in matches[:10]
+    ]
+
+
+def empty_source_result() -> dict[str, object]:
+    return {"sanctioned": False, "matches": []}
+
+
+def enrich_vessels(records: list[dict[str, str]], generated_at: str) -> None:
+    if not VESSELS_PATH.exists():
+        return
+
+    vessel_data = json.loads(VESSELS_PATH.read_text(encoding="utf-8"))
+    vessels = vessel_data.get("vessels", [])
+    if not isinstance(vessels, list):
+        return
+
+    for vessel in vessels:
+        if not isinstance(vessel, dict):
+            continue
+
+        source_results = {
+            "ofac": empty_source_result(),
+            "uk": empty_source_result(),
+            "eu": empty_source_result(),
+        }
+        subject_results = []
+
+        for subject in subject_names(vessel):
+            matches = match_records(subject["name"], records)
+            if not matches:
+                subject_results.append({
+                    **subject,
+                    "status": "clear",
+                    "matches": [],
+                })
+                continue
+
+            summarized = summarize_matches(subject, matches)
+            subject_results.append({
+                **subject,
+                "status": "match",
+                "matches": summarized,
+            })
+
+            for match in summarized:
+                bucket = match["source"]
+                if bucket not in source_results:
+                    continue
+                source_results[bucket]["sanctioned"] = True
+                source_results[bucket]["matches"].append(match)
+
+        vessel["sanctions"] = {
+            "checked_at": generated_at,
+            "status": "match" if any(item["sanctioned"] for item in source_results.values()) else "clear",
+            "sources": source_results,
+            "subjects": subject_results,
+        }
+
+    vessel_data["sanctions_checked_at"] = generated_at
+    VESSELS_PATH.write_text(json.dumps(vessel_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     DATA_DIR.mkdir(exist_ok=True)
     RAW_DIR.mkdir(exist_ok=True)
@@ -236,11 +447,12 @@ def main() -> int:
         }
 
         try:
-            body, headers = download(source["url"])
+            body, headers, resolved_url = download_with_fallbacks(source)
             raw_path.write_bytes(body)
             parsed = parse_records(source, raw_path)
             records.extend(parsed)
             source_result.update({
+                "url": resolved_url,
                 "records": len(parsed),
                 "status": "ok",
                 "sha256": fingerprint(body),
@@ -268,13 +480,15 @@ def main() -> int:
         })
 
     records = sorted(records, key=lambda item: (item["source"], item["name"].casefold()))
+    generated_at = utc_now()
     snapshot = {
-        "generated_at": utc_now(),
+        "generated_at": generated_at,
         "status": "ok" if records else "empty",
         "sources": source_results,
         "records": records,
     }
-    SNAPSHOT_PATH.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
+    SNAPSHOT_PATH.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    enrich_vessels(records, generated_at)
     print(f"Wrote {SNAPSHOT_PATH.relative_to(ROOT)} with {len(records)} records")
     for source in source_results:
         print(f"{source['key']}: {source['status']} ({source['records']} records)")
