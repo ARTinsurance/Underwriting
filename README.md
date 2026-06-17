@@ -6,6 +6,8 @@ This repository contains two usable sanctions screening surfaces:
 
 - `index.html` - a static sanctions checklist website for GitHub Pages.
 - `sanctions_checker_improved.py` - a local audit-log runner for CSV, TXT, or Excel inputs.
+- `underwriting_review.py` - a quotation slip review runner for vessel parties, EU/UK/US sanctions, same-vessel quote history, listed areas, and client offering terms.
+- `marine_uw_agent/` - VM/headful-browser workflow package for marine war quotation underwriting review.
 
 The default runnable input is `company_names.csv`, so a fresh clone can run without first creating an Excel workbook.
 
@@ -91,6 +93,60 @@ Alternative branch-source setup:
 
 For Excel input, update `sanctions_config.json` to point to an `.xlsx` file and install `pandas` plus `openpyxl`.
 
+### Option 3: Quotation Slip Review
+**Best for**: Underwriters reviewing a vessel quotation before binding or referral
+
+Prepare a quotation slip JSON with the vessel, parties, trading/listed area wording, and offered terms:
+
+```json
+{
+  "quotation_date": "2026-06-17",
+  "vessel": {
+    "name": "DUBAI TOWER",
+    "imo": "9433066",
+    "registered_owner": "Transfar Shipping Pte Ltd",
+    "manager": "Bernhard Schulte"
+  },
+  "parties": [
+    {"role": "assured", "name": "Example Assured Ltd"},
+    {"role": "broker", "name": "Example Broker Ltd"}
+  ],
+  "trading_limits": "Worldwide excluding sanctioned trades. Calls to Black Sea require prior agreement.",
+  "listed_areas": ["Black Sea"],
+  "coverage": "marine war risks",
+  "limit": "USD 10,000,000",
+  "premium": "USD 25,000",
+  "conditions": ["Subject to sanctions clause", "Subject to no known loss"]
+}
+```
+
+Optional quotation history can be JSON or CSV. Use `quotation_date`, `vessel_name` or `vessel_imo`, and any quote terms you want reported.
+
+```bash
+python underwriting_review.py quote_slip.json \
+  --history data/quotation_history.json \
+  --output results/underwriting_review.md \
+  --json-output results/underwriting_review.json
+```
+
+The review screens all extracted parties against the local sanctions snapshot, groups results by EU/UK/US, reports same-vessel quotations in the previous 3 months, explains how listed areas were defined, and summarizes what is being offered to the client.
+
+### Option 4: VM Browser Underwriting Agent
+**Best for**: Full quotation-system, Equasis, Hifleet, sanctions, evidence, and workbook workflow
+
+This workflow is browser-based only and does not connect to Gmail or build email integration.
+
+```bash
+python -m marine_uw_agent.run \
+  --quotation-reference "ART-YYYYMMDDNN-MW" \
+  --template-workbook "./input/UW Review - HK.xlsx" \
+  --output-dir "./output" \
+  --as-of-date "YYYY-MM-DD" \
+  --headful true
+```
+
+Configure credentials in `.env` or VM secrets using `.env.example`. Do not commit `.env`. Full setup notes are in `VM_BROWSER_WORKFLOW.md`.
+
 ---
 
 ## 📦 What You Get
@@ -100,6 +156,9 @@ For Excel input, update `sanctions_config.json` to point to an `.xlsx` file and 
 |------|---------|-------|
 | **SanctionsCheck_VBA.bas** | Excel macro code | All (via Excel) |
 | **sanctions_checker_improved.py** | Python version | Technical staff |
+| **underwriting_review.py** | Quotation slip review module | Underwriters / Technical staff |
+| **marine_uw_agent/** | VM browser automation workflow | Underwriters / Compliance automation |
+| **VM_BROWSER_WORKFLOW.md** | VM setup and runbook | IT/Admin / Compliance automation |
 | **sanctions_config.json** | Configuration | IT/Admin |
 | **company_names.csv** | Sample/default screening input | All |
 | **index.html** | GitHub Pages checklist website | All |

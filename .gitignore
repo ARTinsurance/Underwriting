@@ -2,3 +2,10 @@ __pycache__/
 venv/
 results/
 sanctions_check.log
+.env
+.env.*
+!.env.example
+runs/
+output/
+evidence/
+playwright-profile/
