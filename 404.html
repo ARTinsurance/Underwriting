@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Underwriting</title>
+  <script>
+    (function () {
+      var marker = "/Underwriting/";
+      var base = window.location.pathname.indexOf(marker) === 0 ? marker : "/";
+      var target = new URL(base, window.location.origin);
+      var requested = window.location.pathname + window.location.search + window.location.hash;
+      if (requested && requested !== base) target.searchParams.set("from", requested);
+      window.location.replace(target.toString());
+    }());
+  </script>
+</head>
+<body>
+  <p>Redirecting to the underwriting workbench.</p>
+</body>
+</html>

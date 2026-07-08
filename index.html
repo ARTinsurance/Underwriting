@@ -3,27 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sanctions Screening Checklist</title>
+  <title>Marine UW Sanctions Evidence Workbench</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f4f6f8;
+      --bg: #f5f7fa;
       --surface: #ffffff;
-      --surface-alt: #eef3f7;
-      --line: #d8e0e7;
-      --text: #1b2733;
-      --muted: #647386;
-      --primary: #0f6b57;
-      --primary-dark: #0a4d3f;
-      --danger: #b42318;
-      --warning: #b54708;
-      --ok: #087443;
-      --focus: #1b73e8;
-      --shadow: 0 10px 28px rgba(27, 39, 51, 0.08);
+      --surface-2: #f0f4f8;
+      --surface-3: #e8eef5;
+      --text: #17212b;
+      --muted: #5d6b7c;
+      --line: #d8e0ea;
+      --blue: #1d5f9f;
+      --blue-dark: #164a7b;
+      --green: #087443;
+      --amber: #a15c05;
+      --red: #b42318;
+      --ink: #253448;
+      --shadow: 0 12px 30px rgba(25, 35, 47, 0.08);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -42,24 +47,55 @@
     }
 
     button {
+      align-items: center;
       border: 1px solid transparent;
       border-radius: 6px;
       cursor: pointer;
-      min-height: 38px;
-      padding: 8px 12px;
+      display: inline-flex;
+      gap: 7px;
+      justify-content: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      white-space: nowrap;
     }
 
     button:focus-visible,
     input:focus-visible,
     select:focus-visible,
-    textarea:focus-visible {
-      outline: 3px solid rgba(27, 115, 232, 0.25);
-      outline-offset: 1px;
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(29, 95, 159, 0.22);
+      outline-offset: 2px;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      min-height: 38px;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    label {
+      color: var(--muted);
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin: 0 0 5px;
+      text-transform: uppercase;
     }
 
     .app {
-      display: grid;
-      grid-template-rows: auto 1fr;
       min-height: 100vh;
     }
 
@@ -67,17 +103,13 @@
       align-items: center;
       background: var(--surface);
       border-bottom: 1px solid var(--line);
-      display: flex;
-      gap: 18px;
-      justify-content: space-between;
-      padding: 14px 20px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(260px, 1.2fr) minmax(420px, 1.5fr) auto;
+      padding: 13px 18px;
       position: sticky;
       top: 0;
-      z-index: 3;
-    }
-
-    .brand {
-      min-width: 220px;
+      z-index: 5;
     }
 
     .brand h1 {
@@ -88,34 +120,36 @@
 
     .brand p {
       color: var(--muted);
-      margin: 3px 0 0;
+      margin: 2px 0 0;
     }
 
     .metrics {
       display: grid;
       gap: 8px;
-      grid-template-columns: repeat(4, minmax(92px, 1fr));
-      max-width: 620px;
-      width: 100%;
+      grid-template-columns: repeat(4, minmax(100px, 1fr));
     }
 
     .metric {
-      background: var(--surface-alt);
+      background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 7px;
+      min-width: 0;
       padding: 8px 10px;
     }
 
     .metric span {
       color: var(--muted);
       display: block;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
     .metric strong {
       display: block;
       font-size: 18px;
       line-height: 1.2;
+      overflow-wrap: anywhere;
     }
 
     .actions {
@@ -126,12 +160,12 @@
     }
 
     .btn-primary {
-      background: var(--primary);
+      background: var(--blue);
       color: #fff;
     }
 
     .btn-primary:hover {
-      background: var(--primary-dark);
+      background: var(--blue-dark);
     }
 
     .btn-secondary {
@@ -141,193 +175,20 @@
     }
 
     .btn-secondary:hover {
-      background: var(--surface-alt);
+      background: var(--surface-2);
     }
 
     .btn-danger {
-      background: #fff5f3;
-      border-color: #f5c7c1;
-      color: var(--danger);
+      background: #fff3f1;
+      border-color: #f0b8b2;
+      color: var(--red);
     }
 
-    .workspace {
+    .layout {
       display: grid;
-      gap: 16px;
-      grid-template-columns: minmax(240px, 0.9fr) minmax(420px, 1.5fr) minmax(300px, 1fr);
-      padding: 16px;
-    }
-
-    .tabs {
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      gap: 8px;
-      padding: 10px 16px;
-    }
-
-    .tab {
-      background: transparent;
-      border-color: var(--line);
-      color: var(--muted);
-      min-height: 36px;
-    }
-
-    .tab.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-    }
-
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: grid;
-    }
-
-    .dashboard {
-      gap: 16px;
-      grid-template-columns: minmax(360px, 1.4fr) minmax(300px, 0.9fr);
-      padding: 16px;
-    }
-
-    .map-panel {
-      min-height: 560px;
-      position: relative;
-    }
-
-    .map {
-      background:
-        linear-gradient(rgba(15, 107, 87, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 107, 87, 0.08) 1px, transparent 1px),
-        linear-gradient(145deg, #dbe9ef 0%, #eef6f1 46%, #cfdfe7 100%);
-      background-size: 40px 40px, 40px 40px, cover;
-      border-radius: 8px;
-      height: 500px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .route-line {
-      border-top: 2px dashed rgba(15, 107, 87, 0.55);
-      height: 0;
-      left: 15%;
-      position: absolute;
-      top: 55%;
-      transform: rotate(-13deg);
-      transform-origin: left center;
-      width: 70%;
-    }
-
-    .ship-marker {
-      align-items: center;
-      background: #ffffff;
-      border: 2px solid var(--primary);
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      display: flex;
-      height: 34px;
-      justify-content: center;
-      position: absolute;
-      transform: translate(-50%, -50%);
-      width: 34px;
-    }
-
-    .ship-marker::after {
-      border-bottom: 7px solid transparent;
-      border-left: 11px solid var(--primary);
-      border-top: 7px solid transparent;
-      content: "";
-      display: block;
-      margin-left: 3px;
-    }
-
-    .ship-marker.active {
-      border-color: var(--danger);
-    }
-
-    .ship-marker.active::after {
-      border-left-color: var(--danger);
-    }
-
-    .map-caption {
-      bottom: 12px;
-      color: var(--muted);
-      font-size: 12px;
-      left: 12px;
-      position: absolute;
-    }
-
-    .ship-list {
-      display: grid;
-      gap: 10px;
-      max-height: 240px;
-      overflow: auto;
-    }
-
-    .hifleet-frame-wrap {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      height: 500px;
-      overflow: hidden;
-    }
-
-    .hifleet-frame {
-      border: 0;
-      height: 100%;
-      width: 100%;
-    }
-
-    .ship-row {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px;
-      text-align: left;
-      width: 100%;
-    }
-
-    .ship-row.active {
-      border-color: var(--primary);
-      box-shadow: inset 4px 0 0 var(--primary);
-    }
-
-    .ship-detail {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(2, 1fr);
-      margin-top: 12px;
-    }
-
-    .source-status {
-      display: grid;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .source-status-row {
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      display: grid;
-      gap: 8px;
-      grid-template-columns: 1fr auto;
-      padding: 8px 10px;
-    }
-
-    .match-list {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-      max-height: 180px;
-      overflow: auto;
-    }
-
-    .match-row {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 8px;
+      gap: 14px;
+      grid-template-columns: minmax(290px, 0.85fr) minmax(560px, 1.7fr) minmax(330px, 0.95fr);
+      padding: 14px;
     }
 
     .panel {
@@ -344,90 +205,37 @@
       display: flex;
       gap: 10px;
       justify-content: space-between;
-      padding: 14px;
+      min-height: 53px;
+      padding: 12px 13px;
     }
 
-    .panel-header h2 {
+    .panel-header h2,
+    .section-title {
       font-size: 15px;
       margin: 0;
     }
 
     .panel-body {
-      padding: 14px;
+      padding: 13px;
     }
 
-    .entity-tools {
+    .stack {
       display: grid;
-      gap: 8px;
-      grid-template-columns: 1fr auto;
-      margin-bottom: 12px;
+      gap: 12px;
     }
 
-    .field {
+    .field-grid {
       display: grid;
-      gap: 5px;
-      margin-bottom: 12px;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
+    .field-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    input,
-    select,
-    textarea {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      color: var(--text);
-      min-height: 38px;
-      padding: 8px 10px;
-      width: 100%;
-    }
-
-    textarea {
-      min-height: 76px;
-      resize: vertical;
-    }
-
-    .entity-list {
-      display: grid;
-      gap: 8px;
-      max-height: calc(100vh - 260px);
-      overflow: auto;
-      padding-right: 3px;
-    }
-
-    .entity {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      display: grid;
-      gap: 5px;
-      padding: 10px;
-      text-align: left;
-      width: 100%;
-    }
-
-    .entity.active {
-      border-color: var(--primary);
-      box-shadow: inset 4px 0 0 var(--primary);
-    }
-
-    .entity-title {
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
-    .entity-meta {
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      font-size: 12px;
-      gap: 6px;
+    .span-2 {
+      grid-column: span 2;
     }
 
     .badge {
@@ -441,116 +249,113 @@
     }
 
     .badge.pending {
-      background: #eef3f7;
-      color: #475569;
+      background: #edf2f7;
+      color: #4a5568;
     }
 
     .badge.clear {
-      background: #e9f8ef;
-      color: var(--ok);
+      background: #e8f6ee;
+      color: var(--green);
     }
 
     .badge.review {
-      background: #fff7e8;
-      color: var(--warning);
+      background: #fff4df;
+      color: var(--amber);
     }
 
     .badge.match {
-      background: #fff1ef;
-      color: var(--danger);
+      background: #fff0ee;
+      color: var(--red);
     }
 
-    .checklist {
+    .badge.info {
+      background: #eaf2fb;
+      color: var(--blue);
+    }
+
+    .workflow {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .check-item {
+    .step {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px;
+      display: grid;
+      gap: 10px;
+      padding: 11px;
     }
 
-    .check-head {
+    .step-head {
       align-items: start;
       display: grid;
       gap: 10px;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr;
     }
 
-    .check-head input {
-      height: 18px;
-      margin-top: 3px;
-      min-height: 18px;
-      width: 18px;
+    .step-number {
+      align-items: center;
+      background: var(--ink);
+      border-radius: 999px;
+      color: #fff;
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 700;
+      height: 28px;
+      justify-content: center;
+      width: 28px;
     }
 
-    .check-title strong {
+    .step-title strong {
       display: block;
-      font-size: 14px;
     }
 
-    .check-title span {
+    .step-title span {
       color: var(--muted);
       display: block;
       font-size: 12px;
       margin-top: 2px;
     }
 
-    .source-link {
-      color: var(--primary);
-      font-size: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      white-space: nowrap;
+    .step-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .source-link:hover {
-      text-decoration: underline;
-    }
-
-    .evidence-grid {
+    .source-grid {
       display: grid;
-      gap: 10px;
-      grid-template-columns: minmax(120px, 0.8fr) 1fr;
-      margin-top: 10px;
+      gap: 11px;
     }
 
-    .decision-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: 1fr 1fr;
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    .decision-strip {
+    .source-card-head {
+      align-items: center;
+      background: var(--surface-2);
       border-bottom: 1px solid var(--line);
       display: grid;
       gap: 10px;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 14px;
+      grid-template-columns: 1fr auto;
+      padding: 10px;
     }
 
-    .decision-option {
-      align-items: center;
-      background: var(--surface-alt);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      display: flex;
-      gap: 8px;
-      min-height: 48px;
-      padding: 8px;
+    .source-card h3 {
+      font-size: 14px;
+      margin: 0;
     }
 
-    .decision-option input {
-      min-height: 18px;
-      width: 18px;
+    .source-card p {
+      color: var(--muted);
+      margin: 2px 0 0;
     }
 
-    .audit-log {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      max-height: 260px;
-      overflow: auto;
+    .task-table {
+      width: 100%;
     }
 
     table {
@@ -567,11 +372,13 @@
     }
 
     th {
-      background: var(--surface-alt);
+      background: var(--surface-2);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       position: sticky;
       top: 0;
+      text-transform: uppercase;
+      z-index: 1;
     }
 
     td {
@@ -579,60 +386,190 @@
       overflow-wrap: anywhere;
     }
 
+    .task-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .task-actions button {
+      min-height: 30px;
+      padding: 5px 8px;
+    }
+
+    .task-actions a {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: inline-flex;
+      min-height: 30px;
+      padding: 5px 8px;
+      text-decoration: none;
+    }
+
+    .compact-select {
+      min-height: 32px;
+      padding: 5px 7px;
+    }
+
+    .match-list {
+      display: grid;
+      gap: 8px;
+      max-height: 250px;
+      overflow: auto;
+    }
+
+    .match-row {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 8px;
+    }
+
+    .entity-meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 12px;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .fleet-tabs {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 10px;
+    }
+
+    .fleet-tab {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--muted);
+      min-height: 34px;
+    }
+
+    .fleet-tab.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .table-scroll {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      max-height: 330px;
+      overflow: auto;
+    }
+
+    .evidence-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .evidence-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .evidence-card img {
+      background: var(--surface-3);
+      display: block;
+      max-height: 170px;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .evidence-card-body {
+      display: grid;
+      gap: 7px;
+      padding: 9px;
+    }
+
+    .evidence-card-body strong {
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
     .empty {
       color: var(--muted);
-      padding: 22px;
+      padding: 20px;
       text-align: center;
     }
 
-    @media (max-width: 1120px) {
+    .note {
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 10px;
+    }
+
+    .source-status {
+      display: grid;
+      gap: 8px;
+    }
+
+    .source-status-row {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto;
+      padding: 8px 10px;
+    }
+
+    .hidden-input {
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      width: 1px;
+    }
+
+    @media (max-width: 1180px) {
       .topbar {
         align-items: stretch;
-        flex-direction: column;
-      }
-
-      .metrics {
-        max-width: none;
+        grid-template-columns: 1fr;
       }
 
       .actions {
         justify-content: flex-start;
       }
 
-      .workspace {
-        grid-template-columns: 300px 1fr;
+      .layout {
+        grid-template-columns: minmax(280px, 0.8fr) minmax(520px, 1.3fr);
       }
 
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      .decision-panel {
+      .right-column {
         grid-column: 1 / -1;
       }
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 780px) {
+      .layout {
+        grid-template-columns: 1fr;
+        padding: 10px;
+      }
+
       .metrics,
-      .workspace,
-      .dashboard,
-      .ship-detail,
-      .decision-grid,
-      .decision-strip,
-      .evidence-grid {
+      .field-grid,
+      .field-grid.three,
+      .fleet-tabs {
         grid-template-columns: 1fr;
       }
 
-      .workspace {
-        padding: 10px;
+      .span-2 {
+        grid-column: auto;
+      }
+
+      .source-card-head {
+        grid-template-columns: 1fr;
       }
 
       .topbar {
         padding: 12px;
-      }
-
-      .entity-list {
-        max-height: 260px;
       }
     }
   </style>
@@ -641,251 +578,327 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>Sanctions Screening Checklist</h1>
-        <p>OFAC, UK, EU, evidence capture, and audit export</p>
+        <h1>Marine UW Sanctions Evidence Workbench</h1>
+        <p>IMO research, Equasis fleet info, HiFleet review, official-source screenshots</p>
       </div>
-      <section class="metrics" aria-label="Screening status">
-        <div class="metric"><span>Total</span><strong id="metricTotal">0</strong></div>
-        <div class="metric"><span>Clear</span><strong id="metricClear">0</strong></div>
-        <div class="metric"><span>Review</span><strong id="metricReview">0</strong></div>
-        <div class="metric"><span>Match</span><strong id="metricMatch">0</strong></div>
+      <section class="metrics" aria-label="Review status">
+        <div class="metric"><span>Search tasks</span><strong id="metricTasks">0</strong></div>
+        <div class="metric"><span>Completed</span><strong id="metricComplete">0</strong></div>
+        <div class="metric"><span>Local hits</span><strong id="metricHits">0</strong></div>
+        <div class="metric"><span>Screenshots</span><strong id="metricEvidence">0</strong></div>
       </section>
       <div class="actions">
-        <button class="btn-secondary" id="loadSample" type="button">Load Sample</button>
-        <button class="btn-secondary" id="exportCsv" type="button">Export CSV</button>
+        <button class="btn-secondary" id="loadTraverse" type="button">Load Traverse sample</button>
+        <button class="btn-secondary" id="exportJson" type="button">Export review JSON</button>
+        <button class="btn-secondary" id="exportCsv" type="button">Export source CSV</button>
         <button class="btn-danger" id="resetAll" type="button">Reset</button>
       </div>
     </header>
 
-    <nav class="tabs" aria-label="Website sections">
-      <button class="tab active" id="screeningTab" type="button">Sanctions Checklist</button>
-      <button class="tab" id="dashboardTab" type="button">Ship Dashboard</button>
-    </nav>
-
-    <main class="workspace view active" id="screeningView">
+    <main class="layout">
       <section class="panel">
         <div class="panel-header">
-          <h2>Entity Queue</h2>
-          <span class="badge pending" id="queueCount">0 pending</span>
+          <h2>Workbook Inputs</h2>
+          <span class="badge info">UW Info</span>
         </div>
-        <div class="panel-body">
-          <div class="entity-tools">
-            <input id="entityName" placeholder="Company or vessel name" aria-label="Company or vessel name">
-            <button class="btn-primary" id="addEntity" type="button">Add</button>
-          </div>
-          <div class="field">
-            <label for="bulkEntities">Bulk paste</label>
-            <textarea id="bulkEntities" placeholder="Paste one entity per line"></textarea>
-            <button class="btn-secondary" id="addBulk" type="button">Add pasted entities</button>
-          </div>
-          <div class="entity-list" id="entityList" aria-label="Entities to screen"></div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-header">
-          <h2 id="currentTitle">Select an entity</h2>
-          <span class="badge pending" id="currentStatus">Pending</span>
-        </div>
-        <div class="panel-body">
-          <div class="decision-grid">
-            <div class="field">
-              <label for="entityType">Entity type</label>
-              <select id="entityType">
-                <option>Company</option>
-                <option>Vessel</option>
-                <option>Individual</option>
-                <option>Owner / Manager</option>
-              </select>
+        <div class="panel-body stack">
+          <div class="field-grid">
+            <div>
+              <label for="quotationRef">Quotation Ref no.</label>
+              <input id="quotationRef" data-review="quotationRef" placeholder="ART-YYYYMMDDNN-MW">
             </div>
-            <div class="field">
-              <label for="riskLevel">Risk level</label>
-              <select id="riskLevel">
-                <option>Standard</option>
-                <option>High</option>
-                <option>Enhanced due diligence</option>
-              </select>
+            <div>
+              <label for="listedArea">Listed Area</label>
+              <input id="listedArea" data-review="listedArea" placeholder="Gulf of Aden/Red Sea/Indian Ocean">
+            </div>
+            <div>
+              <label for="eta">Estimated Date of Arrival</label>
+              <input id="eta" data-review="eta" placeholder="YYYY-MM-DD or free text">
+            </div>
+            <div>
+              <label for="flag">Flag</label>
+              <input id="flag" data-review="flag" placeholder="Flag state">
+            </div>
+            <div>
+              <label for="vesselName">Vessel Name</label>
+              <input id="vesselName" data-review="vesselName" placeholder="MV TRAVERSE SINGAPORE">
+            </div>
+            <div>
+              <label for="imo">IMO</label>
+              <input id="imo" data-review="imo" placeholder="9342865">
+            </div>
+            <div class="span-2">
+              <label for="commercialManager">Commercial Manager</label>
+              <input id="commercialManager" data-review="commercialManager" placeholder="Commercial manager from Equasis">
+            </div>
+            <div class="span-2">
+              <label for="registeredOwner">Registered Owner</label>
+              <input id="registeredOwner" data-review="registeredOwner" placeholder="Registered owner from Equasis">
+            </div>
+            <div class="span-2">
+              <label for="ownerAddress">Owner / Manager Address</label>
+              <textarea id="ownerAddress" data-review="ownerAddress" placeholder="Paste address or source note from Equasis"></textarea>
             </div>
           </div>
 
-          <div class="checklist" id="checklist"></div>
-          <div class="match-list" id="autoMatches"></div>
-        </div>
-      </section>
+          <div class="workflow" aria-label="Research workflow">
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">1</span>
+                <div class="step-title">
+                  <strong>Open Equasis and search the IMO</strong>
+                  <span>Capture vessel identity, registered owner, commercial manager, and fleet rows.</span>
+                </div>
+              </div>
+              <div class="step-actions">
+                <button class="btn-primary" data-open-source="equasis" type="button">Open Equasis</button>
+                <button class="btn-secondary" data-copy-term="imo" type="button">Copy IMO</button>
+                <button class="btn-secondary" data-capture-source="equasis" data-capture-term="imo" type="button">Capture Equasis</button>
+              </div>
+            </article>
 
-      <section class="panel decision-panel">
-        <div class="panel-header">
-          <h2>Decision & Audit</h2>
-          <span id="saveState" class="badge clear">Saved locally</span>
-        </div>
-        <div class="decision-strip" role="radiogroup" aria-label="Screening decision">
-          <label class="decision-option"><input type="radio" name="decision" value="clear"> Clear</label>
-          <label class="decision-option"><input type="radio" name="decision" value="review"> Review</label>
-          <label class="decision-option"><input type="radio" name="decision" value="match"> Match</label>
-        </div>
-        <div class="panel-body">
-          <div class="field">
-            <label for="reviewer">Reviewer</label>
-            <input id="reviewer" placeholder="Name or initials">
-          </div>
-          <div class="field">
-            <label for="notes">Reviewer notes</label>
-            <textarea id="notes" placeholder="Record rationale, escalation owner, or next action"></textarea>
-          </div>
-          <button class="btn-primary" id="completeEntity" type="button">Complete current screening</button>
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">2</span>
+                <div class="step-title">
+                  <strong>Open HiFleet and search the IMO</strong>
+                  <span>Capture AIS position, port history, and any Israel/US/UK call-port exposure.</span>
+                </div>
+              </div>
+              <div class="step-actions">
+                <button class="btn-primary" data-open-source="hifleet" type="button">Open HiFleet</button>
+                <button class="btn-secondary" data-copy-term="imo" type="button">Copy IMO</button>
+                <button class="btn-secondary" data-capture-source="hifleet" data-capture-term="imo" type="button">Capture HiFleet</button>
+              </div>
+            </article>
 
-          <h2 style="font-size:15px;margin:18px 0 10px;">Recent Audit Entries</h2>
-          <div class="audit-log">
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Entity</th>
-                  <th>Decision</th>
-                  <th>Sources</th>
-                </tr>
-              </thead>
-              <tbody id="auditRows"></tbody>
-            </table>
-            <div class="empty" id="auditEmpty">No completed screenings yet.</div>
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">3</span>
+                <div class="step-title">
+                  <strong>Run each sanctions source for every search term</strong>
+                  <span>Search IMO, vessel name, commercial manager, and registered owner, then attach screenshots.</span>
+                </div>
+              </div>
+            </article>
           </div>
-        </div>
-      </section>
-    </main>
 
-    <main class="dashboard view" id="dashboardView">
-      <section class="panel map-panel">
-        <div class="panel-header">
-          <h2>HiFleet Vessel Location Dashboard</h2>
-          <span class="badge review" id="vesselSourceState">Awaiting live refresh</span>
-        </div>
-        <div class="panel-body">
-          <div class="hifleet-frame-wrap">
-            <iframe class="hifleet-frame" src="https://hifleet.com/" title="HiFleet vessel tracking" loading="lazy"></iframe>
+          <div class="note">
+            This static GitHub Pages site cannot securely store passwords or silently control third-party websites. Use the official tabs, then use Capture to save the browser-approved screenshot into this review.
           </div>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-header">
-          <h2>Vessels & Source Data</h2>
-          <a class="source-link" href="https://hifleet.com/" target="_blank" rel="noreferrer">Open HiFleet</a>
+          <h2>Official Source Search & Screenshots</h2>
+          <span class="badge pending" id="captureState">Ready</span>
         </div>
-        <div class="panel-body">
-          <div class="map" id="shipMap" aria-label="Stored vessel position reference">
-            <div class="route-line"></div>
-            <div class="map-caption">Stored vessel reference points for screening context.</div>
-          </div>
-
-          <h2 style="font-size:15px;margin:14px 0 10px;">Vessels & Source Data</h2>
-          <div class="ship-list" id="shipList"></div>
-          <div class="ship-detail" id="shipDetail"></div>
-
-          <h2 style="font-size:15px;margin:18px 0 10px;">Sanctions Dataset Status</h2>
-          <div class="source-status" id="sourceStatus"></div>
-        </div>
+        <div class="panel-body source-grid" id="sourceGrid"></div>
       </section>
-    </main>
 
+      <aside class="right-column stack">
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Local Snapshot Matches</h2>
+            <span class="badge info" id="snapshotDate">Loading</span>
+          </div>
+          <div class="panel-body">
+            <div class="match-list" id="localMatches"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Fleet Info</h2>
+            <span class="badge info">Equasis</span>
+          </div>
+          <div class="panel-body">
+            <div class="fleet-tabs">
+              <button class="fleet-tab active" id="managerFleetTab" type="button">Commercial Manager</button>
+              <button class="fleet-tab" id="ownerFleetTab" type="button">Registered Owner</button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ship</th>
+                    <th>GT</th>
+                    <th>Type</th>
+                    <th>Flag</th>
+                    <th>Acting as</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Screenshot Evidence</h2>
+            <span class="badge clear" id="evidenceCount">0 saved</span>
+          </div>
+          <div class="panel-body evidence-grid" id="evidenceGrid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Decision & Notes</h2>
+            <span class="badge clear" id="saveState">Saved locally</span>
+          </div>
+          <div class="panel-body stack">
+            <div class="field-grid">
+              <div>
+                <label for="reviewer">Reviewer</label>
+                <input id="reviewer" data-review="reviewer" placeholder="Name or initials">
+              </div>
+              <div>
+                <label for="decision">Decision</label>
+                <select id="decision" data-review="decision">
+                  <option>Pending</option>
+                  <option>Clear</option>
+                  <option>Review</option>
+                  <option>Match</option>
+                </select>
+              </div>
+              <div class="span-2">
+                <label for="notes">Reviewer notes</label>
+                <textarea id="notes" data-review="notes" placeholder="Record rationale, escalation owner, missing screenshots, or source limitations"></textarea>
+              </div>
+            </div>
+
+            <div class="source-status" id="sourceStatus"></div>
+          </div>
+        </section>
+      </aside>
+    </main>
   </div>
 
+  <input class="hidden-input" id="uploadEvidence" type="file" accept="image/*">
+
   <script>
-    const sources = [
+    const officialSources = [
       {
         key: "ofac",
         name: "OFAC Sanctions Search",
-        detail: "US Treasury SDN and consolidated sanctions screening",
-        url: "https://sanctionssearch.ofac.treas.gov/"
+        url: "https://sanctionssearch.ofac.treas.gov/",
+        detail: "US Treasury web search. Screen each term and capture the visible result page.",
+        localSources: ["ofac_sdn", "ofac_consolidated"]
       },
       {
-        key: "uk",
-        name: "UK Sanctions List",
-        detail: "UK consolidated list search and designation evidence",
-        url: "https://search-uk-sanctions-list.service.gov.uk/"
+        key: "uk_reg",
+        name: "UK Russia Regulations 2019/855",
+        url: "https://www.legislation.gov.uk/uksi/2019/855",
+        detail: "UK sanctions regulation reference. Use browser find for the term and capture no-result/result state.",
+        localSources: ["uk"]
       },
       {
-        key: "eu",
-        name: "EU Financial Sanctions",
-        detail: "EU consolidated financial sanctions source",
-        url: "https://webgate.ec.europa.eu/cfs/public/#/screening"
-      },
-      {
-        key: "internal",
-        name: "Internal / Counterparty Records",
-        detail: "Known aliases, beneficial ownership, vessel manager, or prior notes",
-        url: "#"
+        key: "eu_reg",
+        name: "EU Regulation 833/2014",
+        url: "https://eur-lex.europa.eu/eli/reg/2014/833/oj/eng",
+        detail: "EU regulation reference. Use browser find for the term and capture no-result/result state.",
+        localSources: ["eu"]
       }
     ];
 
-    const sampleEntities = [
-      "TRANSFAR SHIPPING PTE",
-      "TRANSFAR BANGKOK HOLDINGS",
-      "BERNHARD SCHULTE",
-      "DUBAI TOWER",
-      "M-Trans"
-    ];
-
-    let sanctionsData = { generated_at: "", sources: [], records: [] };
-    let vesselData = { generated_at: "", source: "", vessels: [] };
-    let activeVessel = "";
-
-    const state = JSON.parse(localStorage.getItem("sanctionsChecklist") || "{}");
-    state.entities ||= [];
-    state.activeId ||= "";
-    state.audit ||= [];
-    state.reviewer ||= "";
-
-    const els = {
-      entityName: document.getElementById("entityName"),
-      bulkEntities: document.getElementById("bulkEntities"),
-      entityList: document.getElementById("entityList"),
-      checklist: document.getElementById("checklist"),
-      autoMatches: document.getElementById("autoMatches"),
-      currentTitle: document.getElementById("currentTitle"),
-      currentStatus: document.getElementById("currentStatus"),
-      entityType: document.getElementById("entityType"),
-      riskLevel: document.getElementById("riskLevel"),
-      reviewer: document.getElementById("reviewer"),
-      notes: document.getElementById("notes"),
-      saveState: document.getElementById("saveState"),
-      auditRows: document.getElementById("auditRows"),
-      auditEmpty: document.getElementById("auditEmpty"),
-      dashboardTab: document.getElementById("dashboardTab"),
-      screeningTab: document.getElementById("screeningTab"),
-      dashboardView: document.getElementById("dashboardView"),
-      screeningView: document.getElementById("screeningView"),
-      shipMap: document.getElementById("shipMap"),
-      shipList: document.getElementById("shipList"),
-      shipDetail: document.getElementById("shipDetail"),
-      sourceStatus: document.getElementById("sourceStatus"),
-      vesselSourceState: document.getElementById("vesselSourceState")
+    const researchSources = {
+      equasis: {
+        key: "equasis",
+        name: "Equasis",
+        url: "https://www.equasis.org/EquasisWeb/public/HomePage"
+      },
+      hifleet: {
+        key: "hifleet",
+        name: "HiFleet",
+        url: "https://hifleet.com/"
+      }
     };
 
-    function createEntity(name) {
+    const traverseSample = {
+      quotationRef: "ART-2026070209-MW",
+      listedArea: "Gulf of Aden/Red Sea/Indian Ocean",
+      eta: "2026-07-15 Suez Canal / 2026-08-05 Ghent",
+      flag: "Panama",
+      vesselName: "MV TRAVERSE SINGAPORE",
+      imo: "9342865",
+      commercialManager: "GOLDENKING SHIP MANAGEMENT (GUANGZHOU) CO., LTD",
+      registeredOwner: "Traverse Shipping Co., Ltd",
+      ownerAddress: "C/O Goldenking Ship Management (Guangzhou) Co Ltd, 106 Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China",
+      reviewer: "",
+      decision: "Pending",
+      notes: "Modelled from UW Review - draft - Traverse Singapore - updated.xlsx."
+    };
+
+    const fleetData = {
+      manager: [
+        ["(9284908) TRAVERSE CAOFEIDIAN", "40108", "Bulk Carrier", "Marshall Islands", "ISM Manager since 26/12/2025"],
+        ["(9330317) TRAVERSE ANTWERP", "40689", "Bulk Carrier", "Panama", "ISM Manager since 29/10/2025"],
+        ["(9342865) TRAVERSE SINGAPORE", "39738", "Bulk Carrier", "Panama", "Ship manager/Commercial manager since 16/10/2025; ISM Manager since 16/10/2025"],
+        ["(9350056) NGS FAITH", "16962", "Bulk Carrier", "Liberia", "ISM Manager since 10/09/2024"],
+        ["(9515682) GOLDEN BRAVE", "17025", "Bulk Carrier", "Marshall Islands", "ISM Manager since 15/03/2026"],
+        ["(9630743) MEDROSE", "32839", "Bulk Carrier", "Marshall Islands", "ISM Manager since 18/10/2023"],
+        ["(9649706) OCEAN LORRY", "40921", "Bulk Carrier", "Liberia", "ISM Manager since 04/04/2023"]
+      ],
+      owner: [
+        ["(9284908) TRAVERSE CAOFEIDIAN", "40108", "Bulk Carrier", "Marshall Islands", "Registered owner since 26/12/2025"],
+        ["(9330317) TRAVERSE ANTWERP", "40689", "Bulk Carrier", "Panama", "Registered owner since 29/10/2025; Ship manager/Commercial manager since 29/10/2025"],
+        ["(9342865) TRAVERSE SINGAPORE", "39738", "Bulk Carrier", "Panama", "Registered owner since 16/10/2025"]
+      ]
+    };
+
+    const defaultReview = {
+      quotationRef: "",
+      listedArea: "",
+      eta: "",
+      flag: "",
+      vesselName: "",
+      imo: "",
+      commercialManager: "",
+      registeredOwner: "",
+      ownerAddress: "",
+      reviewer: "",
+      decision: "Pending",
+      notes: ""
+    };
+
+    const state = loadState();
+    let sanctionsData = { generated_at: "", sources: [], records: [] };
+    let activeFleet = "manager";
+    let pendingUpload = null;
+
+    const els = {
+      sourceGrid: document.getElementById("sourceGrid"),
+      localMatches: document.getElementById("localMatches"),
+      evidenceGrid: document.getElementById("evidenceGrid"),
+      evidenceCount: document.getElementById("evidenceCount"),
+      sourceStatus: document.getElementById("sourceStatus"),
+      snapshotDate: document.getElementById("snapshotDate"),
+      saveState: document.getElementById("saveState"),
+      captureState: document.getElementById("captureState"),
+      uploadEvidence: document.getElementById("uploadEvidence"),
+      fleetRows: document.getElementById("fleetRows")
+    };
+
+    function loadState() {
+      const stored = JSON.parse(localStorage.getItem("marineUwWorkbench") || "{}");
       return {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-        name: name.trim(),
-        type: "Company",
-        risk: "Standard",
-        decision: "pending",
-        notes: "",
-        updatedAt: new Date().toISOString(),
-        checks: Object.fromEntries(sources.map(source => [source.key, {
-          done: false,
-          result: "No match",
-          evidence: ""
-        }]))
+        review: { ...defaultReview, ...(stored.review || traverseSample) },
+        results: stored.results || {},
+        evidence: stored.evidence || []
       };
     }
 
-    function activeEntity() {
-      return state.entities.find(entity => entity.id === state.activeId) || state.entities[0];
-    }
-
     function save() {
-      localStorage.setItem("sanctionsChecklist", JSON.stringify(state));
-      els.saveState.textContent = "Saved locally";
-      els.saveState.className = "badge clear";
+      try {
+        localStorage.setItem("marineUwWorkbench", JSON.stringify(state));
+        els.saveState.textContent = "Saved locally";
+        els.saveState.className = "badge clear";
+      } catch (error) {
+        els.saveState.textContent = "Storage full";
+        els.saveState.className = "badge review";
+      }
     }
 
     function dirty() {
@@ -895,101 +908,203 @@
       dirty.timer = window.setTimeout(() => {
         save();
         render();
-      }, 250);
+      }, 200);
     }
 
-    function statusLabel(decision) {
-      if (decision === "clear") return "Clear";
-      if (decision === "review") return "Review";
-      if (decision === "match") return "Match";
-      return "Pending";
+    function assetUrl(path) {
+      const cleanPath = String(path || "").replace(/^\/+/, "");
+      const marker = "/Underwriting/";
+      if (window.location.pathname.startsWith(marker)) return `${marker}${cleanPath}`;
+      return cleanPath;
     }
 
     async function loadStaticData() {
       try {
-        const [sanctionsResponse, vesselsResponse] = await Promise.all([
-          fetch("data/sanctions_snapshot.json", { cache: "no-store" }),
-          fetch("data/vessels.json", { cache: "no-store" })
-        ]);
-        if (sanctionsResponse.ok) sanctionsData = await sanctionsResponse.json();
-        if (vesselsResponse.ok) vesselData = await vesselsResponse.json();
+        const response = await fetch(assetUrl("data/sanctions_snapshot.json"), { cache: "no-store" });
+        if (response.ok) sanctionsData = await response.json();
       } catch (error) {
         sanctionsData.status = "unavailable";
       }
-      renderDashboard();
       render();
     }
 
-    function setView(view) {
-      const dashboard = view === "dashboard";
-      els.dashboardTab.classList.toggle("active", dashboard);
-      els.screeningTab.classList.toggle("active", !dashboard);
-      els.dashboardView.classList.toggle("active", dashboard);
-      els.screeningView.classList.toggle("active", !dashboard);
+    function searchTerms() {
+      return [
+        ["imo", "IMO", state.review.imo],
+        ["vessel", "Ship name", state.review.vesselName],
+        ["manager", "Commercial manager", state.review.commercialManager],
+        ["owner", "Registered owner", state.review.registeredOwner]
+      ].map(([key, label, value]) => ({ key, label, value: String(value || "").trim() }))
+        .filter(term => term.value);
     }
 
-    function renderDashboard() {
-      renderVessels();
-      renderSourceStatus();
+    function resultKey(sourceKey, termKey) {
+      const term = termByKey(termKey);
+      return `${sourceKey}:${termKey}:${normalize(term ? term.value : "")}`;
     }
 
-    function renderVessels() {
-      const vessels = vesselData.vessels || [];
-      if (!activeVessel && vessels.length) activeVessel = vessels[0].name;
-      els.shipList.innerHTML = "";
-      els.shipMap.querySelectorAll(".ship-marker").forEach(marker => marker.remove());
+    function getResult(sourceKey, termKey) {
+      const key = resultKey(sourceKey, termKey);
+      state.results[key] ||= { status: "Pending", note: "" };
+      return state.results[key];
+    }
 
-      if (!vessels.length) {
-        els.shipList.innerHTML = '<div class="empty">No vessel positions stored yet.</div>';
-        els.shipDetail.innerHTML = "";
+    function renderInputs() {
+      document.querySelectorAll("[data-review]").forEach(input => {
+        input.value = state.review[input.dataset.review] || "";
+      });
+    }
+
+    function renderMetrics() {
+      const terms = searchTerms();
+      const taskCount = terms.length * officialSources.length;
+      const activeResultKeys = new Set(officialSources.flatMap(source => terms.map(term => resultKey(source.key, term.key))));
+      const completed = Object.entries(state.results).filter(([key, result]) => activeResultKeys.has(key) && result.status !== "Pending").length;
+      const hits = localMatches().length;
+      document.getElementById("metricTasks").textContent = taskCount;
+      document.getElementById("metricComplete").textContent = Math.min(completed, taskCount);
+      document.getElementById("metricHits").textContent = hits;
+      document.getElementById("metricEvidence").textContent = state.evidence.length;
+      els.evidenceCount.textContent = `${state.evidence.length} saved`;
+    }
+
+    function renderSources() {
+      const terms = searchTerms();
+      if (!terms.length) {
+        els.sourceGrid.innerHTML = '<div class="empty">Enter an IMO, vessel name, manager, or owner to build source search tasks.</div>';
         return;
       }
 
-      vessels.forEach(vessel => {
-        const marker = document.createElement("button");
-        marker.className = `ship-marker ${vessel.name === activeVessel ? "active" : ""}`;
-        marker.type = "button";
-        marker.title = vessel.name;
-        marker.style.left = `${lonToX(vessel.lon)}%`;
-        marker.style.top = `${latToY(vessel.lat)}%`;
-        marker.addEventListener("click", () => {
-          activeVessel = vessel.name;
-          renderVessels();
-        });
-        els.shipMap.appendChild(marker);
-
-        const row = document.createElement("button");
-        row.className = `ship-row ${vessel.name === activeVessel ? "active" : ""}`;
-        row.type = "button";
-        row.innerHTML = `
-          <strong>${escapeHtml(vessel.name)}</strong>
-          <span class="entity-meta">
-            <span>${escapeHtml(vessel.status || "Unknown")}</span>
-            <span>${escapeHtml(vessel.last_seen || "No timestamp")}</span>
-          </span>
-        `;
-        row.addEventListener("click", () => {
-          activeVessel = vessel.name;
-          renderVessels();
-        });
-        els.shipList.appendChild(row);
-      });
-
-      const vessel = vessels.find(item => item.name === activeVessel) || vessels[0];
-      els.shipDetail.innerHTML = [
-        ["Latitude", vessel.lat],
-        ["Longitude", vessel.lon],
-        ["Speed", vessel.speed_kn == null ? "Pending" : `${vessel.speed_kn} kn`],
-        ["Course", vessel.course == null ? "Pending" : `${vessel.course} deg`],
-        ["IMO", vessel.imo || "Pending"],
-        ["MMSI", vessel.mmsi || "Pending"]
-      ].map(([label, value]) => `
-        <div class="metric"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>
+      els.sourceGrid.innerHTML = officialSources.map(source => `
+        <article class="source-card">
+          <div class="source-card-head">
+            <div>
+              <h3>${escapeHtml(source.name)}</h3>
+              <p>${escapeHtml(source.detail)}</p>
+            </div>
+            <button class="btn-primary" data-open-source="${source.key}" type="button">Open source</button>
+          </div>
+          <div class="table-scroll">
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Search term</th>
+                  <th>Result</th>
+                  <th>Evidence</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${terms.map(term => taskRow(source, term)).join("")}
+              </tbody>
+            </table>
+          </div>
+        </article>
       `).join("");
+    }
 
-      const isSeed = String(vesselData.source || "").toLowerCase().includes("seed");
-      els.vesselSourceState.textContent = isSeed ? "Seed data" : "Live data loaded";
-      els.vesselSourceState.className = `badge ${isSeed ? "review" : "clear"}`;
+    function taskRow(source, term) {
+      const result = getResult(source.key, term.key);
+      const latest = latestEvidence(source.key, term.key, term.value);
+      return `
+        <tr>
+          <td>
+            <strong>${escapeHtml(term.label)}</strong>
+            <div class="entity-meta">${escapeHtml(term.value)}</div>
+          </td>
+          <td>
+            <select class="compact-select" data-result-source="${source.key}" data-result-term="${term.key}">
+              ${["Pending", "No match", "Possible match", "Confirmed match", "Source unavailable"].map(option => `
+                <option ${option === result.status ? "selected" : ""}>${option}</option>
+              `).join("")}
+            </select>
+          </td>
+          <td>
+            ${latest ? `<span class="badge clear">${escapeHtml(new Date(latest.capturedAt).toLocaleString())}</span>` : '<span class="badge pending">No screenshot</span>'}
+          </td>
+          <td>
+            <div class="task-actions">
+              <button class="btn-secondary" data-copy-value="${escapeAttr(term.value)}" type="button">Copy</button>
+              <button class="btn-secondary" data-capture-source="${source.key}" data-capture-term="${term.key}" type="button">Capture</button>
+              <button class="btn-secondary" data-upload-source="${source.key}" data-upload-term="${term.key}" type="button">Upload</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderMatches() {
+      const matches = localMatches();
+      els.snapshotDate.textContent = sanctionsData.generated_at ? new Date(sanctionsData.generated_at).toLocaleDateString() : "Unavailable";
+      els.snapshotDate.className = `badge ${matches.length ? "review" : "info"}`;
+      if (!matches.length) {
+        els.localMatches.innerHTML = '<div class="empty">No exact or contained-name hits in the local OFAC, UK, or EU snapshot for the current terms.</div>';
+        return;
+      }
+      els.localMatches.innerHTML = matches.slice(0, 30).map(match => `
+        <div class="match-row">
+          <strong>${escapeHtml(match.record.name)}</strong>
+          <div class="entity-meta">
+            <span>${escapeHtml(match.term.label)}: ${escapeHtml(match.term.value)}</span>
+            <span>${escapeHtml(match.record.source_name || match.record.source)}</span>
+            <span>${escapeHtml(match.record.program || "No program")}</span>
+            <span>${escapeHtml(match.record.reference || "No reference")}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function localMatches() {
+      const terms = searchTerms();
+      const records = sanctionsData.records || [];
+      if (!terms.length || !records.length) return [];
+      const output = [];
+      for (const term of terms) {
+        const needle = normalize(term.value);
+        if (!needle || needle.length < 3) continue;
+        for (const record of records) {
+          const candidate = normalize(record.name);
+          if (candidate && (candidate === needle || candidate.includes(needle) || needle.includes(candidate))) {
+            output.push({ term, record });
+            if (output.length >= 60) return output;
+          }
+        }
+      }
+      return output;
+    }
+
+    function renderEvidence() {
+      if (!state.evidence.length) {
+        els.evidenceGrid.innerHTML = '<div class="empty">No screenshots saved yet. Open a source, run the search, then click Capture or Upload.</div>';
+        return;
+      }
+      els.evidenceGrid.innerHTML = state.evidence.map(item => `
+        <article class="evidence-card">
+          <img src="${item.image}" alt="${escapeAttr(item.sourceName)} screenshot for ${escapeAttr(item.termValue)}">
+          <div class="evidence-card-body">
+            <strong>${escapeHtml(item.sourceName)} - ${escapeHtml(item.termLabel)}</strong>
+            <span class="entity-meta">${escapeHtml(item.termValue)} | ${escapeHtml(new Date(item.capturedAt).toLocaleString())}</span>
+            <div class="task-actions">
+              <a class="btn-secondary" href="${item.image}" download="${downloadName(item)}">Download</a>
+              <button class="btn-danger" data-delete-evidence="${item.id}" type="button">Delete</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderFleet() {
+      document.getElementById("managerFleetTab").classList.toggle("active", activeFleet === "manager");
+      document.getElementById("ownerFleetTab").classList.toggle("active", activeFleet === "owner");
+      els.fleetRows.innerHTML = fleetData[activeFleet].map(row => `
+        <tr>
+          <td><strong>${escapeHtml(row[0])}</strong></td>
+          <td>${escapeHtml(row[1])}</td>
+          <td>${escapeHtml(row[2])}</td>
+          <td>${escapeHtml(row[3])}</td>
+          <td>${escapeHtml(row[4])}</td>
+        </tr>
+      `).join("");
     }
 
     function renderSourceStatus() {
@@ -998,230 +1113,182 @@
         els.sourceStatus.innerHTML = '<div class="empty">No sanctions data snapshot loaded.</div>';
         return;
       }
-      els.sourceStatus.innerHTML = sources.map(source => `
+      els.sourceStatus.innerHTML = sources.filter(source => source.key !== "eu_local_pdf").map(source => `
         <div class="source-status-row">
           <div>
             <strong>${escapeHtml(source.name)}</strong>
-            <span class="entity-meta">${escapeHtml(source.records || 0)} records · ${escapeHtml(source.last_modified || sanctionsData.generated_at || "No timestamp")}</span>
+            <span class="entity-meta">${escapeHtml(source.records || 0)} records | ${escapeHtml(source.last_modified || sanctionsData.generated_at || "No timestamp")}</span>
           </div>
           <span class="badge ${source.status === "ok" ? "clear" : "review"}">${escapeHtml(source.status)}</span>
         </div>
       `).join("");
     }
 
-    function lonToX(lon) {
-      const value = Number(lon);
-      if (!Number.isFinite(value)) return 50;
-      return Math.max(4, Math.min(96, ((value + 180) / 360) * 100));
-    }
-
-    function latToY(lat) {
-      const value = Number(lat);
-      if (!Number.isFinite(value)) return 50;
-      return Math.max(4, Math.min(96, ((90 - value) / 180) * 100));
-    }
-
-    function findSanctionsMatches(name) {
-      const target = normalizeName(name);
-      if (!target || !(sanctionsData.records || []).length) return [];
-      return sanctionsData.records.filter(record => {
-        const candidate = normalizeName(record.name);
-        return candidate === target || candidate.includes(target) || target.includes(candidate);
-      }).slice(0, 20);
-    }
-
-    function normalizeName(value) {
-      return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    }
-
-    function renderMetrics() {
-      const counts = state.entities.reduce((memo, entity) => {
-        memo[entity.decision] = (memo[entity.decision] || 0) + 1;
-        return memo;
-      }, {});
-      document.getElementById("metricTotal").textContent = state.entities.length;
-      document.getElementById("metricClear").textContent = counts.clear || 0;
-      document.getElementById("metricReview").textContent = counts.review || 0;
-      document.getElementById("metricMatch").textContent = counts.match || 0;
-      document.getElementById("queueCount").textContent = `${counts.pending || 0} pending`;
-    }
-
-    function renderEntities() {
-      els.entityList.innerHTML = "";
-      if (!state.entities.length) {
-        els.entityList.innerHTML = '<div class="empty">Add entities to begin screening.</div>';
-        return;
-      }
-
-      state.entities.forEach(entity => {
-        const complete = Object.values(entity.checks).filter(check => check.done).length;
-        const button = document.createElement("button");
-        button.className = `entity ${entity.id === state.activeId ? "active" : ""}`;
-        button.type = "button";
-        button.innerHTML = `
-          <span class="entity-title">${escapeHtml(entity.name)}</span>
-          <span class="entity-meta">
-            <span class="badge ${entity.decision}">${statusLabel(entity.decision)}</span>
-            <span>${complete}/${sources.length} sources</span>
-            <span>${escapeHtml(entity.risk)}</span>
-          </span>
-        `;
-        button.addEventListener("click", () => {
-          state.activeId = entity.id;
-          save();
-          render();
-        });
-        els.entityList.appendChild(button);
-      });
-    }
-
-    function renderCurrent() {
-      const entity = activeEntity();
-      if (!entity) {
-        els.currentTitle.textContent = "Select an entity";
-        els.currentStatus.textContent = "Pending";
-        els.checklist.innerHTML = '<div class="empty">No active entity selected.</div>';
-        return;
-      }
-
-      state.activeId = entity.id;
-      els.currentTitle.textContent = entity.name;
-      els.currentStatus.textContent = statusLabel(entity.decision);
-      els.currentStatus.className = `badge ${entity.decision}`;
-      els.entityType.value = entity.type;
-      els.riskLevel.value = entity.risk;
-      els.reviewer.value = state.reviewer;
-      els.notes.value = entity.notes;
-      document.querySelectorAll('input[name="decision"]').forEach(input => {
-        input.checked = input.value === entity.decision;
-      });
-
-      els.checklist.innerHTML = "";
-      sources.forEach(source => {
-        const check = entity.checks[source.key];
-        const item = document.createElement("article");
-        item.className = "check-item";
-        item.innerHTML = `
-          <div class="check-head">
-            <input data-source="${source.key}" data-field="done" type="checkbox" ${check.done ? "checked" : ""} aria-label="${source.name} completed">
-            <div class="check-title">
-              <strong>${source.name}</strong>
-              <span>${source.detail}</span>
-            </div>
-            <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">Open source</a>
-          </div>
-          <div class="evidence-grid">
-            <div class="field">
-              <label>Result</label>
-              <select data-source="${source.key}" data-field="result">
-                ${["No match", "Possible match", "Confirmed match", "Source unavailable"].map(value => `
-                  <option ${value === check.result ? "selected" : ""}>${value}</option>
-                `).join("")}
-              </select>
-            </div>
-            <div class="field">
-              <label>Evidence / Reference</label>
-              <input data-source="${source.key}" data-field="evidence" value="${escapeAttr(check.evidence)}" placeholder="Search term, list ID, screenshot file, or note">
-            </div>
-          </div>
-        `;
-        els.checklist.appendChild(item);
-      });
-
-      const matches = findSanctionsMatches(entity.name);
-      if (matches.length) {
-        els.autoMatches.innerHTML = `
-          <h2 style="font-size:15px;margin:6px 0 4px;">Stored Data Matches</h2>
-          ${matches.map(match => `
-            <div class="match-row">
-              <strong>${escapeHtml(match.name)}</strong>
-              <span class="entity-meta">
-                <span>${escapeHtml(match.source_name)}</span>
-                <span>${escapeHtml(match.program || "No program")}</span>
-                <span>${escapeHtml(match.reference || "No reference")}</span>
-              </span>
-            </div>
-          `).join("")}
-        `;
-      } else {
-        els.autoMatches.innerHTML = `
-          <div class="empty">No exact stored-data match for this entity in the current snapshot.</div>
-        `;
-      }
-    }
-
-    function renderAudit() {
-      els.auditRows.innerHTML = "";
-      els.auditEmpty.style.display = state.audit.length ? "none" : "block";
-      state.audit.slice(-12).reverse().forEach(entry => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${escapeHtml(new Date(entry.completedAt).toLocaleString())}</td>
-          <td>${escapeHtml(entry.name)}</td>
-          <td><span class="badge ${entry.decision}">${statusLabel(entry.decision)}</span></td>
-          <td>${entry.sourcesComplete}/${sources.length}</td>
-        `;
-        els.auditRows.appendChild(row);
-      });
-    }
-
     function render() {
+      renderInputs();
       renderMetrics();
-      renderEntities();
-      renderCurrent();
-      renderAudit();
+      renderSources();
+      renderMatches();
+      renderEvidence();
+      renderFleet();
+      renderSourceStatus();
     }
 
-    function addEntities(names) {
-      const cleanNames = names.map(name => name.trim()).filter(Boolean);
-      cleanNames.forEach(name => state.entities.push(createEntity(name)));
-      if (!state.activeId && state.entities.length) state.activeId = state.entities[0].id;
-      save();
-      render();
+    async function captureEvidence(sourceKey, termKey) {
+      const source = sourceByKey(sourceKey);
+      const term = termByKey(termKey);
+      if (!source || !term) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        window.alert("Screen capture is not available in this browser. Use Upload instead.");
+        return;
+      }
+
+      els.captureState.textContent = "Choose tab/window";
+      els.captureState.className = "badge review";
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        await new Promise((resolve, reject) => {
+          video.onloadedmetadata = resolve;
+          video.onerror = reject;
+        });
+        await video.play();
+        await new Promise(resolve => window.setTimeout(resolve, 250));
+        const image = frameToDataUrl(video);
+        stream.getTracks().forEach(track => track.stop());
+        addEvidence(source, term, image);
+        els.captureState.textContent = "Captured";
+        els.captureState.className = "badge clear";
+      } catch (error) {
+        els.captureState.textContent = "Capture cancelled";
+        els.captureState.className = "badge pending";
+      }
     }
 
-    function completeCurrent() {
-      const entity = activeEntity();
-      if (!entity) return;
-      const sourcesComplete = Object.values(entity.checks).filter(check => check.done).length;
-      entity.updatedAt = new Date().toISOString();
-      state.audit.push({
-        completedAt: entity.updatedAt,
-        name: entity.name,
-        decision: entity.decision,
-        reviewer: state.reviewer,
-        sourcesComplete,
-        notes: entity.notes
+    function frameToDataUrl(video) {
+      const maxWidth = 1400;
+      const scale = Math.min(1, maxWidth / Math.max(video.videoWidth, 1));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+      canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/jpeg", 0.82);
+    }
+
+    function addEvidence(source, term, image) {
+      state.evidence.unshift({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+        sourceKey: source.key,
+        sourceName: source.name,
+        termKey: term.key,
+        termLabel: term.label,
+        termValue: term.value,
+        capturedAt: new Date().toISOString(),
+        image
       });
       save();
       render();
+    }
+
+    function latestEvidence(sourceKey, termKey, termValue) {
+      const normalizedTerm = normalize(termValue);
+      return state.evidence.find(item => item.sourceKey === sourceKey && item.termKey === termKey && normalize(item.termValue) === normalizedTerm);
+    }
+
+    function openSource(sourceKey) {
+      const source = sourceByKey(sourceKey);
+      if (!source) return;
+      window.open(source.url, "_blank", "noopener,noreferrer");
+    }
+
+    async function copyValue(value) {
+      const text = String(value || "");
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const input = document.createElement("textarea");
+        input.value = text;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        input.remove();
+      }
+    }
+
+    function exportJson() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        review: state.review,
+        results: state.results,
+        evidence: state.evidence.map(item => ({
+          id: item.id,
+          sourceName: item.sourceName,
+          termLabel: item.termLabel,
+          termValue: item.termValue,
+          capturedAt: item.capturedAt,
+          imageIncluded: true
+        })),
+        localMatches: localMatches().map(match => ({
+          term: match.term,
+          source: match.record.source_name || match.record.source,
+          name: match.record.name,
+          program: match.record.program,
+          reference: match.record.reference
+        }))
+      };
+      downloadBlob(JSON.stringify(payload, null, 2), "marine-uw-review.json", "application/json");
     }
 
     function exportCsv() {
-      const header = [
-        "timestamp", "entity", "type", "risk", "decision", "reviewer", "sources_complete",
-        "ofac_result", "uk_result", "eu_result", "internal_result", "notes"
-      ];
-      const rows = state.entities.map(entity => {
-        const complete = Object.values(entity.checks).filter(check => check.done).length;
-        return [
-          entity.updatedAt, entity.name, entity.type, entity.risk, entity.decision, state.reviewer, complete,
-          entity.checks.ofac.result, entity.checks.uk.result, entity.checks.eu.result,
-          entity.checks.internal.result, entity.notes
-        ].map(csvCell).join(",");
-      });
-      const blob = new Blob([[header.join(","), ...rows].join("\n")], { type: "text/csv" });
+      const terms = searchTerms();
+      const header = ["source", "term_type", "term", "result", "screenshot_count"];
+      const rows = [];
+      for (const source of officialSources) {
+        for (const term of terms) {
+          const result = getResult(source.key, term.key);
+          const screenshotCount = state.evidence.filter(item => item.sourceKey === source.key && item.termKey === term.key && normalize(item.termValue) === normalize(term.value)).length;
+          rows.push([source.name, term.label, term.value, result.status, screenshotCount].map(csvCell).join(","));
+        }
+      }
+      downloadBlob([header.join(","), ...rows].join("\n"), "marine-uw-source-results.csv", "text/csv");
+    }
+
+    function downloadBlob(content, filename, type) {
+      const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `sanctions-screening-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
     }
 
+    function sourceByKey(key) {
+      return officialSources.find(source => source.key === key) || researchSources[key];
+    }
+
+    function termByKey(key) {
+      return searchTerms().find(term => term.key === key) || (key === "imo" ? { key: "imo", label: "IMO", value: state.review.imo } : null);
+    }
+
+    function normalize(value) {
+      return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function downloadName(item) {
+      return `${item.sourceKey}-${item.termKey}-${item.capturedAt.slice(0, 10)}.jpg`;
+    }
+
     function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
       }[char]));
     }
 
@@ -1233,69 +1300,86 @@
       return `"${String(value ?? "").replace(/"/g, '""')}"`;
     }
 
-    document.getElementById("addEntity").addEventListener("click", () => {
-      addEntities([els.entityName.value]);
-      els.entityName.value = "";
-    });
-
-    els.entityName.addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        document.getElementById("addEntity").click();
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (target.dataset.review) {
+        state.review[target.dataset.review] = target.value;
+        dirty();
+      }
+      if (target.dataset.resultSource) {
+        getResult(target.dataset.resultSource, target.dataset.resultTerm).status = target.value;
+        dirty();
       }
     });
 
-    document.getElementById("addBulk").addEventListener("click", () => {
-      addEntities(els.bulkEntities.value.split(/\n+/));
-      els.bulkEntities.value = "";
+    document.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      if (button.dataset.openSource) {
+        openSource(button.dataset.openSource);
+      } else if (button.dataset.copyTerm) {
+        const term = termByKey(button.dataset.copyTerm);
+        copyValue(term ? term.value : "");
+      } else if (button.dataset.copyValue) {
+        copyValue(button.dataset.copyValue);
+      } else if (button.dataset.captureSource) {
+        captureEvidence(button.dataset.captureSource, button.dataset.captureTerm);
+      } else if (button.dataset.uploadSource) {
+        pendingUpload = { sourceKey: button.dataset.uploadSource, termKey: button.dataset.uploadTerm };
+        els.uploadEvidence.click();
+      } else if (button.dataset.deleteEvidence) {
+        state.evidence = state.evidence.filter(item => item.id !== button.dataset.deleteEvidence);
+        save();
+        render();
+      }
     });
 
-    document.getElementById("loadSample").addEventListener("click", () => addEntities(sampleEntities));
-    document.getElementById("exportCsv").addEventListener("click", exportCsv);
-    document.getElementById("resetAll").addEventListener("click", () => {
-      if (!confirm("Reset all local checklist data?")) return;
-      localStorage.removeItem("sanctionsChecklist");
-      state.entities = [];
-      state.activeId = "";
-      state.audit = [];
-      state.reviewer = "";
+    els.uploadEvidence.addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file || !pendingUpload) return;
+      const source = sourceByKey(pendingUpload.sourceKey);
+      const term = termByKey(pendingUpload.termKey);
+      const reader = new FileReader();
+      reader.onload = () => {
+        addEvidence(source, term, String(reader.result));
+        pendingUpload = null;
+        els.uploadEvidence.value = "";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("loadTraverse").addEventListener("click", () => {
+      state.review = { ...defaultReview, ...traverseSample };
+      state.results = {};
+      state.evidence = [];
       save();
       render();
     });
 
-    document.getElementById("completeEntity").addEventListener("click", completeCurrent);
-    els.dashboardTab.addEventListener("click", () => setView("dashboard"));
-    els.screeningTab.addEventListener("click", () => setView("screening"));
-
-    document.addEventListener("input", event => {
-      const entity = activeEntity();
-      if (!entity) return;
-
-      const target = event.target;
-      if (target.dataset.source) {
-        const check = entity.checks[target.dataset.source];
-        check[target.dataset.field] = target.type === "checkbox" ? target.checked : target.value;
-      } else if (target.id === "entityType") {
-        entity.type = target.value;
-      } else if (target.id === "riskLevel") {
-        entity.risk = target.value;
-      } else if (target.id === "reviewer") {
-        state.reviewer = target.value;
-      } else if (target.id === "notes") {
-        entity.notes = target.value;
-      } else if (target.name === "decision") {
-        entity.decision = target.value;
-      }
-      entity.updatedAt = new Date().toISOString();
-      dirty();
+    document.getElementById("exportJson").addEventListener("click", exportJson);
+    document.getElementById("exportCsv").addEventListener("click", exportCsv);
+    document.getElementById("resetAll").addEventListener("click", () => {
+      if (!window.confirm("Reset all locally saved review data and screenshots?")) return;
+      localStorage.removeItem("marineUwWorkbench");
+      state.review = { ...defaultReview };
+      state.results = {};
+      state.evidence = [];
+      save();
+      render();
     });
 
-    if (!state.entities.length) {
-      addEntities(sampleEntities.slice(0, 2));
-    } else {
-      render();
-    }
+    document.getElementById("managerFleetTab").addEventListener("click", () => {
+      activeFleet = "manager";
+      renderFleet();
+    });
 
+    document.getElementById("ownerFleetTab").addEventListener("click", () => {
+      activeFleet = "owner";
+      renderFleet();
+    });
+
+    render();
     loadStaticData();
   </script>
 </body>
