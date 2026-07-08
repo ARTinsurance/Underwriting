@@ -9,3 +9,4 @@ runs/
 output/
 evidence/
 playwright-profile/
+.ms-playwright/

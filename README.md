@@ -47,6 +47,31 @@ Open:
 http://127.0.0.1:4173/index.html
 ```
 
+### Capture Web Evidence for the Website
+
+The GitHub Pages site cannot securely store passwords or control third-party
+tabs directly. Use the local Playwright evidence runner to operate Equasis,
+HiFleet, OFAC, UK legislation, and EUR-Lex, then publish the generated
+screenshots and manifest:
+
+```bash
+cp .env.example .env
+# Fill EQUASIS_USERNAME, EQUASIS_PASSWORD, HIFLEET_USERNAME, HIFLEET_PASSWORD.
+pip install -r requirements-vm.txt
+python -m playwright install chromium
+python3 scripts/run_uw_web_evidence.py --headless false
+python3 scripts/verify_static_site.py
+```
+
+The runner writes:
+
+- `data/evidence_manifest.json`
+- `site-evidence/traverse-singapore/*.png`
+- `site-evidence/traverse-singapore/*.txt`
+
+After committing and pushing those files to the Pages branch, the website lists
+the automated screenshots in the evidence panel.
+
 ### Publish With GitHub Pages
 
 This branch includes `.github/workflows/pages.yml`. After pushing the branch:

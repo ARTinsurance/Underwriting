@@ -505,6 +505,19 @@
       padding: 10px;
     }
 
+    .automation-summary {
+      background: #f7fbff;
+      border: 1px solid #cfe0f3;
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .automation-summary strong {
+      color: var(--ink);
+    }
+
     .source-status {
       display: grid;
       gap: 8px;
@@ -686,6 +699,11 @@
           <div class="note">
             This static GitHub Pages site cannot securely store passwords or silently control third-party websites. Use the official tabs, then use Capture to save the browser-approved screenshot into this review.
           </div>
+
+          <div class="automation-summary" id="automationSummary">
+            <strong>Automated evidence runner</strong>
+            <span>Run <code>python3 scripts/run_uw_web_evidence.py</code> locally to operate Equasis, HiFleet, OFAC, UK, and EU pages with Playwright, then publish the generated manifest/screenshots.</span>
+          </div>
         </div>
       </section>
 
@@ -865,6 +883,7 @@
 
     const state = loadState();
     let sanctionsData = { generated_at: "", sources: [], records: [] };
+    let evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {} };
     let activeFleet = "manager";
     let pendingUpload = null;
 
@@ -878,7 +897,8 @@
       saveState: document.getElementById("saveState"),
       captureState: document.getElementById("captureState"),
       uploadEvidence: document.getElementById("uploadEvidence"),
-      fleetRows: document.getElementById("fleetRows")
+      fleetRows: document.getElementById("fleetRows"),
+      automationSummary: document.getElementById("automationSummary")
     };
 
     function loadState() {
@@ -920,8 +940,12 @@
 
     async function loadStaticData() {
       try {
-        const response = await fetch(assetUrl("data/sanctions_snapshot.json"), { cache: "no-store" });
-        if (response.ok) sanctionsData = await response.json();
+        const [snapshotResponse, evidenceResponse] = await Promise.all([
+          fetch(assetUrl("data/sanctions_snapshot.json"), { cache: "no-store" }),
+          fetch(assetUrl("data/evidence_manifest.json"), { cache: "no-store" })
+        ]);
+        if (snapshotResponse.ok) sanctionsData = await snapshotResponse.json();
+        if (evidenceResponse.ok) evidenceManifest = await evidenceResponse.json();
       } catch (error) {
         sanctionsData.status = "unavailable";
       }
@@ -960,12 +984,13 @@
       const taskCount = terms.length * officialSources.length;
       const activeResultKeys = new Set(officialSources.flatMap(source => terms.map(term => resultKey(source.key, term.key))));
       const completed = Object.entries(state.results).filter(([key, result]) => activeResultKeys.has(key) && result.status !== "Pending").length;
+      const automatedCompleted = (evidenceManifest.source_results || []).filter(result => result.status && result.status !== "started" && result.status !== "failed" && result.status !== "timeout").length;
       const hits = localMatches().length;
       document.getElementById("metricTasks").textContent = taskCount;
-      document.getElementById("metricComplete").textContent = Math.min(completed, taskCount);
+      document.getElementById("metricComplete").textContent = Math.min(completed + automatedCompleted, taskCount + 2);
       document.getElementById("metricHits").textContent = hits;
-      document.getElementById("metricEvidence").textContent = state.evidence.length;
-      els.evidenceCount.textContent = `${state.evidence.length} saved`;
+      document.getElementById("metricEvidence").textContent = allEvidence().length;
+      els.evidenceCount.textContent = `${allEvidence().length} saved`;
     }
 
     function renderSources() {
@@ -1006,6 +1031,8 @@
     function taskRow(source, term) {
       const result = getResult(source.key, term.key);
       const latest = latestEvidence(source.key, term.key, term.value);
+      const automated = automatedResult(source.key, term.key, term.value);
+      const selectedResult = result.status === "Pending" && automated ? automated.status : result.status;
       return `
         <tr>
           <td>
@@ -1015,9 +1042,10 @@
           <td>
             <select class="compact-select" data-result-source="${source.key}" data-result-term="${term.key}">
               ${["Pending", "No match", "Possible match", "Confirmed match", "Source unavailable"].map(option => `
-                <option ${option === result.status ? "selected" : ""}>${option}</option>
+                <option ${option === selectedResult ? "selected" : ""}>${option}</option>
               `).join("")}
             </select>
+            ${automated ? `<div class="entity-meta">Runner: ${escapeHtml(automated.status)}</div>` : ""}
           </td>
           <td>
             ${latest ? `<span class="badge clear">${escapeHtml(new Date(latest.capturedAt).toLocaleString())}</span>` : '<span class="badge pending">No screenshot</span>'}
@@ -1074,19 +1102,22 @@
     }
 
     function renderEvidence() {
-      if (!state.evidence.length) {
-        els.evidenceGrid.innerHTML = '<div class="empty">No screenshots saved yet. Open a source, run the search, then click Capture or Upload.</div>';
+      renderAutomationSummary();
+      const evidence = allEvidence();
+      if (!evidence.length) {
+        els.evidenceGrid.innerHTML = '<div class="empty">No screenshots saved yet. Run the Playwright evidence runner or open a source manually, run the search, then click Capture or Upload.</div>';
         return;
       }
-      els.evidenceGrid.innerHTML = state.evidence.map(item => `
+      els.evidenceGrid.innerHTML = evidence.map(item => `
         <article class="evidence-card">
-          <img src="${item.image}" alt="${escapeAttr(item.sourceName)} screenshot for ${escapeAttr(item.termValue)}">
+          <img src="${imageSrc(item)}" alt="${escapeAttr(item.sourceName)} screenshot for ${escapeAttr(item.termValue)}">
           <div class="evidence-card-body">
             <strong>${escapeHtml(item.sourceName)} - ${escapeHtml(item.termLabel)}</strong>
-            <span class="entity-meta">${escapeHtml(item.termValue)} | ${escapeHtml(new Date(item.capturedAt).toLocaleString())}</span>
+            <span class="entity-meta">${escapeHtml(item.termValue)} | ${escapeHtml(formatDate(item.capturedAt))} ${item.automated ? "| automated" : "| manual"}</span>
+            ${item.status ? `<span class="badge ${item.manualReviewRequired ? "review" : "clear"}">${escapeHtml(item.status)}</span>` : ""}
             <div class="task-actions">
-              <a class="btn-secondary" href="${item.image}" download="${downloadName(item)}">Download</a>
-              <button class="btn-danger" data-delete-evidence="${item.id}" type="button">Delete</button>
+              <a class="btn-secondary" href="${imageSrc(item)}" download="${downloadName(item)}">Download</a>
+              ${item.automated ? "" : `<button class="btn-danger" data-delete-evidence="${item.id}" type="button">Delete</button>`}
             </div>
           </div>
         </article>
@@ -1096,7 +1127,15 @@
     function renderFleet() {
       document.getElementById("managerFleetTab").classList.toggle("active", activeFleet === "manager");
       document.getElementById("ownerFleetTab").classList.toggle("active", activeFleet === "owner");
-      els.fleetRows.innerHTML = fleetData[activeFleet].map(row => `
+      const manifestRows = ((evidenceManifest.fleet || {})[activeFleet] || []).map(row => [
+        row.ship || row.vessel_name || "",
+        row.gross_tonnage || row.gt || "",
+        row.type || row.ship_type || "",
+        row.flag || "",
+        row.acting_as || row.role || ""
+      ]).filter(row => row.some(Boolean));
+      const rows = manifestRows.length ? manifestRows : fleetData[activeFleet];
+      els.fleetRows.innerHTML = rows.map(row => `
         <tr>
           <td><strong>${escapeHtml(row[0])}</strong></td>
           <td>${escapeHtml(row[1])}</td>
@@ -1105,6 +1144,17 @@
           <td>${escapeHtml(row[4])}</td>
         </tr>
       `).join("");
+    }
+
+    function renderAutomationSummary() {
+      const summary = evidenceManifest.summary || {};
+      const generated = evidenceManifest.generated_at ? formatDate(evidenceManifest.generated_at) : "No automated run published";
+      els.automationSummary.innerHTML = `
+        <strong>Automated evidence runner</strong>
+        <span>${escapeHtml(generated)}</span>
+        <span>${escapeHtml(summary.total_screenshots || 0)} screenshots | ${escapeHtml(summary.completed_sources || 0)} completed source actions | ${escapeHtml(summary.manual_review_required || 0)} manual-review flags</span>
+        <span>Command: <code>python3 scripts/run_uw_web_evidence.py --headless false</code></span>
+      `;
     }
 
     function renderSourceStatus() {
@@ -1194,7 +1244,7 @@
 
     function latestEvidence(sourceKey, termKey, termValue) {
       const normalizedTerm = normalize(termValue);
-      return state.evidence.find(item => item.sourceKey === sourceKey && item.termKey === termKey && normalize(item.termValue) === normalizedTerm);
+      return allEvidence().find(item => item.sourceKey === sourceKey && item.termKey === termKey && normalize(item.termValue) === normalizedTerm);
     }
 
     function openSource(sourceKey) {
@@ -1223,14 +1273,17 @@
         exportedAt: new Date().toISOString(),
         review: state.review,
         results: state.results,
-        evidence: state.evidence.map(item => ({
+        evidence: allEvidence().map(item => ({
           id: item.id,
           sourceName: item.sourceName,
           termLabel: item.termLabel,
           termValue: item.termValue,
           capturedAt: item.capturedAt,
+          image: item.image,
+          automated: Boolean(item.automated),
           imageIncluded: true
         })),
+        automatedManifest: evidenceManifest,
         localMatches: localMatches().map(match => ({
           term: match.term,
           source: match.record.source_name || match.record.source,
@@ -1249,7 +1302,7 @@
       for (const source of officialSources) {
         for (const term of terms) {
           const result = getResult(source.key, term.key);
-          const screenshotCount = state.evidence.filter(item => item.sourceKey === source.key && item.termKey === term.key && normalize(item.termValue) === normalize(term.value)).length;
+          const screenshotCount = allEvidence().filter(item => item.sourceKey === source.key && item.termKey === term.key && normalize(item.termValue) === normalize(term.value)).length;
           rows.push([source.name, term.label, term.value, result.status, screenshotCount].map(csvCell).join(","));
         }
       }
@@ -1266,6 +1319,45 @@
       URL.revokeObjectURL(url);
     }
 
+    function allEvidence() {
+      const automated = (evidenceManifest.screenshots || []).map(item => ({
+        id: item.id || `${item.source_key}-${item.term_key}-${item.term_value}`,
+        sourceKey: item.source_key,
+        sourceName: item.source_name,
+        termKey: item.term_key,
+        termLabel: item.term_label,
+        termValue: item.term_value,
+        capturedAt: item.captured_at,
+        image: item.image,
+        status: item.status,
+        manualReviewRequired: Boolean(item.manual_review_required),
+        automated: true
+      })).filter(item => item.image);
+      return [...automated, ...state.evidence];
+    }
+
+    function automatedResult(sourceKey, termKey, termValue) {
+      const normalizedTerm = normalize(termValue);
+      const result = (evidenceManifest.source_results || []).find(item =>
+        item.source_key === sourceKey &&
+        item.term_key === termKey &&
+        normalize(item.term_value || "") === normalizedTerm
+      );
+      if (!result) return null;
+      return {
+        status: result.status === "captured_no_visible_match" ? "No match" :
+          result.status === "visible_result_or_page_match" ? "Review" :
+          result.status === "manual_review_required" ? "Source unavailable" :
+          result.status,
+      };
+    }
+
+    function imageSrc(item) {
+      if (!item.image) return "";
+      if (/^(data:|https?:)/i.test(item.image)) return item.image;
+      return assetUrl(item.image);
+    }
+
     function sourceByKey(key) {
       return officialSources.find(source => source.key === key) || researchSources[key];
     }
@@ -1280,6 +1372,12 @@
 
     function downloadName(item) {
       return `${item.sourceKey}-${item.termKey}-${item.capturedAt.slice(0, 10)}.jpg`;
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
     }
 
     function escapeHtml(value) {
