@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: marine-uw-workbench
+    runtime: docker
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_DATA_DIR
+        value: /data
+      - key: MAX_STATE_BYTES
+        value: "26214400"
+    disk:
+      name: underwriting-data
+      mountPath: /data
+      sizeGB: 1
+

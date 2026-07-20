@@ -1,0 +1,12 @@
+.git
+.env
+.ms-playwright
+__pycache__
+*.pyc
+*.zip
+runtime-data
+output
+results
+runs
+制裁自动化
+

@@ -35,6 +35,43 @@ The website is a single static Sanctions Screening Checklist at `index.html`. It
 - Local browser saving and CSV export
 - Ship dashboard with stored vessel positions and sanctions dataset status
 
+## Deployable Website With Persistent Storage
+
+The workbench can also run as a full-stack application. `web_app.py` serves the
+website and a same-origin API, while SQLite stores each browser's review fields
+and captured/uploaded screenshots. The browser keeps a local fallback copy, so
+the same `index.html` continues to work on GitHub Pages when no API is present.
+
+### Run locally
+
+```bash
+python3 -m pip install -r requirements-web.txt
+APP_DATA_DIR=./runtime-data uvicorn web_app:app --reload --port 8000
+```
+
+Open `http://127.0.0.1:8000`. The health endpoint is available at
+`http://127.0.0.1:8000/api/health`.
+
+### Run with Docker
+
+```bash
+docker compose up --build
+```
+
+The named Docker volume preserves `/data/underwriting.sqlite3` across container
+restarts and image upgrades.
+
+### Deploy on Render
+
+The repository includes `render.yaml`. Create a Render Blueprint from the
+repository; it builds the Docker image, mounts a persistent disk at `/data`, and
+uses `/api/health` for health checks. The persistent-disk plan is required if
+review data must survive redeployments.
+
+For production use involving multiple authenticated underwriters, put the app
+behind the organization's SSO/reverse proxy. The current browser-generated
+review IDs separate records but are not an authentication mechanism.
+
 ### Run Locally
 
 ```bash

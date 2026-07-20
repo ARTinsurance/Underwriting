@@ -71,7 +71,7 @@ class SourceDef:
 
 SOURCES = [
     SourceDef("ofac", "OFAC Sanctions Search", "https://sanctionssearch.ofac.treas.gov/", "search"),
-    SourceDef("uk_reg", "UK Russia Regulations 2019/855", "https://www.legislation.gov.uk/uksi/2019/855", "find"),
+    SourceDef("uk_reg", "UK Sanctions List Search", "https://search-uk-sanctions-list.service.gov.uk/", "search"),
     SourceDef(
         "eu_tracker",
         "EU Sanctions Tracker",

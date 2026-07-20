@@ -807,23 +807,23 @@
       },
       {
         key: "uk_reg",
-        name: "UK Russia Regulations 2019/855",
-        url: "https://www.legislation.gov.uk/uksi/2019/855",
-        detail: "UK sanctions regulation reference. Use browser find for the term and capture no-result/result state.",
+        name: "UK Sanctions List Search",
+        url: "https://search-uk-sanctions-list.service.gov.uk/",
+        detail: "Official UK sanctions search. Open the page, search each term, then capture and download the result screenshot.",
         localSources: ["uk"]
       },
       {
         key: "eu_tracker",
         name: "EU Sanctions Tracker",
         url: "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
-        detail: "EU tracker entity search. Search each term and capture the resulting entity/no-result state.",
+        detail: "EU tracker entity search. Open the page, search each term, then capture and download the entity/no-result screenshot.",
         localSources: ["eu"]
       },
       {
         key: "eu_vessel_designations",
         name: "EU Vessel Designations - DMA",
         url: "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
-        detail: "EU vessel designation reference from the Danish Maritime Authority. Use browser find for IMO and ship name.",
+        detail: "EU vessel designations from the Danish Maritime Authority. Open the page, find the IMO or ship name, then capture and download the screenshot.",
         localSources: ["eu"]
       }
     ];
@@ -876,6 +876,8 @@
     let evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {}, equasis: {} };
     let activeFleet = "manager";
     let pendingUpload = null;
+    let backendAvailable = false;
+    const reviewId = loadReviewId();
 
     const els = {
       sourceGrid: document.getElementById("sourceGrid"),
@@ -892,21 +894,79 @@
     };
 
     function loadState() {
-      const stored = JSON.parse(localStorage.getItem("marineUwWorkbench") || "{}");
+      let stored = {};
+      try {
+        stored = JSON.parse(localStorage.getItem("marineUwWorkbench") || "{}");
+      } catch (error) {
+        localStorage.removeItem("marineUwWorkbench");
+      }
       return {
         review: { ...defaultReview, ...(stored.review || traverseSample) },
         evidence: stored.evidence || []
       };
     }
 
+    function loadReviewId() {
+      let id = localStorage.getItem("marineUwReviewId");
+      if (!id) {
+        id = crypto.randomUUID ? crypto.randomUUID() : `review-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        localStorage.setItem("marineUwReviewId", id);
+      }
+      return id;
+    }
+
     function save() {
       try {
         localStorage.setItem("marineUwWorkbench", JSON.stringify(state));
-        els.saveState.textContent = "Saved locally";
+        els.saveState.textContent = backendAvailable ? "Saving…" : "Saved locally";
         els.saveState.className = "badge clear";
+        scheduleBackendSave();
       } catch (error) {
         els.saveState.textContent = "Storage full";
         els.saveState.className = "badge review";
+      }
+    }
+
+    function scheduleBackendSave() {
+      if (!backendAvailable) return;
+      window.clearTimeout(scheduleBackendSave.timer);
+      scheduleBackendSave.timer = window.setTimeout(saveToBackend, 350);
+    }
+
+    async function saveToBackend() {
+      try {
+        const response = await fetch(`/api/reviews/${encodeURIComponent(reviewId)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(state)
+        });
+        if (!response.ok) throw new Error(`Save failed (${response.status})`);
+        els.saveState.textContent = "Saved to server";
+        els.saveState.className = "badge clear";
+      } catch (error) {
+        els.saveState.textContent = "Server save failed; local copy kept";
+        els.saveState.className = "badge review";
+      }
+    }
+
+    async function loadBackendState() {
+      try {
+        const health = await fetch("/api/health", { cache: "no-store" });
+        if (!health.ok) return;
+        backendAvailable = true;
+        const response = await fetch(`/api/reviews/${encodeURIComponent(reviewId)}`, { cache: "no-store" });
+        if (response.ok) {
+          const stored = await response.json();
+          state.review = { ...defaultReview, ...(stored.state.review || {}) };
+          state.evidence = Array.isArray(stored.state.evidence) ? stored.state.evidence : [];
+          localStorage.setItem("marineUwWorkbench", JSON.stringify(state));
+          els.saveState.textContent = "Loaded from server";
+        } else if (response.status === 404) {
+          await saveToBackend();
+        }
+        render();
+      } catch (error) {
+        backendAvailable = false;
       }
     }
 
@@ -986,7 +1046,7 @@
               <h3>${escapeHtml(source.name)}</h3>
               <p>${escapeHtml(source.detail)}</p>
             </div>
-            <button class="btn-primary" data-open-source="${source.key}" type="button">Open source</button>
+            <button class="btn-primary" data-open-source="${source.key}" type="button">Open official page</button>
           </div>
           <div class="table-scroll">
             <table class="task-table">
@@ -1429,11 +1489,14 @@
 
     document.getElementById("exportJson").addEventListener("click", exportJson);
     document.getElementById("exportCsv").addEventListener("click", exportCsv);
-    document.getElementById("resetAll").addEventListener("click", () => {
+    document.getElementById("resetAll").addEventListener("click", async () => {
       if (!window.confirm("Reset all locally saved review data and screenshots?")) return;
       localStorage.removeItem("marineUwWorkbench");
       state.review = { ...defaultReview };
       state.evidence = [];
+      if (backendAvailable) {
+        await fetch(`/api/reviews/${encodeURIComponent(reviewId)}`, { method: "DELETE" }).catch(() => {});
+      }
       save();
       render();
     });
@@ -1450,6 +1513,7 @@
 
     render();
     loadStaticData();
+    loadBackendState();
   </script>
 </body>
 </html>
