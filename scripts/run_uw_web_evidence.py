@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
-from urllib.parse import quote
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -128,7 +127,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
             run_in_fresh_browser(playwright, args, headless, lambda context: capture_research_source(context, args, manifest, "hifleet"))
         if "sanctions" in selected_sources:
             for source in SOURCES:
-                for term in search_terms_from_manifest(manifest, args):
+                terms = eu_tracker_terms_from_manifest(manifest, args) if source.key == "eu_tracker" else search_terms_from_manifest(manifest, args)
+                for term in terms:
                     run_in_fresh_browser(
                         playwright,
                         args,
@@ -215,6 +215,49 @@ def search_terms_from_manifest(manifest: Dict[str, Any], args: argparse.Namespac
     return [term for term in terms if term.value]
 
 
+def eu_tracker_terms_from_manifest(manifest: Dict[str, Any], args: argparse.Namespace) -> List[SearchTerm]:
+    """Build EU Tracker searches from all useful Equasis vessel/management fields."""
+    terms = search_terms_from_manifest(manifest, args)
+    details = ((manifest.get("equasis") or {}).get("details") or {})
+    for key, label, field in (
+        ("imo", "IMO", "imo"),
+        ("vessel", "Ship name", "vesselName"),
+        ("manager", "Commercial manager", "commercialManager"),
+        ("manager_address", "Commercial manager address", "managerAddress"),
+        ("owner", "Registered owner", "registeredOwner"),
+        ("owner_address", "Registered owner address", "ownerAddress"),
+    ):
+        value = str(details.get(field) or "").strip()
+        if value:
+            terms.append(SearchTerm(key, label, value))
+
+    for fleet_group in ("manager", "owner"):
+        rows = ((manifest.get("fleet") or {}).get(fleet_group) or [])
+        for index, row in enumerate(rows, start=1):
+            if not isinstance(row, dict):
+                continue
+            role = str(row.get("role") or fleet_group).strip()
+            company = str(row.get("company") or "").strip()
+            company_imo = str(row.get("company_imo") or "").strip()
+            address = str(row.get("address") or "").strip()
+            if company:
+                terms.append(SearchTerm(f"equasis_{fleet_group}_{index}", f"Equasis {role}", company))
+            if company_imo:
+                terms.append(SearchTerm(f"equasis_{fleet_group}_imo_{index}", f"Equasis {role} company IMO", company_imo))
+            if address:
+                terms.append(SearchTerm(f"equasis_{fleet_group}_address_{index}", f"Equasis {role} address", address))
+
+    unique: List[SearchTerm] = []
+    seen = set()
+    for term in terms:
+        normalized = normalize(term.value)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        unique.append(term)
+    return unique
+
+
 def capture_research_source(context: Any, args: argparse.Namespace, manifest: Dict[str, Any], source_key: str) -> None:
     if source_key == "equasis":
         source = {
@@ -262,7 +305,7 @@ def capture_research_source(context: Any, args: argparse.Namespace, manifest: Di
             search_equasis_imo(page, args.imo)
             expand_equasis_management_detail(page)
         else:
-            search_in_page(page, args.imo)
+            search_hifleet_imo(page, args.imo)
         safe_wait(page, 3500)
         raw_text = body_text(page)
         challenge = has_manual_challenge(raw_text)
@@ -279,7 +322,7 @@ def capture_research_source(context: Any, args: argparse.Namespace, manifest: Di
             result["error"] = "Equasis rendered without accessible ship data after login/search/management-detail expansion."
         else:
             result["status"] = "captured"
-            result["result_label"] = "Ship details captured"
+            result["result_label"] = "Ship details captured" if source_key == "equasis" else "IMO search captured"
         if source_key == "equasis":
             merge_equasis_data(manifest, raw_text, args)
         save_result_files(page, args, manifest, result, source["key"], args.imo, raw_text)
@@ -628,6 +671,35 @@ def search_equasis_imo(page: Any, imo: str) -> bool:
     return True
 
 
+def search_hifleet_imo(page: Any, imo: str) -> bool:
+    """Type an IMO into HiFleet's visible search control and submit it."""
+    selectors = (
+        'input[placeholder*="IMO" i]',
+        'input[placeholder*="ship" i]',
+        'input[placeholder*="vessel" i]',
+        'input[placeholder*="search" i]',
+        'input[name*="imo" i]',
+        'input[name*="search" i]',
+        'input[id*="imo" i]',
+        'input[id*="search" i]',
+        'input[type="search"]',
+        'input[type="text"]',
+    )
+    if not fill_first_visible(page, selectors, imo):
+        raise RuntimeError("Could not find a visible HiFleet IMO search bar")
+    if not click_first_visible(
+        page,
+        (
+            'button:has-text("Search")',
+            'button[aria-label*="search" i]',
+            'button[type="submit"]',
+            'input[type="submit"]',
+        ),
+    ):
+        page.keyboard.press("Enter")
+    return True
+
+
 def expand_equasis_management_detail(page: Any) -> None:
     for selector in (
         'text=/Management detail/i',
@@ -659,12 +731,30 @@ def expand_equasis_management_detail(page: Any) -> None:
 
 
 def search_eu_tracker(page: Any, term: SearchTerm) -> bool:
-    search_url = f"https://data.europa.eu/apps/eusanctionstracker/entities/{quote(term.value, safe='')}"
-    try:
-        page.goto(search_url, wait_until="domcontentloaded")
-        return True
-    except Exception:
-        return search_in_page(page, term.value)
+    """Type one Equasis-derived value into the EU Tracker search bar."""
+    selectors = (
+        'input[type="search"]',
+        'input[placeholder*="search" i]',
+        'input[placeholder*="entity" i]',
+        'input[name*="search" i]',
+        'input[name*="query" i]',
+        'input[id*="search" i]',
+        'input[id*="query" i]',
+        'input[type="text"]',
+    )
+    if not fill_first_visible(page, selectors, term.value):
+        raise RuntimeError("Could not find a visible EU Sanctions Tracker search bar")
+    if not click_first_visible(
+        page,
+        (
+            'button:has-text("Search")',
+            'button[aria-label*="search" i]',
+            'button[type="submit"]',
+            'input[type="submit"]',
+        ),
+    ):
+        page.keyboard.press("Enter")
+    return True
 
 
 def source_requires_accessible_text(source_key: str) -> bool:

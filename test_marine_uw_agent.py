@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
 
 from marine_uw_agent.history import filter_same_vessel_quotes
 from marine_uw_agent.models import QuotationSlip, ReviewState, RunInputs
@@ -14,9 +15,55 @@ from marine_uw_agent.restrictions import cargo_restriction_review
 from marine_uw_agent.run import run_workflow
 from marine_uw_agent.sanctions import LocalSanctionsIndex
 from marine_uw_agent.workbook import WorkbookPopulationError, populate_workbook
+from scripts.run_uw_web_evidence import eu_tracker_terms_from_manifest
 
 
 class MarineUWAgentTests(unittest.TestCase):
+    def test_eu_tracker_uses_all_equasis_management_companies(self):
+        args = SimpleNamespace(
+            imo="9342865",
+            vessel_name="Fallback Vessel",
+            commercial_manager="Fallback Manager",
+            registered_owner="Fallback Owner",
+        )
+        manifest = {
+            "review": {
+                "imo": "9342865",
+                "vesselName": "TRAVERSE SINGAPORE",
+                "commercialManager": "Goldenking Ship Management",
+                "registeredOwner": "Traverse Shipping Co Ltd",
+            },
+            "equasis": {"details": {"commercialManager": "Goldenking Ship Management"}},
+            "fleet": {
+                "manager": [
+                    {
+                        "role": "Ship manager",
+                        "company": "Second Management Company",
+                        "company_imo": "7654321",
+                        "address": "1 Harbour Road, Singapore",
+                    }
+                ],
+                "owner": [
+                    {
+                        "role": "Registered owner",
+                        "company": "Traverse Shipping Co Ltd",
+                        "company_imo": "1234567",
+                    }
+                ],
+            },
+        }
+
+        terms = eu_tracker_terms_from_manifest(manifest, args)
+        values = [term.value for term in terms]
+
+        self.assertIn("TRAVERSE SINGAPORE", values)
+        self.assertIn("Goldenking Ship Management", values)
+        self.assertIn("Second Management Company", values)
+        self.assertIn("7654321", values)
+        self.assertIn("1234567", values)
+        self.assertIn("1 Harbour Road, Singapore", values)
+        self.assertEqual(values.count("Traverse Shipping Co Ltd"), 1)
+
     def test_quotation_text_extraction(self):
         text = """
         Quotation Date: 2026-06-17
