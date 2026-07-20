@@ -37,6 +37,8 @@ def populate_workbook(state: ReviewState, output_path: Path) -> Path:
             workbook.create_sheet(sheet)
 
     ensure_sheets(workbook)
+    for sheet_name in ("Sources", "UW Info", "Fleet Info", "Search results"):
+        clear_sheet_values(workbook[sheet_name])
     populate_sources(workbook["Sources"], state)
     populate_uw_info(workbook["UW Info"], state)
     populate_fleet_info(workbook["Fleet Info"], state)
@@ -50,6 +52,16 @@ def ensure_sheets(workbook: Any) -> None:
     for sheet in SHEETS:
         if sheet not in workbook.sheetnames:
             workbook.create_sheet(sheet)
+
+
+def clear_sheet_values(sheet: Any) -> None:
+    for merged_range in list(sheet.merged_cells.ranges):
+        sheet.unmerge_cells(str(merged_range))
+    for row in sheet.iter_rows():
+        for cell in row:
+            cell.value = None
+            cell.hyperlink = None
+            cell.comment = None
 
 
 def write_table(sheet: Any, start_row: int, headers: Iterable[str], rows: Iterable[Iterable[Any]]) -> int:
@@ -66,12 +78,13 @@ def write_table(sheet: Any, start_row: int, headers: Iterable[str], rows: Iterab
 def populate_sources(sheet: Any, state: ReviewState) -> None:
     rows = [
         ("Quotation system", "QUOTATION_SYSTEM_URL", "Stored in VM secrets"),
-        ("Equasis", "https://www.equasis.org/EquasisWeb/restricted/Search?fs=Search", "Stored in VM secrets"),
+        ("Equasis", "https://www.equasis.org/EquasisWeb/public/HomePage", "Stored in VM secrets"),
         ("Hifleet", "https://www.hifleet.com", "Stored in VM secrets"),
         ("UK Sanctions List", "https://search-uk-sanctions-list.service.gov.uk/", ""),
         ("UK Russia Regulations", "https://www.legislation.gov.uk/uksi/2019/855", ""),
         ("OFAC Sanctions Search", "https://sanctionssearch.ofac.treas.gov/", ""),
-        ("EU Regulation 833/2014", "https://eur-lex.europa.eu/eli/reg/2014/833/oj/eng", ""),
+        ("EU Sanctions Tracker", "https://data.europa.eu/apps/eusanctionstracker/entities/%20", ""),
+        ("EU Vessel Designations - DMA", "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations", ""),
     ]
     write_table(sheet, 1, ("Source", "URL / Reference", "Password"), rows)
 
@@ -80,18 +93,18 @@ def populate_uw_info(sheet: Any, state: ReviewState) -> None:
     slip = state.quotation
     if not slip:
         return
-    sheet["A1"] = "Quotation Ref no."
+    sheet["A1"] = "Quotation Ref no.:"
     sheet["B1"] = slip.quotation_reference
-    sheet["A2"] = "Listed Area"
+    sheet["A2"] = "Listed Area:"
     sheet["B2"] = state.listed_area_review.get("listed_area") or "Information insufficient"
-    sheet["A3"] = "Estimated Date of Arrival"
+    sheet["A3"] = "Estimated Date of Arrival:"
     sheet["B3"] = state.hifleet.get("eta", "Information insufficient")
 
     vessel_rows = [
         (
             slip.vessel_name,
             slip.imo,
-            "Vessel",
+            slip.vessel_type or "Vessel",
             slip.flag,
             israel_interest(state),
             jurisdiction_summary(state, "vessel name", "EU"),
@@ -104,7 +117,7 @@ def populate_uw_info(sheet: Any, state: ReviewState) -> None:
     row = write_table(
         sheet,
         5,
-        ("Vessel Name", "IMO", "Role", "Flag", "Israeli Interest Y/N", "EU result", "UK result", "UN result", "US result", "Call port history"),
+        ("Vessel Name", "IMO", "Role", "Flag", "Israeli Interest - Y/N", "EU", "UK", "UN", "US", "Call Port history to Israel \n(For GOA/IO/Red Sea only)"),
         vessel_rows,
     )
 
@@ -125,21 +138,26 @@ def populate_uw_info(sheet: Any, state: ReviewState) -> None:
                 party.address,
             )
         )
-    row = write_table(sheet, row, ("Name", "Identifier", "Role", "Country origin", "Israeli Interest Y/N", "EU result", "UK result", "UN result", "US result", "Address"), party_rows)
+    row = write_table(sheet, row, ("Parties Involved", "IMO", "Role", "Country Origin", "Israeli Interest - Y/N", "EU", "UK", "UN", "US", "Address"), party_rows)
 
+    history_start = max(row, 13)
     history_rows = [
         (
             item.get("quotation_reference") or item.get("quote_id"),
             item.get("broker"),
+            item.get("vessel_imo") or item.get("imo"),
             item.get("listed_area"),
-            item.get("type_of_coverage") or item.get("insurance_type"),
+            item.get("coverage_type") or item.get("type_of_coverage") or item.get("insurance_type"),
+            item.get("gross_rate"),
+            item.get("discounts"),
             item.get("net_rate"),
             item.get("premium"),
             item.get("bound") or item.get("status"),
+            item.get("quotation_date"),
         )
         for item in state.quotation_history
     ]
-    row = write_table(sheet, row, ("Quotation Ref no.", "Broker", "Listed Area", "Type of Coverage", "Net rate", "Premium", "Bound or not"), history_rows)
+    row = write_table(sheet, history_start, ("Quotation Ref no.", "Broker", "IMO", "Listed Area", "Type of Coverage", "Gross rate", "Discounts", "Net rate", "Premium ", "Bound or not", "Quotation Date"), history_rows)
 
     cargo = slip.cargo or {}
     cargo_rows = [
@@ -161,9 +179,20 @@ def populate_uw_info(sheet: Any, state: ReviewState) -> None:
 
 def populate_fleet_info(sheet: Any, state: ReviewState) -> None:
     rows = []
-    fleet = state.vessel_details.get("associated_fleet", [])
+    fleet = state.vessel_details.get("associated_fleet") or state.vessel_details.get("management_rows") or []
     for item in fleet if isinstance(fleet, list) else []:
-        rows.append((item.get("vessel_name"), item.get("imo"), item.get("role"), item.get("flag"), item.get("manager") or item.get("owner"), "Information insufficient", "Information insufficient", item.get("source", "Equasis/Hifleet")))
+        rows.append(
+            (
+                item.get("vessel_name") or item.get("ship"),
+                item.get("imo") or item.get("company_imo"),
+                item.get("role"),
+                item.get("flag"),
+                item.get("manager") or item.get("owner") or item.get("company"),
+                "Information insufficient",
+                "Information insufficient",
+                item.get("source", "Equasis/Hifleet"),
+            )
+        )
     if not rows:
         rows.append((state.quotation.vessel_name if state.quotation else "", state.quotation.imo if state.quotation else "", "Current vessel", state.quotation.flag if state.quotation else "", state.quotation.registered_owner if state.quotation else "", "See UW Info", port_history_summary(state), "Quotation/Equasis/Hifleet"))
     write_table(sheet, 1, ("Vessel name", "IMO", "Role/relationship", "Flag", "Manager/owner", "Sanctions result", "Port call exposure", "Source"), rows)
@@ -172,7 +201,18 @@ def populate_fleet_info(sheet: Any, state: ReviewState) -> None:
 def populate_search_results(sheet: Any, state: ReviewState) -> None:
     summary = evidence_summary(state)
     rows = [(section, text) for section, text in summary.items()]
-    write_table(sheet, 1, ("Section", "Result"), rows)
+    next_row = write_table(sheet, 1, ("Section", "Result"), rows)
+    evidence_rows = []
+    for source in state.source_results:
+        for path in source.evidence_paths:
+            evidence_rows.append((source.source, source.status, path))
+    if evidence_rows:
+        write_table(sheet, next_row, ("Evidence Source", "Status", "Screenshot / Source File"), evidence_rows)
+        for row_index in range(next_row + 1, next_row + 1 + len(evidence_rows)):
+            cell = sheet.cell(row_index, 3)
+            if cell.value:
+                cell.hyperlink = str(cell.value)
+                cell.style = "Hyperlink"
 
 
 def jurisdiction_summary(state: ReviewState, role_contains: str, jurisdiction: str) -> str:

@@ -1,10 +1,10 @@
 Skip to main content
 Skip to navigation
-Cookies on Legislation.gov.uk
+Cookie preferences updated
 
-The cookies on legislation.gov.uk do two things: they remember any settings you've chosen so you don't have to choose them on every page, and they help us understand how people browse our website, so we can make improvements and fix problems. We need your consent to use some of these cookies.
+You can change your cookie settings at any time using our cookies page
 
-Yes, these cookies are OKFind out more or set individual cookie preferencesNo, I want to reject all cookies
+Dismiss
 
 We're always trying to make legislation.gov.uk better. Please tell us what you think by taking our survey.
 Tell us what you think
@@ -598,4 +598,13 @@ F27
 Word in reg. 5(1)(b) substituted (1.3.2022 at 3.00 p.m.) by The Russia (Sanctions) (EU Exit) (Amendment) (No. 4) Regulations 2022 (S.I. 2022/203), regs. 1(2), 4(a)
 
 F28
-Reg. 5(1)(bza) inserted (30.3.2022 at 5.00 p.m.) by The Russia (Sanctions) (EU Exit) (Amendment) (No. 7) Regulations 2022 (S.I. 2022/395), regs
+Reg. 5(1)(bza) inserted (30.3.2022 at 5.00 p.m.) by The Russia (Sanctions) (EU Exit) (Amendment) (No. 7) Regulations 2022 (S.I. 2022/395), regs. 1(2), 5(a)
+
+F29
+Reg. 5(1)(bzaa) inserted (20.5.2026) by The Russia (Sanctions) (EU Exit) (Amendment) Regulations 2026 (S.I. 2026/543), regs. 1(2), 5(2)
+
+F30
+Reg. 5(1)(bzb) inserted (29.4.2022) by The Russia (Sanctions) (EU Exit) (Amendment) (No. 9) Regulations 2022 (S.I. 2022/477), regs. 1(2), 4(a)
+
+F31
+Reg. 5(1)(ba) inser

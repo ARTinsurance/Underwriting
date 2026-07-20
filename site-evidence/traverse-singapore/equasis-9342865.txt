@@ -1,92 +1,94 @@
 	
 Home
  
+My Equasis 
 About Equasis  
 News
-  
+ 
+Statistics  
+ 
 Support  
-Welcome to Equasis, a public site promoting maritime safety and quality
-Equasis is a tool aimed at reducing substandard shipping
-- Equasis provides safety related information on ships and companies
-- Its services are free of any charge
-- You only need to register as a user
- 
-   
-
-More news   
-
-News
-2026-06-05
-
-Equasis team is pleased to announce the conclusion of the platform developments required to integrate DYNAMARINe s data into Equasis.
-The data is now available for consultation on the Ship Info page under the STS Operations section.
-
-More details here.
-
-Access
-E-mail
-Password
-	
-Lost password 
 Search
-
-Ship
-
-Company
-
-Advanced Search 
+Ship info
 Go to My Equasis 
-First time visiting ?
+Ship info
 
-You need to register in order to use ship and company search.
+  
 
-LAST DATA UPDATE :
-16 minute(s) ago
+TRAVERSE SINGAPORE  -  IMO n°  9342865
 
-US Coast Guard - E_ZERO
+Flag
+ 
+(Panama)
+Call Sign
+3EDM7
+MMSI
+371626000
+Gross tonnage
+39738
+(since 01/12/2005)
+DWT
+76619
+Type of ship
+Bulk Carrier
+(since 01/12/2005)
+Year of build
+2005
+Status
+In Service/Commission
+(since 10/03/2021)
 
-18 minute(s) ago
 
-US Coast Guard
 
-26 minute(s) ago
+Last update of ship particulars 24/06/2026
 
-Korean Register of Shipping
+  See picture on VesselTracker
+  See picture on MarineTraffic
+Ship info
+Inspections (53)
+Ship History
+Overview
 
-1 hour(s) ago
 
-Nippon Kaiji Kyokai
+The ship is classed by (at least) one of the IACS member societies
+0.0% Of inspections having led to a detention in last 36 months
 
-1 hour(s) ago
+Flag performance
 
-American Bureau of Shipping
+Paris MOU
 
-20 hour(s) ago
+ 
+ 
 
-IHS Maritime
+White
 
-1 day(s) ago
+Tokyo MOU
 
-Nippon Kaiji Kyokai
+ 
+ 
 
-1 day(s) ago
+???shipInfo.overview.flagPerf.high???
 
-West of England Shipowners
+Flag targeting
 
-1 day(s) ago
+USCG: targeted flag
 
-Japan Ship Owners' P&I Association
+RO Performances 
 
-1 day(s) ago
+Management detail
 
-Korean Register of Shipping
 
-USER ACTIVITY :
+IMO number	Role	Name of company	Address	Date of effect	Details
+6212304	Ship manager/Commercial manager	GOLDENKING SHIP MANAGEMENT	106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.	since 16/10/2025	
+6212304	ISM Manager	GOLDENKING SHIP MANAGEMENT	106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.	since 16/10/2025	
+0358925	Registered owner	TRAVERSE SHIPPING CO LTD-MAI	C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.	since 16/10/2025	
 
-Connections : 96,997,229 since 2007
 
-Users connected : 15262
-
+Classification
+Safety management certificate (Recognised Organisations)
+P&I Information
+Geographical Information
+Convention, Association and Manning
 Equasis's contributors
  
  
@@ -111,4 +113,4 @@ Join us on       or contact us 
 
 © Copyright 2000-2026; Version : Prod v3.7.1 a; Developed and hosted by French Ministry in charge of the Sea and Fisheries -DGAMPA/SDNUM-Saint-Malo
 
-Help FAQ 
+Help FAQ Report an Issue Give your opinion 

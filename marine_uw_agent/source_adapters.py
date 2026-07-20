@@ -113,12 +113,27 @@ class EquasisClient:
         try:
             page.goto(self.settings.equasis_url, wait_until="domcontentloaded")
             pause_for_manual_if_needed(page, "Equasis")
+            self._login_if_present(page)
+            pause_for_manual_if_needed(page, "Equasis")
             term = slip.imo or slip.vessel_name or ""
-            for selector in ('input[name="P_IMO"]', 'input[name="search"]', 'input[type="text"]'):
+            for selector in ('input[name="P_IMO"]', 'input[name="P_IMO_NUMBER"]', 'input[name*="imo" i]', 'input[id*="imo" i]', 'input[name="search"]', 'input[type="search"]', 'input[type="text"]'):
                 if page.locator(selector).count():
                     page.locator(selector).first.fill(term)
-                    page.keyboard.press("Enter")
+                    for button in ('button[type="submit"]', 'input[type="submit"]', 'button:has-text("Search")', 'input[value*="Search" i]'):
+                        if page.locator(button).count():
+                            page.locator(button).first.click()
+                            break
+                    else:
+                        page.keyboard.press("Enter")
                     page.wait_for_load_state("domcontentloaded")
+                    for link in (f'a:has-text("{term}")', 'table a'):
+                        if page.locator(link).count():
+                            try:
+                                page.locator(link).first.click()
+                                page.wait_for_load_state("domcontentloaded")
+                            except Exception:
+                                pass
+                            break
                     break
             pause_for_manual_if_needed(page, "Equasis")
             screenshot = evidence_path(self.paths, "equasis", term)
@@ -133,6 +148,53 @@ class EquasisClient:
             raise
         except Exception as exc:
             return {}, SourceResult("Equasis", "failed", now_iso(), self.settings.equasis_url, evidence, error=str(exc), manual_intervention_required=True)
+
+    def _login_if_present(self, page: Any) -> None:
+        if not self.settings.equasis_username or not self.settings.equasis_password:
+            return
+        if page.locator("#home-login").count() and page.locator("#home-password").count():
+            page.locator("#home-login").first.fill(self.settings.equasis_username)
+            page.locator("#home-password").first.fill(self.settings.equasis_password)
+            if page.locator('form:has(#home-login) input[type="submit"]').count():
+                page.locator('form:has(#home-login) input[type="submit"]').first.click()
+            else:
+                page.locator("#home-password").press("Enter")
+            page.wait_for_load_state("domcontentloaded", timeout=10000)
+            return
+        for selector in ('a:has-text("Login")', 'a:has-text("Log in")', 'button:has-text("Login")', 'button:has-text("Log in")'):
+            if page.locator(selector).count():
+                try:
+                    page.locator(selector).first.click()
+                    page.wait_for_load_state("domcontentloaded", timeout=5000)
+                except Exception:
+                    pass
+                break
+        filled = False
+        for selector in ('input[name="j_email"]', 'input[name="j_username"]', 'input[name="username"]', 'input[name*="user" i]', 'input[name*="email" i]', 'input[type="email"]', '#username', '#login'):
+            if page.locator(selector).count():
+                page.locator(selector).first.fill(self.settings.equasis_username)
+                filled = True
+                break
+        for selector in ('input[name="j_password"]', 'input[name="password"]', 'input[type="password"]', '#password'):
+            if page.locator(selector).count():
+                page.locator(selector).first.fill(self.settings.equasis_password)
+                filled = True
+                break
+        if not filled:
+            return
+        for selector in ('button[type="submit"]', 'input[type="submit"]', 'button:has-text("Login")', 'button:has-text("Log in")', 'input[value*="Login" i]'):
+            if page.locator(selector).count():
+                page.locator(selector).first.click()
+                page.wait_for_load_state("domcontentloaded", timeout=10000)
+                break
+        for selector in ('a:has-text("Go to My Equasis")', 'button:has-text("Go to My Equasis")', 'input[value*="Go to My Equasis" i]'):
+            if page.locator(selector).count():
+                try:
+                    page.locator(selector).first.click()
+                    page.wait_for_load_state("domcontentloaded", timeout=10000)
+                except Exception:
+                    pass
+                return
 
 
 class HifleetClient:

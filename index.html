@@ -592,10 +592,10 @@
     <header class="topbar">
       <div class="brand">
         <h1>Marine UW Sanctions Evidence Workbench</h1>
-        <p>IMO research, Equasis fleet info, HiFleet review, official-source screenshots</p>
+        <p>IMO research, Equasis fleet info, HiFleet review, official sanctions screenshots</p>
       </div>
       <section class="metrics" aria-label="Review status">
-        <div class="metric"><span>Search tasks</span><strong id="metricTasks">0</strong></div>
+        <div class="metric"><span>Source tasks</span><strong id="metricTasks">0</strong></div>
         <div class="metric"><span>Completed</span><strong id="metricComplete">0</strong></div>
         <div class="metric"><span>Local hits</span><strong id="metricHits">0</strong></div>
         <div class="metric"><span>Screenshots</span><strong id="metricEvidence">0</strong></div>
@@ -659,8 +659,8 @@
               <div class="step-head">
                 <span class="step-number">1</span>
                 <div class="step-title">
-                  <strong>Open Equasis and search the IMO</strong>
-                  <span>Capture vessel identity, registered owner, commercial manager, and fleet rows.</span>
+                  <strong>Run Equasis IMO lookup</strong>
+                  <span>Local automation signs in from VM secrets, searches the IMO, then captures vessel, owner, manager, and fleet rows.</span>
                 </div>
               </div>
               <div class="step-actions">
@@ -697,12 +697,12 @@
           </div>
 
           <div class="note">
-            This static GitHub Pages site cannot securely store passwords or silently control third-party websites. Use the official tabs, then use Capture to save the browser-approved screenshot into this review.
+            This static GitHub Pages site never stores third-party passwords. Automatic Equasis login and IMO search run only in the local Playwright runner using ignored VM secrets; this page displays the resulting screenshots and extracted ship information.
           </div>
 
           <div class="automation-summary" id="automationSummary">
             <strong>Automated evidence runner</strong>
-            <span>Run <code>python3 scripts/run_uw_web_evidence.py</code> locally to operate Equasis, HiFleet, OFAC, UK, and EU pages with Playwright, then publish the generated manifest/screenshots.</span>
+            <span>Run <code>python3 scripts/run_uw_web_evidence.py --headless false</code> locally to operate Equasis, HiFleet, OFAC, UK, EU Sanctions Tracker, and DMA vessel designation pages, then publish the generated manifest/screenshots.</span>
           </div>
         </div>
       </section>
@@ -718,7 +718,7 @@
       <aside class="right-column stack">
         <section class="panel">
           <div class="panel-header">
-            <h2>Local Snapshot Matches</h2>
+          <h2>Returned Sanctions Matches</h2>
             <span class="badge info" id="snapshotDate">Loading</span>
           </div>
           <div class="panel-body">
@@ -813,10 +813,17 @@
         localSources: ["uk"]
       },
       {
-        key: "eu_reg",
-        name: "EU Regulation 833/2014",
-        url: "https://eur-lex.europa.eu/eli/reg/2014/833/oj/eng",
-        detail: "EU regulation reference. Use browser find for the term and capture no-result/result state.",
+        key: "eu_tracker",
+        name: "EU Sanctions Tracker",
+        url: "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
+        detail: "EU tracker entity search. Search each term and capture the resulting entity/no-result state.",
+        localSources: ["eu"]
+      },
+      {
+        key: "eu_vessel_designations",
+        name: "EU Vessel Designations - DMA",
+        url: "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
+        detail: "EU vessel designation reference from the Danish Maritime Authority. Use browser find for IMO and ship name.",
         localSources: ["eu"]
       }
     ];
@@ -849,23 +856,6 @@
       notes: "Modelled from UW Review - draft - Traverse Singapore - updated.xlsx."
     };
 
-    const fleetData = {
-      manager: [
-        ["(9284908) TRAVERSE CAOFEIDIAN", "40108", "Bulk Carrier", "Marshall Islands", "ISM Manager since 26/12/2025"],
-        ["(9330317) TRAVERSE ANTWERP", "40689", "Bulk Carrier", "Panama", "ISM Manager since 29/10/2025"],
-        ["(9342865) TRAVERSE SINGAPORE", "39738", "Bulk Carrier", "Panama", "Ship manager/Commercial manager since 16/10/2025; ISM Manager since 16/10/2025"],
-        ["(9350056) NGS FAITH", "16962", "Bulk Carrier", "Liberia", "ISM Manager since 10/09/2024"],
-        ["(9515682) GOLDEN BRAVE", "17025", "Bulk Carrier", "Marshall Islands", "ISM Manager since 15/03/2026"],
-        ["(9630743) MEDROSE", "32839", "Bulk Carrier", "Marshall Islands", "ISM Manager since 18/10/2023"],
-        ["(9649706) OCEAN LORRY", "40921", "Bulk Carrier", "Liberia", "ISM Manager since 04/04/2023"]
-      ],
-      owner: [
-        ["(9284908) TRAVERSE CAOFEIDIAN", "40108", "Bulk Carrier", "Marshall Islands", "Registered owner since 26/12/2025"],
-        ["(9330317) TRAVERSE ANTWERP", "40689", "Bulk Carrier", "Panama", "Registered owner since 29/10/2025; Ship manager/Commercial manager since 29/10/2025"],
-        ["(9342865) TRAVERSE SINGAPORE", "39738", "Bulk Carrier", "Panama", "Registered owner since 16/10/2025"]
-      ]
-    };
-
     const defaultReview = {
       quotationRef: "",
       listedArea: "",
@@ -883,7 +873,7 @@
 
     const state = loadState();
     let sanctionsData = { generated_at: "", sources: [], records: [] };
-    let evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {} };
+    let evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {}, equasis: {} };
     let activeFleet = "manager";
     let pendingUpload = null;
 
@@ -905,7 +895,6 @@
       const stored = JSON.parse(localStorage.getItem("marineUwWorkbench") || "{}");
       return {
         review: { ...defaultReview, ...(stored.review || traverseSample) },
-        results: stored.results || {},
         evidence: stored.evidence || []
       };
     }
@@ -946,6 +935,9 @@
         ]);
         if (snapshotResponse.ok) sanctionsData = await snapshotResponse.json();
         if (evidenceResponse.ok) evidenceManifest = await evidenceResponse.json();
+        if (evidenceManifest.review) {
+          state.review = { ...state.review, ...evidenceManifest.review };
+        }
       } catch (error) {
         sanctionsData.status = "unavailable";
       }
@@ -962,17 +954,6 @@
         .filter(term => term.value);
     }
 
-    function resultKey(sourceKey, termKey) {
-      const term = termByKey(termKey);
-      return `${sourceKey}:${termKey}:${normalize(term ? term.value : "")}`;
-    }
-
-    function getResult(sourceKey, termKey) {
-      const key = resultKey(sourceKey, termKey);
-      state.results[key] ||= { status: "Pending", note: "" };
-      return state.results[key];
-    }
-
     function renderInputs() {
       document.querySelectorAll("[data-review]").forEach(input => {
         input.value = state.review[input.dataset.review] || "";
@@ -982,12 +963,10 @@
     function renderMetrics() {
       const terms = searchTerms();
       const taskCount = terms.length * officialSources.length;
-      const activeResultKeys = new Set(officialSources.flatMap(source => terms.map(term => resultKey(source.key, term.key))));
-      const completed = Object.entries(state.results).filter(([key, result]) => activeResultKeys.has(key) && result.status !== "Pending").length;
       const automatedCompleted = (evidenceManifest.source_results || []).filter(result => result.status && result.status !== "started" && result.status !== "failed" && result.status !== "timeout").length;
-      const hits = localMatches().length;
+      const hits = returnedMatches().length;
       document.getElementById("metricTasks").textContent = taskCount;
-      document.getElementById("metricComplete").textContent = Math.min(completed + automatedCompleted, taskCount + 2);
+      document.getElementById("metricComplete").textContent = Math.min(automatedCompleted, taskCount + 2);
       document.getElementById("metricHits").textContent = hits;
       document.getElementById("metricEvidence").textContent = allEvidence().length;
       els.evidenceCount.textContent = `${allEvidence().length} saved`;
@@ -1029,10 +1008,10 @@
     }
 
     function taskRow(source, term) {
-      const result = getResult(source.key, term.key);
       const latest = latestEvidence(source.key, term.key, term.value);
       const automated = automatedResult(source.key, term.key, term.value);
-      const selectedResult = result.status === "Pending" && automated ? automated.status : result.status;
+      const badgeClass = automated ? resultBadgeClass(automated) : "pending";
+      const status = automated ? automated.label : "Not checked";
       return `
         <tr>
           <td>
@@ -1040,12 +1019,8 @@
             <div class="entity-meta">${escapeHtml(term.value)}</div>
           </td>
           <td>
-            <select class="compact-select" data-result-source="${source.key}" data-result-term="${term.key}">
-              ${["Pending", "No match", "Possible match", "Confirmed match", "Source unavailable"].map(option => `
-                <option ${option === selectedResult ? "selected" : ""}>${option}</option>
-              `).join("")}
-            </select>
-            ${automated ? `<div class="entity-meta">Runner: ${escapeHtml(automated.status)}</div>` : ""}
+            <span class="badge ${badgeClass}">${escapeHtml(status)}</span>
+            ${automated && automated.error ? `<div class="entity-meta">${escapeHtml(automated.error)}</div>` : ""}
           </td>
           <td>
             ${latest ? `<span class="badge clear">${escapeHtml(new Date(latest.capturedAt).toLocaleString())}</span>` : '<span class="badge pending">No screenshot</span>'}
@@ -1062,43 +1037,27 @@
     }
 
     function renderMatches() {
-      const matches = localMatches();
+      const matches = returnedMatches();
       els.snapshotDate.textContent = sanctionsData.generated_at ? new Date(sanctionsData.generated_at).toLocaleDateString() : "Unavailable";
       els.snapshotDate.className = `badge ${matches.length ? "review" : "info"}`;
       if (!matches.length) {
-        els.localMatches.innerHTML = '<div class="empty">No exact or contained-name hits in the local OFAC, UK, or EU snapshot for the current terms.</div>';
+        els.localMatches.innerHTML = '<div class="empty">No sanctions matches were returned by the completed OFAC, UK, or EU website checks.</div>';
         return;
       }
       els.localMatches.innerHTML = matches.slice(0, 30).map(match => `
         <div class="match-row">
-          <strong>${escapeHtml(match.record.name)}</strong>
+          <strong>${escapeHtml(match.source_name)}</strong>
           <div class="entity-meta">
-            <span>${escapeHtml(match.term.label)}: ${escapeHtml(match.term.value)}</span>
-            <span>${escapeHtml(match.record.source_name || match.record.source)}</span>
-            <span>${escapeHtml(match.record.program || "No program")}</span>
-            <span>${escapeHtml(match.record.reference || "No reference")}</span>
+            <span>${escapeHtml(match.term_label)}: ${escapeHtml(match.term_value)}</span>
+            <span>${escapeHtml(match.result_label || match.status)}</span>
+            ${match.raw_text_file ? `<span>${escapeHtml(match.raw_text_file)}</span>` : ""}
           </div>
         </div>
       `).join("");
     }
 
-    function localMatches() {
-      const terms = searchTerms();
-      const records = sanctionsData.records || [];
-      if (!terms.length || !records.length) return [];
-      const output = [];
-      for (const term of terms) {
-        const needle = normalize(term.value);
-        if (!needle || needle.length < 3) continue;
-        for (const record of records) {
-          const candidate = normalize(record.name);
-          if (candidate && (candidate === needle || candidate.includes(needle) || needle.includes(candidate))) {
-            output.push({ term, record });
-            if (output.length >= 60) return output;
-          }
-        }
-      }
-      return output;
+    function returnedMatches() {
+      return (evidenceManifest.source_results || []).filter(result => result.match_found);
     }
 
     function renderEvidence() {
@@ -1134,7 +1093,17 @@
         row.flag || "",
         row.acting_as || row.role || ""
       ]).filter(row => row.some(Boolean));
-      const rows = manifestRows.length ? manifestRows : fleetData[activeFleet];
+      const rows = manifestRows;
+      if (!rows.length) {
+        const equasis = evidenceManifest.equasis || {};
+        const missing = (equasis.missing_fields || []).join(", ");
+        els.fleetRows.innerHTML = `
+          <tr>
+            <td colspan="5">${escapeHtml(equasis.error || (missing ? `Could not identify Equasis fields: ${missing}` : "No Equasis management rows identified from the latest automated run."))}</td>
+          </tr>
+        `;
+        return;
+      }
       els.fleetRows.innerHTML = rows.map(row => `
         <tr>
           <td><strong>${escapeHtml(row[0])}</strong></td>
@@ -1152,7 +1121,8 @@
       els.automationSummary.innerHTML = `
         <strong>Automated evidence runner</strong>
         <span>${escapeHtml(generated)}</span>
-        <span>${escapeHtml(summary.total_screenshots || 0)} screenshots | ${escapeHtml(summary.completed_sources || 0)} completed source actions | ${escapeHtml(summary.manual_review_required || 0)} manual-review flags</span>
+        <span>${escapeHtml(summary.total_screenshots || 0)} screenshots | ${escapeHtml(summary.completed_sources || 0)} completed source actions | ${escapeHtml(summary.matches_found || 0)} matches returned | ${escapeHtml(summary.manual_review_required || 0)} manual-review flags</span>
+        <span>Equasis login is local-only via <code>.env</code>; credentials are never embedded in the website.</span>
         <span>Command: <code>python3 scripts/run_uw_web_evidence.py --headless false</code></span>
       `;
     }
@@ -1272,7 +1242,7 @@
       const payload = {
         exportedAt: new Date().toISOString(),
         review: state.review,
-        results: state.results,
+        sourceResults: evidenceManifest.source_results || [],
         evidence: allEvidence().map(item => ({
           id: item.id,
           sourceName: item.sourceName,
@@ -1284,13 +1254,7 @@
           imageIncluded: true
         })),
         automatedManifest: evidenceManifest,
-        localMatches: localMatches().map(match => ({
-          term: match.term,
-          source: match.record.source_name || match.record.source,
-          name: match.record.name,
-          program: match.record.program,
-          reference: match.record.reference
-        }))
+        returnedMatches: returnedMatches()
       };
       downloadBlob(JSON.stringify(payload, null, 2), "marine-uw-review.json", "application/json");
     }
@@ -1301,9 +1265,9 @@
       const rows = [];
       for (const source of officialSources) {
         for (const term of terms) {
-          const result = getResult(source.key, term.key);
+          const result = automatedResult(source.key, term.key, term.value);
           const screenshotCount = allEvidence().filter(item => item.sourceKey === source.key && item.termKey === term.key && normalize(item.termValue) === normalize(term.value)).length;
-          rows.push([source.name, term.label, term.value, result.status, screenshotCount].map(csvCell).join(","));
+          rows.push([source.name, term.label, term.value, result ? result.label : "Not checked", screenshotCount].map(csvCell).join(","));
         }
       }
       downloadBlob([header.join(","), ...rows].join("\n"), "marine-uw-source-results.csv", "text/csv");
@@ -1345,11 +1309,24 @@
       );
       if (!result) return null;
       return {
-        status: result.status === "captured_no_visible_match" ? "No match" :
-          result.status === "visible_result_or_page_match" ? "Review" :
-          result.status === "manual_review_required" ? "Source unavailable" :
-          result.status,
+        status: result.status,
+        label: result.result_label || (
+          result.status === "no_match" ? "No match returned" :
+          result.status === "match_found" ? "Match returned" :
+          result.status === "manual_review_required" ? "Cannot check" :
+          result.status
+        ),
+        matchFound: Boolean(result.match_found),
+        manualReviewRequired: Boolean(result.manual_review_required),
+        error: result.error || "",
       };
+    }
+
+    function resultBadgeClass(result) {
+      if (result.matchFound) return "match";
+      if (result.manualReviewRequired) return "review";
+      if (result.status === "no_match") return "clear";
+      return "pending";
     }
 
     function imageSrc(item) {
@@ -1404,10 +1381,6 @@
         state.review[target.dataset.review] = target.value;
         dirty();
       }
-      if (target.dataset.resultSource) {
-        getResult(target.dataset.resultSource, target.dataset.resultTerm).status = target.value;
-        dirty();
-      }
     });
 
     document.addEventListener("click", event => {
@@ -1449,7 +1422,6 @@
 
     document.getElementById("loadTraverse").addEventListener("click", () => {
       state.review = { ...defaultReview, ...traverseSample };
-      state.results = {};
       state.evidence = [];
       save();
       render();
@@ -1461,7 +1433,6 @@
       if (!window.confirm("Reset all locally saved review data and screenshots?")) return;
       localStorage.removeItem("marineUwWorkbench");
       state.review = { ...defaultReview };
-      state.results = {};
       state.evidence = [];
       save();
       render();

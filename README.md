@@ -50,9 +50,10 @@ http://127.0.0.1:4173/index.html
 ### Capture Web Evidence for the Website
 
 The GitHub Pages site cannot securely store passwords or control third-party
-tabs directly. Use the local Playwright evidence runner to operate Equasis,
-HiFleet, OFAC, UK legislation, and EUR-Lex, then publish the generated
-screenshots and manifest:
+tabs directly. Use the local Playwright evidence runner to sign into Equasis,
+search the IMO, operate HiFleet, OFAC, UK legislation, the EU Sanctions Tracker,
+and the DMA EU vessel-designation page, then publish the generated screenshots
+and manifest:
 
 ```bash
 cp .env.example .env

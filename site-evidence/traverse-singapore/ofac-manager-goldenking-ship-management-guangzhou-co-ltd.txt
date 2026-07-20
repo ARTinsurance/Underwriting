@@ -314,7 +314,7 @@ Name	Address	Type	Program(s)	List	Score
 
 Your search has not returned any results.
 * U.S. states are abbreviated on the SDN and Non-SDN lists. To search for a specific U.S. state, please use the two letter U.S. Postal Service abbreviation.
-SDN List last updated on: 7/1/2026 10:08:32 AM
+SDN List last updated on: 7/15/2026 11:01:45 AM
 Non-SDN List last updated on: 1/8/2026 10:05:51 AM
 
  

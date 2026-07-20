@@ -15,6 +15,7 @@ from .models import QuotationSlip, ReviewState, RunInputs, SourceResult
 from .normalizers import parse_date
 from .party_builder import build_parties, missing_party_issues
 from .paths import create_run_paths
+from .quotation_history_adapter import QuotationHistoryAdapter
 from .quotation_extractor import extract_quotation_from_text
 from .report import render_markdown
 from .restrictions import cargo_restriction_review
@@ -96,7 +97,7 @@ def run_workflow(inputs: RunInputs, quotation_text_path: Optional[Path] = None, 
                 if source.status == "ok":
                     state.quotation = slip
                 if state.quotation and state.quotation.vessel_name and state.quotation.imo:
-                    history, history_source = quotation_client.search_history(page, state.quotation, inputs.as_of_date)
+                    history, history_source = QuotationHistoryAdapter(settings, paths).retrieve(page, state.quotation, inputs.as_of_date)
                     state.quotation_history = history
                     state.source_results.append(history_source)
                     equasis_data, equasis_source = EquasisClient(settings, paths).research(page, state.quotation)

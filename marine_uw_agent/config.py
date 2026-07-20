@@ -40,6 +40,8 @@ class Settings:
     quotation_system_url: str
     quotation_system_username: str
     quotation_system_password: str
+    quotation_history_fallback_csv: str
+    quotation_history_fallback_xlsx: str
     hifleet_url: str
     hifleet_username: str
     hifleet_password: str
@@ -59,16 +61,18 @@ class Settings:
             quotation_system_url=os.getenv("QUOTATION_SYSTEM_URL", ""),
             quotation_system_username=os.getenv("QUOTATION_SYSTEM_USERNAME", ""),
             quotation_system_password=os.getenv("QUOTATION_SYSTEM_PASSWORD", ""),
+            quotation_history_fallback_csv=os.getenv("QUOTATION_HISTORY_FALLBACK_CSV", ""),
+            quotation_history_fallback_xlsx=os.getenv("QUOTATION_HISTORY_FALLBACK_XLSX", ""),
             hifleet_url=os.getenv("HIFLEET_URL", "https://www.hifleet.com"),
             hifleet_username=os.getenv("HIFLEET_USERNAME", ""),
             hifleet_password=os.getenv("HIFLEET_PASSWORD", ""),
-            equasis_url=os.getenv("EQUASIS_URL", "https://www.equasis.org/EquasisWeb/restricted/Search?fs=Search"),
+            equasis_url=os.getenv("EQUASIS_URL", "https://www.equasis.org/EquasisWeb/public/HomePage"),
             equasis_username=os.getenv("EQUASIS_USERNAME", ""),
             equasis_password=os.getenv("EQUASIS_PASSWORD", ""),
             ofac_url=os.getenv("OFAC_URL", "https://sanctionssearch.ofac.treas.gov/"),
             uk_sanctions_url=os.getenv("UK_SANCTIONS_URL", "https://search-uk-sanctions-list.service.gov.uk/"),
             uk_russia_regs_url=os.getenv("UK_RUSSIA_REGS_URL", "https://www.legislation.gov.uk/uksi/2019/855"),
-            eu_russia_reg_833_url=os.getenv("EU_RUSSIA_REG_833_URL", "https://eur-lex.europa.eu/eli/reg/2014/833/oj/eng"),
+            eu_russia_reg_833_url=os.getenv("EU_RUSSIA_REG_833_URL", "https://data.europa.eu/apps/eusanctionstracker/entities/%20"),
             browser_profile_dir=Path(os.getenv("BROWSER_PROFILE_DIR", "playwright-profile")),
         )
 

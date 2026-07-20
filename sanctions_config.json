@@ -17,7 +17,8 @@
     "api_endpoints": {
       "ofac_search": "https://sanctionssearch.ofac.treas.gov/api/sanctionsearch/",
       "uk_sanctions": "https://search-uk-sanctions-list.service.gov.uk/",
-      "eu_sanctions": "https://webgate.ec.europa.eu/cftsunilateral/"
+      "eu_sanctions": "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
+      "eu_vessel_designations": "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations"
     },
     "timeout_settings": {
       "timeout_seconds": 30,

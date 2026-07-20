@@ -8,6 +8,7 @@ from marine_uw_agent.history import filter_same_vessel_quotes
 from marine_uw_agent.models import QuotationSlip, ReviewState, RunInputs
 from marine_uw_agent.normalizers import classify_match, normalize_company_name, normalize_imo, normalize_vessel_name
 from marine_uw_agent.paths import create_run_paths, evidence_path
+from marine_uw_agent.quotation_history_adapter import QuotationHistoryAdapter
 from marine_uw_agent.quotation_extractor import extract_quotation_from_text
 from marine_uw_agent.restrictions import cargo_restriction_review
 from marine_uw_agent.run import run_workflow
@@ -101,6 +102,94 @@ class MarineUWAgentTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 output = populate_workbook(state, Path(tmp) / "test.xlsx")
                 self.assertTrue(output.exists())
+
+    def test_quotation_history_adapter_normalizes_rows(self):
+        adapter = object.__new__(QuotationHistoryAdapter)
+        row = adapter._normalize_row(
+            {
+                "Quotation Ref no.": "ART-2026031605-MW",
+                "Broker": "28-BMC Asia/JS Risks",
+                "IMO": "9307736",
+                "Listed Area": "Persian Gulf/Gulf of Oman",
+                "Type of Coverage": "Marine Hull War",
+                "Gross Rate": "0.50%",
+                "Discount": "12.5%",
+                "Net Rate": "0.4375%",
+                "Premium": "USD 200,666.01",
+                "Bound or not": "Bound",
+                "Quotation Date": "2026-03-16",
+            }
+        )
+
+        self.assertEqual(row["quotation_reference"], "ART-2026031605-MW")
+        self.assertEqual(row["vessel_imo"], "9307736")
+        self.assertEqual(row["coverage_type"], "Marine Hull War")
+        self.assertEqual(row["bound"], "Bound")
+
+    def test_quotation_history_adapter_normalizes_api_rows(self):
+        adapter = object.__new__(QuotationHistoryAdapter)
+        row = adapter._normalize_row(
+            {
+                "quotationNo": "ART-2026031605-MW",
+                "brokerName": "28-BMC Asia/JS Risks",
+                "shipImo": "9307736",
+                "classType": "Marine Hull War",
+                "grossRate": "0.50%",
+                "netRate": "0.4375%",
+                "netPremium": "USD 200,666.01",
+                "statusName": "Bound",
+                "createTime": "2026-03-16",
+            }
+        )
+
+        self.assertEqual(row["quotation_reference"], "ART-2026031605-MW")
+        self.assertEqual(row["broker"], "28-BMC Asia/JS Risks")
+        self.assertEqual(row["vessel_imo"], "9307736")
+        self.assertEqual(row["net_rate"], "0.4375%")
+
+    def test_aquamarine_template_population_preserves_excel_output(self):
+        template = Path("data/raw/UW Review - draft - Aquamarine - v2.xlsx")
+        if not template.exists():
+            self.skipTest("Aquamarine template not present")
+        with tempfile.TemporaryDirectory() as tmp:
+            inputs = RunInputs("ART-NEW", date(2026, 7, 17), template, Path(tmp) / "output")
+            state = ReviewState(
+                inputs,
+                "test",
+                "2026-07-17T00:00:00Z",
+                quotation=QuotationSlip(
+                    "ART-NEW",
+                    vessel_name="TRAVERSE SINGAPORE",
+                    imo="9342865",
+                    flag="Panama",
+                    vessel_type="Bulk Carrier",
+                    listed_area="Gulf of Aden/Red Sea/Indian Ocean",
+                ),
+                quotation_history=[
+                    {
+                        "quotation_reference": "ART-OLD",
+                        "broker": "Broker A",
+                        "vessel_imo": "9342865",
+                        "listed_area": "Gulf of Aden",
+                        "coverage_type": "Marine Hull War",
+                        "gross_rate": "0.10%",
+                        "discounts": "0%",
+                        "net_rate": "0.10%",
+                        "premium": "USD 1,000",
+                        "bound": "Not bound",
+                        "quotation_date": "2026-06-01",
+                    }
+                ],
+            )
+            output = populate_workbook(state, Path(tmp) / "review.xlsx")
+            import openpyxl
+
+            wb = openpyxl.load_workbook(output, data_only=True)
+            ws = wb["UW Info"]
+            self.assertEqual(ws["B1"].value, "ART-NEW")
+            self.assertEqual(ws["A13"].value, "Quotation Ref no.")
+            self.assertEqual(ws["A14"].value, "ART-OLD")
+            self.assertEqual(ws["C14"].value, "9342865")
 
     def test_offline_workflow_marks_missing_information(self):
         with tempfile.TemporaryDirectory() as tmp:
