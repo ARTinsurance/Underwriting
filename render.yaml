@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: marine-uw-workbench
+    runtime: docker
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_DATA_DIR
+        value: /data
+      - key: MAX_STATE_BYTES
+        value: "26214400"
+      - key: ALLOWED_ORIGINS
+        value: https://artinsurance.io,https://www.artinsurance.io,https://artinsurance.github.io
+      - key: EQUASIS_USERNAME
+        sync: false
+      - key: EQUASIS_PASSWORD
+        sync: false
+    disk:
+      name: underwriting-data
+      mountPath: /data
+      sizeGB: 1

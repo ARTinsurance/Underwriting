@@ -3,27 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sanctions Screening Checklist</title>
+  <title>Marine UW Sanctions Evidence Workbench</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f4f6f8;
+      --bg: #f5f7fa;
       --surface: #ffffff;
-      --surface-alt: #eef3f7;
-      --line: #d8e0e7;
-      --text: #1b2733;
-      --muted: #647386;
-      --primary: #0f6b57;
-      --primary-dark: #0a4d3f;
-      --danger: #b42318;
-      --warning: #b54708;
-      --ok: #087443;
-      --focus: #1b73e8;
-      --shadow: 0 10px 28px rgba(27, 39, 51, 0.08);
+      --surface-2: #f0f4f8;
+      --surface-3: #e8eef5;
+      --text: #17212b;
+      --muted: #5d6b7c;
+      --line: #d8e0ea;
+      --blue: #1d5f9f;
+      --blue-dark: #164a7b;
+      --green: #087443;
+      --amber: #a15c05;
+      --red: #b42318;
+      --ink: #253448;
+      --shadow: 0 12px 30px rgba(25, 35, 47, 0.08);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -42,24 +47,55 @@
     }
 
     button {
+      align-items: center;
       border: 1px solid transparent;
       border-radius: 6px;
       cursor: pointer;
-      min-height: 38px;
-      padding: 8px 12px;
+      display: inline-flex;
+      gap: 7px;
+      justify-content: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      white-space: nowrap;
     }
 
     button:focus-visible,
     input:focus-visible,
     select:focus-visible,
-    textarea:focus-visible {
-      outline: 3px solid rgba(27, 115, 232, 0.25);
-      outline-offset: 1px;
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(29, 95, 159, 0.22);
+      outline-offset: 2px;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      min-height: 38px;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    label {
+      color: var(--muted);
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin: 0 0 5px;
+      text-transform: uppercase;
     }
 
     .app {
-      display: grid;
-      grid-template-rows: auto 1fr;
       min-height: 100vh;
     }
 
@@ -67,17 +103,13 @@
       align-items: center;
       background: var(--surface);
       border-bottom: 1px solid var(--line);
-      display: flex;
-      gap: 18px;
-      justify-content: space-between;
-      padding: 14px 20px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(260px, 1.2fr) minmax(420px, 1.5fr) auto;
+      padding: 13px 18px;
       position: sticky;
       top: 0;
-      z-index: 3;
-    }
-
-    .brand {
-      min-width: 220px;
+      z-index: 5;
     }
 
     .brand h1 {
@@ -88,34 +120,36 @@
 
     .brand p {
       color: var(--muted);
-      margin: 3px 0 0;
+      margin: 2px 0 0;
     }
 
     .metrics {
       display: grid;
       gap: 8px;
-      grid-template-columns: repeat(4, minmax(92px, 1fr));
-      max-width: 620px;
-      width: 100%;
+      grid-template-columns: repeat(4, minmax(100px, 1fr));
     }
 
     .metric {
-      background: var(--surface-alt);
+      background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 7px;
+      min-width: 0;
       padding: 8px 10px;
     }
 
     .metric span {
       color: var(--muted);
       display: block;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
     .metric strong {
       display: block;
       font-size: 18px;
       line-height: 1.2;
+      overflow-wrap: anywhere;
     }
 
     .actions {
@@ -126,12 +160,12 @@
     }
 
     .btn-primary {
-      background: var(--primary);
+      background: var(--blue);
       color: #fff;
     }
 
     .btn-primary:hover {
-      background: var(--primary-dark);
+      background: var(--blue-dark);
     }
 
     .btn-secondary {
@@ -141,20 +175,20 @@
     }
 
     .btn-secondary:hover {
-      background: var(--surface-alt);
+      background: var(--surface-2);
     }
 
     .btn-danger {
-      background: #fff5f3;
-      border-color: #f5c7c1;
-      color: var(--danger);
+      background: #fff3f1;
+      border-color: #f0b8b2;
+      color: var(--red);
     }
 
-    .workspace {
+    .layout {
       display: grid;
-      gap: 16px;
-      grid-template-columns: minmax(240px, 0.9fr) minmax(420px, 1.5fr) minmax(300px, 1fr);
-      padding: 16px;
+      gap: 14px;
+      grid-template-columns: minmax(290px, 0.85fr) minmax(560px, 1.7fr) minmax(330px, 0.95fr);
+      padding: 14px;
     }
 
     .panel {
@@ -171,90 +205,37 @@
       display: flex;
       gap: 10px;
       justify-content: space-between;
-      padding: 14px;
+      min-height: 53px;
+      padding: 12px 13px;
     }
 
-    .panel-header h2 {
+    .panel-header h2,
+    .section-title {
       font-size: 15px;
       margin: 0;
     }
 
     .panel-body {
-      padding: 14px;
+      padding: 13px;
     }
 
-    .entity-tools {
+    .stack {
       display: grid;
-      gap: 8px;
-      grid-template-columns: 1fr auto;
-      margin-bottom: 12px;
+      gap: 12px;
     }
 
-    .field {
+    .field-grid {
       display: grid;
-      gap: 5px;
-      margin-bottom: 12px;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
+    .field-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    input,
-    select,
-    textarea {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      color: var(--text);
-      min-height: 38px;
-      padding: 8px 10px;
-      width: 100%;
-    }
-
-    textarea {
-      min-height: 76px;
-      resize: vertical;
-    }
-
-    .entity-list {
-      display: grid;
-      gap: 8px;
-      max-height: calc(100vh - 260px);
-      overflow: auto;
-      padding-right: 3px;
-    }
-
-    .entity {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      display: grid;
-      gap: 5px;
-      padding: 10px;
-      text-align: left;
-      width: 100%;
-    }
-
-    .entity.active {
-      border-color: var(--primary);
-      box-shadow: inset 4px 0 0 var(--primary);
-    }
-
-    .entity-title {
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
-    .entity-meta {
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      font-size: 12px;
-      gap: 6px;
+    .span-2 {
+      grid-column: span 2;
     }
 
     .badge {
@@ -268,116 +249,113 @@
     }
 
     .badge.pending {
-      background: #eef3f7;
-      color: #475569;
+      background: #edf2f7;
+      color: #4a5568;
     }
 
     .badge.clear {
-      background: #e9f8ef;
-      color: var(--ok);
+      background: #e8f6ee;
+      color: var(--green);
     }
 
     .badge.review {
-      background: #fff7e8;
-      color: var(--warning);
+      background: #fff4df;
+      color: var(--amber);
     }
 
     .badge.match {
-      background: #fff1ef;
-      color: var(--danger);
+      background: #fff0ee;
+      color: var(--red);
     }
 
-    .checklist {
+    .badge.info {
+      background: #eaf2fb;
+      color: var(--blue);
+    }
+
+    .workflow {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .check-item {
+    .step {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px;
+      display: grid;
+      gap: 10px;
+      padding: 11px;
     }
 
-    .check-head {
+    .step-head {
       align-items: start;
       display: grid;
       gap: 10px;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr;
     }
 
-    .check-head input {
-      height: 18px;
-      margin-top: 3px;
-      min-height: 18px;
-      width: 18px;
+    .step-number {
+      align-items: center;
+      background: var(--ink);
+      border-radius: 999px;
+      color: #fff;
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 700;
+      height: 28px;
+      justify-content: center;
+      width: 28px;
     }
 
-    .check-title strong {
+    .step-title strong {
       display: block;
-      font-size: 14px;
     }
 
-    .check-title span {
+    .step-title span {
       color: var(--muted);
       display: block;
       font-size: 12px;
       margin-top: 2px;
     }
 
-    .source-link {
-      color: var(--primary);
-      font-size: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      white-space: nowrap;
+    .step-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .source-link:hover {
-      text-decoration: underline;
-    }
-
-    .evidence-grid {
+    .source-grid {
       display: grid;
-      gap: 10px;
-      grid-template-columns: minmax(120px, 0.8fr) 1fr;
-      margin-top: 10px;
+      gap: 11px;
     }
 
-    .decision-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: 1fr 1fr;
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    .decision-strip {
+    .source-card-head {
+      align-items: center;
+      background: var(--surface-2);
       border-bottom: 1px solid var(--line);
       display: grid;
       gap: 10px;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 14px;
+      grid-template-columns: 1fr auto;
+      padding: 10px;
     }
 
-    .decision-option {
-      align-items: center;
-      background: var(--surface-alt);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      display: flex;
-      gap: 8px;
-      min-height: 48px;
-      padding: 8px;
+    .source-card h3 {
+      font-size: 14px;
+      margin: 0;
     }
 
-    .decision-option input {
-      min-height: 18px;
-      width: 18px;
+    .source-card p {
+      color: var(--muted);
+      margin: 2px 0 0;
     }
 
-    .audit-log {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      max-height: 260px;
-      overflow: auto;
+    .task-table {
+      width: 100%;
     }
 
     table {
@@ -394,11 +372,13 @@
     }
 
     th {
-      background: var(--surface-alt);
+      background: var(--surface-2);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       position: sticky;
       top: 0;
+      text-transform: uppercase;
+      z-index: 1;
     }
 
     td {
@@ -406,55 +386,231 @@
       overflow-wrap: anywhere;
     }
 
+    .task-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .task-actions button {
+      min-height: 30px;
+      padding: 5px 8px;
+    }
+
+    .task-actions a {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: inline-flex;
+      min-height: 30px;
+      padding: 5px 8px;
+      text-decoration: none;
+    }
+
+    .compact-select {
+      min-height: 32px;
+      padding: 5px 7px;
+    }
+
+    .match-list {
+      display: grid;
+      gap: 8px;
+      max-height: 250px;
+      overflow: auto;
+    }
+
+    .match-row {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 8px;
+    }
+
+    .entity-meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 12px;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .fleet-tabs {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 10px;
+    }
+
+    .fleet-tab {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--muted);
+      min-height: 34px;
+    }
+
+    .fleet-tab.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .table-scroll {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      max-height: 330px;
+      overflow: auto;
+    }
+
+    .evidence-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .evidence-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .evidence-card img {
+      background: var(--surface-3);
+      display: block;
+      max-height: 170px;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .evidence-card-body {
+      display: grid;
+      gap: 7px;
+      padding: 9px;
+    }
+
+    .evidence-card-body strong {
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
     .empty {
       color: var(--muted);
-      padding: 22px;
+      padding: 20px;
       text-align: center;
     }
 
-    @media (max-width: 1120px) {
+    .note {
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 10px;
+    }
+
+    .automation-summary {
+      background: #f7fbff;
+      border: 1px solid #cfe0f3;
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .automation-summary strong {
+      color: var(--ink);
+    }
+
+    .source-status {
+      display: grid;
+      gap: 8px;
+    }
+
+    .source-status-row {
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto;
+      padding: 8px 10px;
+    }
+
+    .hidden-input {
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      width: 1px;
+    }
+
+    @media (max-width: 1180px) {
       .topbar {
         align-items: stretch;
-        flex-direction: column;
-      }
-
-      .metrics {
-        max-width: none;
+        grid-template-columns: 1fr;
       }
 
       .actions {
         justify-content: flex-start;
       }
 
-      .workspace {
-        grid-template-columns: 300px 1fr;
+      .layout {
+        grid-template-columns: minmax(280px, 0.8fr) minmax(520px, 1.3fr);
       }
 
-      .decision-panel {
+      .right-column {
         grid-column: 1 / -1;
       }
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 780px) {
+      .layout {
+        grid-template-columns: 1fr;
+        padding: 10px;
+      }
+
       .metrics,
-      .workspace,
-      .decision-grid,
-      .decision-strip,
-      .evidence-grid {
+      .field-grid,
+      .field-grid.three,
+      .fleet-tabs {
         grid-template-columns: 1fr;
       }
 
-      .workspace {
-        padding: 10px;
+      .span-2 {
+        grid-column: auto;
+      }
+
+      .source-card-head {
+        grid-template-columns: 1fr;
       }
 
       .topbar {
         padding: 12px;
       }
-
-      .entity-list {
-        max-height: 260px;
-      }
+    }
+  </style>
+  <style>
+    /* Progressive IMO screening view. Legacy review controls remain available to
+       the state model but are intentionally removed from the primary workflow. */
+    .metrics, .topbar .actions, .workflow .step:not(:first-child),
+    .workflow .step:first-child .step-actions > :not(#scrapeEquasis),
+    .note, #automationSummary, .right-column > .panel:not(#sanctionsEvidencePanel),
+    #sourceTasksPanel, .internal-fields { display: none !important; }
+    .topbar { min-height: auto; }
+    .brand p { margin-bottom: 0; }
+    .layout { display: block; max-width: 1120px; margin: 0 auto; }
+    .layout > .panel { margin-bottom: 18px; }
+    .imo-entry { display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 12px; align-items: end; }
+    .imo-entry button { min-height: 42px; }
+    .lookup-error { color: var(--danger); margin-top: 8px; }
+    .progress-stage[hidden] { display: none !important; }
+    .ship-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .ship-summary div { background: #f5f8fc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .ship-summary span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+    .management-table td { vertical-align: top; }
+    .sanctions-groups { display: grid; gap: 18px; }
+    .sanctions-group { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .sanctions-group h3 { margin: 0; padding: 12px 14px; background: #eef4fa; font-size: 16px; }
+    .sanctions-group .evidence-grid { padding: 14px; }
+    @media (max-width: 780px) {
+      .imo-entry, .ship-summary { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -462,196 +618,437 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>Sanctions Screening Checklist</h1>
-        <p>OFAC, UK, EU, evidence capture, and audit export</p>
+        <h1>IMO Sanctions Screening</h1>
+        <p>Enter an IMO or open this page from Outlook to retrieve Equasis management and sanctions evidence.</p>
       </div>
-      <section class="metrics" aria-label="Screening status">
-        <div class="metric"><span>Total</span><strong id="metricTotal">0</strong></div>
-        <div class="metric"><span>Clear</span><strong id="metricClear">0</strong></div>
-        <div class="metric"><span>Review</span><strong id="metricReview">0</strong></div>
-        <div class="metric"><span>Match</span><strong id="metricMatch">0</strong></div>
+      <section class="metrics" aria-label="Review status">
+        <div class="metric"><span>Source tasks</span><strong id="metricTasks">0</strong></div>
+        <div class="metric"><span>Completed</span><strong id="metricComplete">0</strong></div>
+        <div class="metric"><span>Local hits</span><strong id="metricHits">0</strong></div>
+        <div class="metric"><span>Screenshots</span><strong id="metricEvidence">0</strong></div>
       </section>
       <div class="actions">
-        <button class="btn-secondary" id="loadSample" type="button">Load Sample</button>
-        <button class="btn-secondary" id="exportCsv" type="button">Export CSV</button>
+        <button class="btn-secondary" id="loadTraverse" type="button">Load Traverse sample</button>
+        <button class="btn-secondary" id="exportJson" type="button">Export review JSON</button>
+        <button class="btn-secondary" id="exportCsv" type="button">Export source CSV</button>
         <button class="btn-danger" id="resetAll" type="button">Reset</button>
       </div>
     </header>
 
-    <main class="workspace">
+    <main class="layout">
       <section class="panel">
         <div class="panel-header">
-          <h2>Entity Queue</h2>
-          <span class="badge pending" id="queueCount">0 pending</span>
+          <h2>1. Vessel IMO</h2>
+          <span class="badge info" id="imoState">Waiting for IMO</span>
         </div>
-        <div class="panel-body">
-          <div class="entity-tools">
-            <input id="entityName" placeholder="Company or vessel name" aria-label="Company or vessel name">
-            <button class="btn-primary" id="addEntity" type="button">Add</button>
+        <div class="panel-body stack">
+          <div class="imo-entry">
+            <div>
+              <label for="imo">IMO</label>
+              <input id="imo" data-review="imo" inputmode="numeric" maxlength="7" placeholder="Enter 7-digit IMO">
+            </div>
+            <button class="btn-primary" id="scrapeEquasis" type="button" disabled>Retrieve Equasis &amp; screen sanctions</button>
           </div>
-          <div class="field">
-            <label for="bulkEntities">Bulk paste</label>
-            <textarea id="bulkEntities" placeholder="Paste one entity per line"></textarea>
-            <button class="btn-secondary" id="addBulk" type="button">Add pasted entities</button>
+          <div class="lookup-error" id="lookupError" role="alert" hidden></div>
+          <div class="field-grid internal-fields" aria-hidden="true">
+            <div>
+              <label for="quotationRef">Quotation Ref no.</label>
+              <input id="quotationRef" data-review="quotationRef" placeholder="ART-YYYYMMDDNN-MW">
+            </div>
+            <div>
+              <label for="listedArea">Listed Area</label>
+              <input id="listedArea" data-review="listedArea" placeholder="Gulf of Aden/Red Sea/Indian Ocean">
+            </div>
+            <div>
+              <label for="eta">Estimated Date of Arrival</label>
+              <input id="eta" data-review="eta" placeholder="YYYY-MM-DD or free text">
+            </div>
+            <div>
+              <label for="flag">Flag</label>
+              <input id="flag" data-review="flag" placeholder="Flag state">
+            </div>
+            <div>
+              <label for="vesselName">Vessel Name</label>
+              <input id="vesselName" data-review="vesselName" placeholder="MV TRAVERSE SINGAPORE">
+            </div>
+            <div class="span-2">
+              <label for="commercialManager">Commercial Manager</label>
+              <input id="commercialManager" data-review="commercialManager" placeholder="Commercial manager from Equasis">
+            </div>
+            <div class="span-2">
+              <label for="registeredOwner">Registered Owner</label>
+              <input id="registeredOwner" data-review="registeredOwner" placeholder="Registered owner from Equasis">
+            </div>
+            <div class="span-2">
+              <label for="ismManager">ISM Manager</label>
+              <input id="ismManager" data-review="ismManager" placeholder="ISM manager from Equasis" readonly>
+            </div>
+            <div class="span-2">
+              <label for="equasisManagement">Equasis Management Table</label>
+              <textarea id="equasisManagement" data-review="equasisManagement" placeholder="IMO number | Role | Company | Address | Date of effect" readonly></textarea>
+            </div>
+            <div class="span-2">
+              <label for="ownerAddress">Owner / Manager Address</label>
+              <textarea id="ownerAddress" data-review="ownerAddress" placeholder="Paste address or source note from Equasis"></textarea>
+            </div>
           </div>
-          <div class="entity-list" id="entityList" aria-label="Entities to screen"></div>
+
+          <div class="workflow" aria-label="Research workflow">
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">1</span>
+                <div class="step-title">
+                  <strong>Run Equasis IMO lookup</strong>
+                  <span>Local automation signs in from VM secrets, searches the IMO, then captures vessel, owner, manager, and fleet rows.</span>
+                </div>
+              </div>
+              <div class="step-actions">
+                <button class="btn-primary" data-open-source="equasis" type="button">Open Equasis</button>
+                <button class="btn-secondary" data-copy-term="imo" type="button">Copy IMO</button>
+                <button class="btn-secondary" data-capture-source="equasis" data-capture-term="imo" type="button">Capture Equasis</button>
+              </div>
+            </article>
+
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">2</span>
+                <div class="step-title">
+                  <strong>Open HiFleet and search the IMO</strong>
+                  <span>Capture AIS position, port history, and any Israel/US/UK call-port exposure.</span>
+                </div>
+              </div>
+              <div class="step-actions">
+                <button class="btn-primary" data-open-source="hifleet" type="button">Open HiFleet</button>
+                <button class="btn-secondary" data-copy-term="imo" type="button">Copy IMO</button>
+                <button class="btn-secondary" data-capture-source="hifleet" data-capture-term="imo" type="button">Capture HiFleet</button>
+              </div>
+            </article>
+
+            <article class="step">
+              <div class="step-head">
+                <span class="step-number">3</span>
+                <div class="step-title">
+                  <strong>Run each sanctions source for every search term</strong>
+                  <span>Search IMO, vessel name, commercial manager, and registered owner, then attach screenshots.</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="note">
+            This static GitHub Pages site never stores third-party passwords. Automatic Equasis login and IMO search run only in the local Playwright runner using ignored VM secrets; this page displays the resulting screenshots and extracted ship information.
+          </div>
+
+          <div class="automation-summary" id="automationSummary">
+            <strong>Automated evidence runner</strong>
+            <span>Run <code>python3 scripts/run_uw_web_evidence.py --headless false</code> locally to operate Equasis, HiFleet, OFAC, UK, EU Sanctions Tracker, and DMA vessel designation pages, then publish the generated manifest/screenshots.</span>
+          </div>
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel progress-stage" id="equasisStage" hidden>
         <div class="panel-header">
-          <h2 id="currentTitle">Select an entity</h2>
-          <span class="badge pending" id="currentStatus">Pending</span>
+          <h2>2. Equasis Ship &amp; Management</h2>
+          <span class="badge clear">Retrieved</span>
         </div>
         <div class="panel-body">
-          <div class="decision-grid">
-            <div class="field">
-              <label for="entityType">Entity type</label>
-              <select id="entityType">
-                <option>Company</option>
-                <option>Vessel</option>
-                <option>Individual</option>
-                <option>Owner / Manager</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="riskLevel">Risk level</label>
-              <select id="riskLevel">
-                <option>Standard</option>
-                <option>High</option>
-                <option>Enhanced due diligence</option>
-              </select>
-            </div>
+          <div class="ship-summary">
+            <div><span>Ship name</span><strong id="summaryVessel">—</strong></div>
+            <div><span>IMO</span><strong id="summaryImo">—</strong></div>
+            <div><span>Flag</span><strong id="summaryFlag">—</strong></div>
           </div>
-
-          <div class="checklist" id="checklist"></div>
-        </div>
-      </section>
-
-      <section class="panel decision-panel">
-        <div class="panel-header">
-          <h2>Decision & Audit</h2>
-          <span id="saveState" class="badge clear">Saved locally</span>
-        </div>
-        <div class="decision-strip" role="radiogroup" aria-label="Screening decision">
-          <label class="decision-option"><input type="radio" name="decision" value="clear"> Clear</label>
-          <label class="decision-option"><input type="radio" name="decision" value="review"> Review</label>
-          <label class="decision-option"><input type="radio" name="decision" value="match"> Match</label>
-        </div>
-        <div class="panel-body">
-          <div class="field">
-            <label for="reviewer">Reviewer</label>
-            <input id="reviewer" placeholder="Name or initials">
-          </div>
-          <div class="field">
-            <label for="notes">Reviewer notes</label>
-            <textarea id="notes" placeholder="Record rationale, escalation owner, or next action"></textarea>
-          </div>
-          <button class="btn-primary" id="completeEntity" type="button">Complete current screening</button>
-
-          <h2 style="font-size:15px;margin:18px 0 10px;">Recent Audit Entries</h2>
-          <div class="audit-log">
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Entity</th>
-                  <th>Decision</th>
-                  <th>Sources</th>
-                </tr>
-              </thead>
-              <tbody id="auditRows"></tbody>
+          <div class="table-scroll">
+            <table class="management-table">
+              <thead><tr><th>Company IMO</th><th>Role</th><th>Company</th><th>Address</th><th>Date of effect</th></tr></thead>
+              <tbody id="managementRows"></tbody>
             </table>
-            <div class="empty" id="auditEmpty">No completed screenings yet.</div>
           </div>
         </div>
       </section>
+
+      <section class="panel" id="sourceTasksPanel">
+        <div class="panel-header">
+          <h2>Official Source Search & Screenshots</h2>
+          <span class="badge pending" id="captureState">Ready</span>
+        </div>
+        <div class="panel-body source-grid" id="sourceGrid"></div>
+      </section>
+
+      <aside class="right-column stack">
+        <section class="panel progress-stage" id="sanctionsEvidencePanel" hidden>
+          <div class="panel-header">
+          <h2>Returned Sanctions Matches</h2>
+            <span class="badge info" id="snapshotDate">Loading</span>
+          </div>
+          <div class="panel-body">
+            <div class="match-list" id="localMatches"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Fleet Info</h2>
+            <span class="badge info">Equasis</span>
+          </div>
+          <div class="panel-body">
+            <div class="fleet-tabs">
+              <button class="fleet-tab active" id="managerFleetTab" type="button">Commercial Manager</button>
+              <button class="fleet-tab" id="ownerFleetTab" type="button">Registered Owner</button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ship</th>
+                    <th>GT</th>
+                    <th>Type</th>
+                    <th>Flag</th>
+                    <th>Acting as</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>3. OFAC, UK &amp; EU Results</h2>
+            <span class="badge clear" id="evidenceCount">0 saved</span>
+          </div>
+          <div class="panel-body sanctions-groups" id="evidenceGrid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Decision & Notes</h2>
+            <span class="badge clear" id="saveState">Saved locally</span>
+          </div>
+          <div class="panel-body stack">
+            <div class="field-grid">
+              <div>
+                <label for="reviewer">Reviewer</label>
+                <input id="reviewer" data-review="reviewer" placeholder="Name or initials">
+              </div>
+              <div>
+                <label for="decision">Decision</label>
+                <select id="decision" data-review="decision">
+                  <option>Pending</option>
+                  <option>Clear</option>
+                  <option>Review</option>
+                  <option>Match</option>
+                </select>
+              </div>
+              <div class="span-2">
+                <label for="notes">Reviewer notes</label>
+                <textarea id="notes" data-review="notes" placeholder="Record rationale, escalation owner, missing screenshots, or source limitations"></textarea>
+              </div>
+            </div>
+
+            <div class="source-status" id="sourceStatus"></div>
+          </div>
+        </section>
+      </aside>
     </main>
   </div>
 
+  <input class="hidden-input" id="uploadEvidence" type="file" accept="image/*">
+
   <script>
-    const sources = [
+    const officialSources = [
       {
         key: "ofac",
         name: "OFAC Sanctions Search",
-        detail: "US Treasury SDN and consolidated sanctions screening",
-        url: "https://sanctionssearch.ofac.treas.gov/"
+        url: "https://sanctionssearch.ofac.treas.gov/",
+        detail: "US Treasury web search. Screen each term and capture the visible result page.",
+        localSources: ["ofac_sdn", "ofac_consolidated"]
       },
       {
-        key: "uk",
-        name: "UK Sanctions List",
-        detail: "UK consolidated list search and designation evidence",
-        url: "https://search-uk-sanctions-list.service.gov.uk/"
+        key: "uk_reg",
+        name: "UK Sanctions List Search",
+        url: "https://search-uk-sanctions-list.service.gov.uk/",
+        detail: "Official UK sanctions search. Open the page, search each term, then capture and download the result screenshot.",
+        localSources: ["uk"]
       },
       {
-        key: "eu",
-        name: "EU Financial Sanctions",
-        detail: "EU consolidated financial sanctions source",
-        url: "https://webgate.ec.europa.eu/cfs/public/#/screening"
+        key: "eu_tracker",
+        name: "EU Sanctions Tracker",
+        url: "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
+        detail: "EU tracker entity search. Open the page, search each term, then capture and download the entity/no-result screenshot.",
+        localSources: ["eu"]
       },
       {
-        key: "internal",
-        name: "Internal / Counterparty Records",
-        detail: "Known aliases, beneficial ownership, vessel manager, or prior notes",
-        url: "#"
+        key: "eu_vessel_designations",
+        name: "EU Vessel Designations - DMA",
+        url: "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
+        detail: "EU vessel designations from the Danish Maritime Authority. Open the page, find the IMO or ship name, then capture and download the screenshot.",
+        localSources: ["eu"]
       }
     ];
 
-    const sampleEntities = [
-      "TRANSFAR SHIPPING PTE",
-      "TRANSFAR BANGKOK HOLDINGS",
-      "BERNHARD SCHULTE",
-      "DUBAI TOWER",
-      "M-Trans"
-    ];
-
-    const state = JSON.parse(localStorage.getItem("sanctionsChecklist") || "{}");
-    state.entities ||= [];
-    state.activeId ||= "";
-    state.audit ||= [];
-    state.reviewer ||= "";
-
-    const els = {
-      entityName: document.getElementById("entityName"),
-      bulkEntities: document.getElementById("bulkEntities"),
-      entityList: document.getElementById("entityList"),
-      checklist: document.getElementById("checklist"),
-      currentTitle: document.getElementById("currentTitle"),
-      currentStatus: document.getElementById("currentStatus"),
-      entityType: document.getElementById("entityType"),
-      riskLevel: document.getElementById("riskLevel"),
-      reviewer: document.getElementById("reviewer"),
-      notes: document.getElementById("notes"),
-      saveState: document.getElementById("saveState"),
-      auditRows: document.getElementById("auditRows"),
-      auditEmpty: document.getElementById("auditEmpty")
+    const researchSources = {
+      equasis: {
+        key: "equasis",
+        name: "Equasis",
+        url: "https://www.equasis.org/EquasisWeb/public/HomePage"
+      },
+      hifleet: {
+        key: "hifleet",
+        name: "HiFleet",
+        url: "https://hifleet.com/"
+      }
     };
 
-    function createEntity(name) {
+    const traverseSample = {
+      quotationRef: "ART-2026070209-MW",
+      listedArea: "Gulf of Aden/Red Sea/Indian Ocean",
+      eta: "2026-07-15 Suez Canal / 2026-08-05 Ghent",
+      flag: "Panama",
+      vesselName: "MV TRAVERSE SINGAPORE",
+      imo: "9342865",
+      commercialManager: "GOLDENKING SHIP MANAGEMENT (GUANGZHOU) CO., LTD",
+      registeredOwner: "Traverse Shipping Co., Ltd",
+      ownerAddress: "C/O Goldenking Ship Management (Guangzhou) Co Ltd, 106 Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China",
+      reviewer: "",
+      decision: "Pending",
+      notes: "Modelled from UW Review - draft - Traverse Singapore - updated.xlsx."
+    };
+
+    const defaultReview = {
+      quotationRef: "",
+      listedArea: "",
+      eta: "",
+      flag: "",
+      vesselName: "",
+      imo: "",
+      commercialManager: "",
+      registeredOwner: "",
+      ismManager: "",
+      equasisManagement: "",
+      ownerAddress: "",
+      reviewer: "",
+      decision: "Pending",
+      notes: ""
+    };
+
+    const state = loadState();
+    let sanctionsData = { generated_at: "", sources: [], records: [] };
+    let evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {}, equasis: {} };
+    let activeFleet = "manager";
+    let pendingUpload = null;
+    let backendAvailable = false;
+    const configuredApiBase = new URLSearchParams(window.location.search).get("api") ||
+      window.SANCTIONS_API_BASE || "https://marine-uw-workbench.onrender.com";
+    let apiBase = ["localhost", "127.0.0.1", "marine-uw-workbench.onrender.com"].includes(window.location.hostname)
+      ? window.location.origin
+      : String(configuredApiBase).replace(/\/$/, "");
+    const reviewId = loadReviewId();
+
+    const els = {
+      sourceGrid: document.getElementById("sourceGrid"),
+      localMatches: document.getElementById("localMatches"),
+      evidenceGrid: document.getElementById("evidenceGrid"),
+      evidenceCount: document.getElementById("evidenceCount"),
+      sourceStatus: document.getElementById("sourceStatus"),
+      snapshotDate: document.getElementById("snapshotDate"),
+      saveState: document.getElementById("saveState"),
+      captureState: document.getElementById("captureState"),
+      uploadEvidence: document.getElementById("uploadEvidence"),
+      fleetRows: document.getElementById("fleetRows"),
+      automationSummary: document.getElementById("automationSummary")
+    };
+
+    function loadState() {
+      let stored = {};
+      try {
+        stored = JSON.parse(localStorage.getItem("marineUwWorkbench") || "{}");
+      } catch (error) {
+        localStorage.removeItem("marineUwWorkbench");
+      }
       return {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-        name: name.trim(),
-        type: "Company",
-        risk: "Standard",
-        decision: "pending",
-        notes: "",
-        updatedAt: new Date().toISOString(),
-        checks: Object.fromEntries(sources.map(source => [source.key, {
-          done: false,
-          result: "No match",
-          evidence: ""
-        }]))
+        review: { ...defaultReview, ...(stored.review || traverseSample) },
+        evidence: stored.evidence || []
       };
     }
 
-    function activeEntity() {
-      return state.entities.find(entity => entity.id === state.activeId) || state.entities[0];
+    function loadReviewId() {
+      let id = localStorage.getItem("marineUwReviewId");
+      if (!id) {
+        id = crypto.randomUUID ? crypto.randomUUID() : `review-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        localStorage.setItem("marineUwReviewId", id);
+      }
+      return id;
+    }
+
+    function apiUrl(path) {
+      return `${apiBase}${path.startsWith("/") ? path : `/${path}`}`;
+    }
+
+    async function responsePayload(response) {
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) return response.json();
+      const text = await response.text();
+      const summary = text.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
+      throw new Error(response.ok
+        ? "The screening service returned an invalid response. Please try again."
+        : `Screening service error (${response.status})${summary ? `: ${summary}` : ""}`);
     }
 
     function save() {
-      localStorage.setItem("sanctionsChecklist", JSON.stringify(state));
-      els.saveState.textContent = "Saved locally";
-      els.saveState.className = "badge clear";
+      try {
+        localStorage.setItem("marineUwWorkbench", JSON.stringify(state));
+        els.saveState.textContent = backendAvailable ? "Saving…" : "Saved locally";
+        els.saveState.className = "badge clear";
+        scheduleBackendSave();
+      } catch (error) {
+        els.saveState.textContent = "Storage full";
+        els.saveState.className = "badge review";
+      }
+    }
+
+    function scheduleBackendSave() {
+      if (!backendAvailable) return;
+      window.clearTimeout(scheduleBackendSave.timer);
+      scheduleBackendSave.timer = window.setTimeout(saveToBackend, 350);
+    }
+
+    async function saveToBackend() {
+      try {
+        const response = await fetch(apiUrl(`/api/reviews/${encodeURIComponent(reviewId)}`), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(state)
+        });
+        if (!response.ok) throw new Error(`Save failed (${response.status})`);
+        els.saveState.textContent = "Saved to server";
+        els.saveState.className = "badge clear";
+      } catch (error) {
+        els.saveState.textContent = "Server save failed; local copy kept";
+        els.saveState.className = "badge review";
+      }
+    }
+
+    async function loadBackendState() {
+      try {
+        const health = await fetch(apiUrl("/api/health"), { cache: "no-store" });
+        if (!health.ok) return;
+        await responsePayload(health);
+        backendAvailable = true;
+        const response = await fetch(apiUrl(`/api/reviews/${encodeURIComponent(reviewId)}`), { cache: "no-store" });
+        if (response.ok) {
+          const stored = await responsePayload(response);
+          state.review = { ...defaultReview, ...(stored.state.review || {}) };
+          state.evidence = Array.isArray(stored.state.evidence) ? stored.state.evidence : [];
+          localStorage.setItem("marineUwWorkbench", JSON.stringify(state));
+          els.saveState.textContent = "Loaded from server";
+        } else if (response.status === 404) {
+          await saveToBackend();
+        }
+        render();
+      } catch (error) {
+        backendAvailable = false;
+      }
     }
 
     function dirty() {
@@ -661,183 +1058,548 @@
       dirty.timer = window.setTimeout(() => {
         save();
         render();
-      }, 250);
+      }, 200);
     }
 
-    function statusLabel(decision) {
-      if (decision === "clear") return "Clear";
-      if (decision === "review") return "Review";
-      if (decision === "match") return "Match";
-      return "Pending";
+    async function scrapeEquasis() {
+      const imo = String(state.review.imo || "").replace(/\D/g, "");
+      if (!/^\d{7}$/.test(imo)) {
+        window.alert("Enter a seven-digit IMO first.");
+        return;
+      }
+      const button = document.getElementById("scrapeEquasis");
+      const errorBox = document.getElementById("lookupError");
+      errorBox.hidden = true;
+      errorBox.textContent = "";
+      button.disabled = true;
+      button.textContent = "Scraping…";
+      try {
+        const response = await fetch(apiUrl(`/api/equasis/${encodeURIComponent(imo)}`), { method: "POST" });
+        const payload = await responsePayload(response);
+        if (!response.ok) throw new Error(payload.detail || "Equasis lookup failed");
+        const details = payload.details || {};
+        const management = payload.management || [];
+        const roleRow = role => management.find(row => String(row.role || "").toLowerCase().includes(role));
+        const ism = roleRow("ism manager");
+        const commercial = roleRow("commercial manager") || roleRow("ship manager");
+        const owner = roleRow("registered owner");
+        state.review.imo = payload.imo || imo;
+        state.review.vesselName = details.vesselName || state.review.vesselName;
+        state.review.flag = details.flag || payload.shipFields?.Flag || state.review.flag;
+        state.review.ismManager = ism?.company || "";
+        state.review.commercialManager = commercial?.company || details.commercialManager || "";
+        state.review.registeredOwner = owner?.company || details.registeredOwner || "";
+        state.review.ownerAddress = owner?.address || commercial?.address || details.ownerAddress || "";
+        state.review.equasisManagement = management.map(row =>
+          [row.company_imo, row.role, row.company, row.address, row.date_of_effect].filter(value => value !== undefined).join(" | ")
+        ).join("\n");
+        evidenceManifest = {
+          generated_at: payload.generatedAt || new Date().toISOString(),
+          summary: payload.summary || {},
+          screenshots: payload.screenshots || [],
+          source_results: payload.sourceResults || [],
+          fleet: {
+            manager: management.filter(row => String(row.role || "").toLowerCase().includes("manager")),
+            owner: management.filter(row => String(row.role || "").toLowerCase().includes("owner"))
+          },
+          review: { ...state.review },
+          equasis: { details, ship_fields: payload.shipFields || {}, management }
+        };
+        if (payload.warning) {
+          state.review.notes = [state.review.notes, `Equasis warning: ${payload.warning}`].filter(Boolean).join("\n");
+        }
+        save();
+        render();
+      } catch (error) {
+        errorBox.textContent = error.message || String(error);
+        errorBox.hidden = false;
+        document.getElementById("imoState").textContent = "Lookup failed";
+        document.getElementById("imoState").className = "badge review";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Retrieve Equasis & screen sanctions";
+      }
+    }
+
+    function assetUrl(path) {
+      const cleanPath = String(path || "").replace(/^\/+/, "");
+      const marker = "/Underwriting/";
+      if (window.location.pathname.startsWith(marker)) return `${marker}${cleanPath}`;
+      return cleanPath;
+    }
+
+    async function loadStaticData() {
+      try {
+        const [snapshotResponse, evidenceResponse] = await Promise.all([
+          fetch(assetUrl("data/sanctions_snapshot.json"), { cache: "no-store" }),
+          fetch(assetUrl("data/evidence_manifest.json"), { cache: "no-store" })
+        ]);
+        if (snapshotResponse.ok) sanctionsData = await snapshotResponse.json();
+        if (evidenceResponse.ok) {
+          const published = await evidenceResponse.json();
+          const requestedImo = String(state.review.imo || "").replace(/\D/g, "");
+          const publishedImo = String(published.review?.imo || "").replace(/\D/g, "");
+          if (requestedImo && requestedImo === publishedImo) evidenceManifest = published;
+        }
+      } catch (error) {
+        sanctionsData.status = "unavailable";
+      }
+      render();
+    }
+
+    function searchTerms() {
+      return [
+        ["imo", "IMO", state.review.imo],
+        ["vessel", "Ship name", state.review.vesselName],
+        ["manager", "Commercial manager", state.review.commercialManager],
+        ["owner", "Registered owner", state.review.registeredOwner]
+      ].map(([key, label, value]) => ({ key, label, value: String(value || "").trim() }))
+        .filter(term => term.value);
+    }
+
+    function renderInputs() {
+      document.querySelectorAll("[data-review]").forEach(input => {
+        input.value = state.review[input.dataset.review] || "";
+      });
     }
 
     function renderMetrics() {
-      const counts = state.entities.reduce((memo, entity) => {
-        memo[entity.decision] = (memo[entity.decision] || 0) + 1;
-        return memo;
-      }, {});
-      document.getElementById("metricTotal").textContent = state.entities.length;
-      document.getElementById("metricClear").textContent = counts.clear || 0;
-      document.getElementById("metricReview").textContent = counts.review || 0;
-      document.getElementById("metricMatch").textContent = counts.match || 0;
-      document.getElementById("queueCount").textContent = `${counts.pending || 0} pending`;
+      const terms = searchTerms();
+      const taskCount = terms.length * officialSources.length;
+      const automatedCompleted = (evidenceManifest.source_results || []).filter(result => result.status && result.status !== "started" && result.status !== "failed" && result.status !== "timeout").length;
+      const hits = returnedMatches().length;
+      document.getElementById("metricTasks").textContent = taskCount;
+      document.getElementById("metricComplete").textContent = Math.min(automatedCompleted, taskCount + 2);
+      document.getElementById("metricHits").textContent = hits;
+      document.getElementById("metricEvidence").textContent = allEvidence().length;
+      els.evidenceCount.textContent = `${allEvidence().length} saved`;
     }
 
-    function renderEntities() {
-      els.entityList.innerHTML = "";
-      if (!state.entities.length) {
-        els.entityList.innerHTML = '<div class="empty">Add entities to begin screening.</div>';
+    function renderSources() {
+      const terms = searchTerms();
+      if (!terms.length) {
+        els.sourceGrid.innerHTML = '<div class="empty">Enter an IMO, vessel name, manager, or owner to build source search tasks.</div>';
         return;
       }
 
-      state.entities.forEach(entity => {
-        const complete = Object.values(entity.checks).filter(check => check.done).length;
-        const button = document.createElement("button");
-        button.className = `entity ${entity.id === state.activeId ? "active" : ""}`;
-        button.type = "button";
-        button.innerHTML = `
-          <span class="entity-title">${escapeHtml(entity.name)}</span>
-          <span class="entity-meta">
-            <span class="badge ${entity.decision}">${statusLabel(entity.decision)}</span>
-            <span>${complete}/${sources.length} sources</span>
-            <span>${escapeHtml(entity.risk)}</span>
-          </span>
-        `;
-        button.addEventListener("click", () => {
-          state.activeId = entity.id;
-          save();
-          render();
-        });
-        els.entityList.appendChild(button);
-      });
+      els.sourceGrid.innerHTML = officialSources.map(source => `
+        <article class="source-card">
+          <div class="source-card-head">
+            <div>
+              <h3>${escapeHtml(source.name)}</h3>
+              <p>${escapeHtml(source.detail)}</p>
+            </div>
+            <button class="btn-primary" data-open-source="${source.key}" type="button">Open official page</button>
+          </div>
+          <div class="table-scroll">
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Search term</th>
+                  <th>Result</th>
+                  <th>Evidence</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${terms.map(term => taskRow(source, term)).join("")}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      `).join("");
     }
 
-    function renderCurrent() {
-      const entity = activeEntity();
-      if (!entity) {
-        els.currentTitle.textContent = "Select an entity";
-        els.currentStatus.textContent = "Pending";
-        els.checklist.innerHTML = '<div class="empty">No active entity selected.</div>';
+    function taskRow(source, term) {
+      const latest = latestEvidence(source.key, term.key, term.value);
+      const automated = automatedResult(source.key, term.key, term.value);
+      const badgeClass = automated ? resultBadgeClass(automated) : "pending";
+      const status = automated ? automated.label : "Not checked";
+      return `
+        <tr>
+          <td>
+            <strong>${escapeHtml(term.label)}</strong>
+            <div class="entity-meta">${escapeHtml(term.value)}</div>
+          </td>
+          <td>
+            <span class="badge ${badgeClass}">${escapeHtml(status)}</span>
+            ${automated && automated.error ? `<div class="entity-meta">${escapeHtml(automated.error)}</div>` : ""}
+          </td>
+          <td>
+            ${latest ? `<span class="badge clear">${escapeHtml(new Date(latest.capturedAt).toLocaleString())}</span>` : '<span class="badge pending">No screenshot</span>'}
+          </td>
+          <td>
+            <div class="task-actions">
+              <button class="btn-secondary" data-copy-value="${escapeAttr(term.value)}" type="button">Copy</button>
+              <button class="btn-secondary" data-capture-source="${source.key}" data-capture-term="${term.key}" type="button">Capture</button>
+              <button class="btn-secondary" data-upload-source="${source.key}" data-upload-term="${term.key}" type="button">Upload</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderMatches() {
+      const matches = returnedMatches();
+      els.snapshotDate.textContent = sanctionsData.generated_at ? new Date(sanctionsData.generated_at).toLocaleDateString() : "Unavailable";
+      els.snapshotDate.className = `badge ${matches.length ? "review" : "info"}`;
+      if (!matches.length) {
+        els.localMatches.innerHTML = '<div class="empty">No sanctions matches were returned by the completed OFAC, UK, or EU website checks.</div>';
         return;
       }
-
-      state.activeId = entity.id;
-      els.currentTitle.textContent = entity.name;
-      els.currentStatus.textContent = statusLabel(entity.decision);
-      els.currentStatus.className = `badge ${entity.decision}`;
-      els.entityType.value = entity.type;
-      els.riskLevel.value = entity.risk;
-      els.reviewer.value = state.reviewer;
-      els.notes.value = entity.notes;
-      document.querySelectorAll('input[name="decision"]').forEach(input => {
-        input.checked = input.value === entity.decision;
-      });
-
-      els.checklist.innerHTML = "";
-      sources.forEach(source => {
-        const check = entity.checks[source.key];
-        const item = document.createElement("article");
-        item.className = "check-item";
-        item.innerHTML = `
-          <div class="check-head">
-            <input data-source="${source.key}" data-field="done" type="checkbox" ${check.done ? "checked" : ""} aria-label="${source.name} completed">
-            <div class="check-title">
-              <strong>${source.name}</strong>
-              <span>${source.detail}</span>
-            </div>
-            <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">Open source</a>
+      els.localMatches.innerHTML = matches.slice(0, 30).map(match => `
+        <div class="match-row">
+          <strong>${escapeHtml(match.source_name)}</strong>
+          <div class="entity-meta">
+            <span>${escapeHtml(match.term_label)}: ${escapeHtml(match.term_value)}</span>
+            <span>${escapeHtml(match.result_label || match.status)}</span>
+            ${match.raw_text_file ? `<span>${escapeHtml(match.raw_text_file)}</span>` : ""}
           </div>
-          <div class="evidence-grid">
-            <div class="field">
-              <label>Result</label>
-              <select data-source="${source.key}" data-field="result">
-                ${["No match", "Possible match", "Confirmed match", "Source unavailable"].map(value => `
-                  <option ${value === check.result ? "selected" : ""}>${value}</option>
-                `).join("")}
-              </select>
-            </div>
-            <div class="field">
-              <label>Evidence / Reference</label>
-              <input data-source="${source.key}" data-field="evidence" value="${escapeAttr(check.evidence)}" placeholder="Search term, list ID, screenshot file, or note">
-            </div>
-          </div>
-        `;
-        els.checklist.appendChild(item);
-      });
+        </div>
+      `).join("");
     }
 
-    function renderAudit() {
-      els.auditRows.innerHTML = "";
-      els.auditEmpty.style.display = state.audit.length ? "none" : "block";
-      state.audit.slice(-12).reverse().forEach(entry => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${escapeHtml(new Date(entry.completedAt).toLocaleString())}</td>
-          <td>${escapeHtml(entry.name)}</td>
-          <td><span class="badge ${entry.decision}">${statusLabel(entry.decision)}</span></td>
-          <td>${entry.sourcesComplete}/${sources.length}</td>
+    function returnedMatches() {
+      return (evidenceManifest.source_results || []).filter(result => result.match_found);
+    }
+
+    function renderEvidence() {
+      renderAutomationSummary();
+      const evidence = allEvidence().filter(item => ["ofac", "uk_reg", "eu_tracker", "eu_vessel_designations"].includes(item.sourceKey));
+      if (!evidence.length) {
+        els.evidenceGrid.innerHTML = "";
+        return;
+      }
+      const groups = [
+        { label: "OFAC", keys: ["ofac"] },
+        { label: "UK Sanctions List", keys: ["uk_reg"] },
+        { label: "European Union", keys: ["eu_tracker", "eu_vessel_designations"] }
+      ];
+      const card = item => `
+        <article class="evidence-card">
+          <img src="${imageSrc(item)}" alt="${escapeAttr(item.sourceName)} screenshot for ${escapeAttr(item.termValue)}">
+          <div class="evidence-card-body">
+            <strong>${escapeHtml(item.sourceName)} - ${escapeHtml(item.termLabel)}</strong>
+            <span class="entity-meta">${escapeHtml(item.termValue)}</span>
+            ${item.status ? `<span class="badge ${item.manualReviewRequired ? "review" : item.status === "match_found" ? "review" : "clear"}">${escapeHtml(item.status === "no_match" ? "No match returned" : item.status)}</span>` : ""}
+            <div class="task-actions">
+              <a class="btn-secondary" href="${imageSrc(item)}" download="${downloadName(item)}">Download</a>
+            </div>
+          </div>
+        </article>
+      `;
+      els.evidenceGrid.innerHTML = groups.map(group => {
+        const items = evidence.filter(item => group.keys.includes(item.sourceKey));
+        if (!items.length) return "";
+        return `<section class="sanctions-group"><h3>${escapeHtml(group.label)}</h3><div class="evidence-grid">${items.map(card).join("")}</div></section>`;
+      }).join("");
+    }
+
+    function renderProgressiveStages() {
+      const imo = String(state.review.imo || "").replace(/\D/g, "");
+      const validImo = /^\d{7}$/.test(imo);
+      const button = document.getElementById("scrapeEquasis");
+      button.disabled = !validImo;
+      document.getElementById("imoState").textContent = validImo ? "IMO ready" : "Waiting for IMO";
+      document.getElementById("imoState").className = `badge ${validImo ? "clear" : "info"}`;
+
+      const management = evidenceManifest.equasis?.management || [];
+      const hasEquasis = management.length > 0 && String(evidenceManifest.review?.imo || state.review.imo) === String(state.review.imo);
+      document.getElementById("equasisStage").hidden = !hasEquasis;
+      if (hasEquasis) {
+        document.getElementById("summaryVessel").textContent = state.review.vesselName || "—";
+        document.getElementById("summaryImo").textContent = state.review.imo || "—";
+        document.getElementById("summaryFlag").textContent = state.review.flag || "—";
+        document.getElementById("managementRows").innerHTML = management.map(row => `
+          <tr><td>${escapeHtml(row.company_imo || "")}</td><td><strong>${escapeHtml(row.role || "")}</strong></td><td>${escapeHtml(row.company || "")}</td><td>${escapeHtml(row.address || "")}</td><td>${escapeHtml(row.date_of_effect || "")}</td></tr>
+        `).join("");
+      }
+      const hasSanctions = (evidenceManifest.screenshots || []).some(item => ["ofac", "uk_reg", "eu_tracker", "eu_vessel_designations"].includes(item.source_key));
+      document.getElementById("sanctionsEvidencePanel").hidden = !hasSanctions;
+    }
+
+    function renderFleet() {
+      document.getElementById("managerFleetTab").classList.toggle("active", activeFleet === "manager");
+      document.getElementById("ownerFleetTab").classList.toggle("active", activeFleet === "owner");
+      const manifestRows = ((evidenceManifest.fleet || {})[activeFleet] || []).map(row => [
+        row.ship || row.vessel_name || "",
+        row.gross_tonnage || row.gt || "",
+        row.type || row.ship_type || "",
+        row.flag || "",
+        row.acting_as || row.role || ""
+      ]).filter(row => row.some(Boolean));
+      const rows = manifestRows;
+      if (!rows.length) {
+        const equasis = evidenceManifest.equasis || {};
+        const missing = (equasis.missing_fields || []).join(", ");
+        els.fleetRows.innerHTML = `
+          <tr>
+            <td colspan="5">${escapeHtml(equasis.error || (missing ? `Could not identify Equasis fields: ${missing}` : "No Equasis management rows identified from the latest automated run."))}</td>
+          </tr>
         `;
-        els.auditRows.appendChild(row);
-      });
+        return;
+      }
+      els.fleetRows.innerHTML = rows.map(row => `
+        <tr>
+          <td><strong>${escapeHtml(row[0])}</strong></td>
+          <td>${escapeHtml(row[1])}</td>
+          <td>${escapeHtml(row[2])}</td>
+          <td>${escapeHtml(row[3])}</td>
+          <td>${escapeHtml(row[4])}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderAutomationSummary() {
+      const summary = evidenceManifest.summary || {};
+      const generated = evidenceManifest.generated_at ? formatDate(evidenceManifest.generated_at) : "No automated run published";
+      els.automationSummary.innerHTML = `
+        <strong>Automated evidence runner</strong>
+        <span>${escapeHtml(generated)}</span>
+        <span>${escapeHtml(summary.total_screenshots || 0)} screenshots | ${escapeHtml(summary.completed_sources || 0)} completed source actions | ${escapeHtml(summary.matches_found || 0)} matches returned | ${escapeHtml(summary.manual_review_required || 0)} manual-review flags</span>
+        <span>Equasis login is local-only via <code>.env</code>; credentials are never embedded in the website.</span>
+        <span>Command: <code>python3 scripts/run_uw_web_evidence.py --headless false</code></span>
+      `;
+    }
+
+    function renderSourceStatus() {
+      const sources = sanctionsData.sources || [];
+      if (!sources.length) {
+        els.sourceStatus.innerHTML = '<div class="empty">No sanctions data snapshot loaded.</div>';
+        return;
+      }
+      els.sourceStatus.innerHTML = sources.filter(source => source.key !== "eu_local_pdf").map(source => `
+        <div class="source-status-row">
+          <div>
+            <strong>${escapeHtml(source.name)}</strong>
+            <span class="entity-meta">${escapeHtml(source.records || 0)} records | ${escapeHtml(source.last_modified || sanctionsData.generated_at || "No timestamp")}</span>
+          </div>
+          <span class="badge ${source.status === "ok" ? "clear" : "review"}">${escapeHtml(source.status)}</span>
+        </div>
+      `).join("");
     }
 
     function render() {
+      renderInputs();
       renderMetrics();
-      renderEntities();
-      renderCurrent();
-      renderAudit();
+      renderSources();
+      renderMatches();
+      renderEvidence();
+      renderFleet();
+      renderSourceStatus();
+      renderProgressiveStages();
     }
 
-    function addEntities(names) {
-      const cleanNames = names.map(name => name.trim()).filter(Boolean);
-      cleanNames.forEach(name => state.entities.push(createEntity(name)));
-      if (!state.activeId && state.entities.length) state.activeId = state.entities[0].id;
-      save();
-      render();
+    async function captureEvidence(sourceKey, termKey) {
+      const source = sourceByKey(sourceKey);
+      const term = termByKey(termKey);
+      if (!source || !term) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        window.alert("Screen capture is not available in this browser. Use Upload instead.");
+        return;
+      }
+
+      els.captureState.textContent = "Choose tab/window";
+      els.captureState.className = "badge review";
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        await new Promise((resolve, reject) => {
+          video.onloadedmetadata = resolve;
+          video.onerror = reject;
+        });
+        await video.play();
+        await new Promise(resolve => window.setTimeout(resolve, 250));
+        const image = frameToDataUrl(video);
+        stream.getTracks().forEach(track => track.stop());
+        addEvidence(source, term, image);
+        els.captureState.textContent = "Captured";
+        els.captureState.className = "badge clear";
+      } catch (error) {
+        els.captureState.textContent = "Capture cancelled";
+        els.captureState.className = "badge pending";
+      }
     }
 
-    function completeCurrent() {
-      const entity = activeEntity();
-      if (!entity) return;
-      const sourcesComplete = Object.values(entity.checks).filter(check => check.done).length;
-      entity.updatedAt = new Date().toISOString();
-      state.audit.push({
-        completedAt: entity.updatedAt,
-        name: entity.name,
-        decision: entity.decision,
-        reviewer: state.reviewer,
-        sourcesComplete,
-        notes: entity.notes
+    function frameToDataUrl(video) {
+      const maxWidth = 1400;
+      const scale = Math.min(1, maxWidth / Math.max(video.videoWidth, 1));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+      canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/jpeg", 0.82);
+    }
+
+    function addEvidence(source, term, image) {
+      state.evidence.unshift({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+        sourceKey: source.key,
+        sourceName: source.name,
+        termKey: term.key,
+        termLabel: term.label,
+        termValue: term.value,
+        capturedAt: new Date().toISOString(),
+        image
       });
       save();
       render();
+    }
+
+    function latestEvidence(sourceKey, termKey, termValue) {
+      const normalizedTerm = normalize(termValue);
+      return allEvidence().find(item => item.sourceKey === sourceKey && item.termKey === termKey && normalize(item.termValue) === normalizedTerm);
+    }
+
+    function openSource(sourceKey) {
+      const source = sourceByKey(sourceKey);
+      if (!source) return;
+      window.open(source.url, "_blank", "noopener,noreferrer");
+    }
+
+    async function copyValue(value) {
+      const text = String(value || "");
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const input = document.createElement("textarea");
+        input.value = text;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        input.remove();
+      }
+    }
+
+    function exportJson() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        review: state.review,
+        sourceResults: evidenceManifest.source_results || [],
+        evidence: allEvidence().map(item => ({
+          id: item.id,
+          sourceName: item.sourceName,
+          termLabel: item.termLabel,
+          termValue: item.termValue,
+          capturedAt: item.capturedAt,
+          image: item.image,
+          automated: Boolean(item.automated),
+          imageIncluded: true
+        })),
+        automatedManifest: evidenceManifest,
+        returnedMatches: returnedMatches()
+      };
+      downloadBlob(JSON.stringify(payload, null, 2), "marine-uw-review.json", "application/json");
     }
 
     function exportCsv() {
-      const header = [
-        "timestamp", "entity", "type", "risk", "decision", "reviewer", "sources_complete",
-        "ofac_result", "uk_result", "eu_result", "internal_result", "notes"
-      ];
-      const rows = state.entities.map(entity => {
-        const complete = Object.values(entity.checks).filter(check => check.done).length;
-        return [
-          entity.updatedAt, entity.name, entity.type, entity.risk, entity.decision, state.reviewer, complete,
-          entity.checks.ofac.result, entity.checks.uk.result, entity.checks.eu.result,
-          entity.checks.internal.result, entity.notes
-        ].map(csvCell).join(",");
-      });
-      const blob = new Blob([[header.join(","), ...rows].join("\n")], { type: "text/csv" });
+      const terms = searchTerms();
+      const header = ["source", "term_type", "term", "result", "screenshot_count"];
+      const rows = [];
+      for (const source of officialSources) {
+        for (const term of terms) {
+          const result = automatedResult(source.key, term.key, term.value);
+          const screenshotCount = allEvidence().filter(item => item.sourceKey === source.key && item.termKey === term.key && normalize(item.termValue) === normalize(term.value)).length;
+          rows.push([source.name, term.label, term.value, result ? result.label : "Not checked", screenshotCount].map(csvCell).join(","));
+        }
+      }
+      downloadBlob([header.join(","), ...rows].join("\n"), "marine-uw-source-results.csv", "text/csv");
+    }
+
+    function downloadBlob(content, filename, type) {
+      const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `sanctions-screening-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
     }
 
+    function allEvidence() {
+      const automated = (evidenceManifest.screenshots || []).map(item => ({
+        id: item.id || `${item.source_key}-${item.term_key}-${item.term_value}`,
+        sourceKey: item.source_key,
+        sourceName: item.source_name,
+        termKey: item.term_key,
+        termLabel: item.term_label,
+        termValue: item.term_value,
+        capturedAt: item.captured_at,
+        image: item.image,
+        status: item.status,
+        manualReviewRequired: Boolean(item.manual_review_required),
+        automated: true
+      })).filter(item => item.image);
+      return [...automated, ...state.evidence];
+    }
+
+    function automatedResult(sourceKey, termKey, termValue) {
+      const normalizedTerm = normalize(termValue);
+      const result = (evidenceManifest.source_results || []).find(item =>
+        item.source_key === sourceKey &&
+        item.term_key === termKey &&
+        normalize(item.term_value || "") === normalizedTerm
+      );
+      if (!result) return null;
+      return {
+        status: result.status,
+        label: result.result_label || (
+          result.status === "no_match" ? "No match returned" :
+          result.status === "match_found" ? "Match returned" :
+          result.status === "manual_review_required" ? "Cannot check" :
+          result.status
+        ),
+        matchFound: Boolean(result.match_found),
+        manualReviewRequired: Boolean(result.manual_review_required),
+        error: result.error || "",
+      };
+    }
+
+    function resultBadgeClass(result) {
+      if (result.matchFound) return "match";
+      if (result.manualReviewRequired) return "review";
+      if (result.status === "no_match") return "clear";
+      return "pending";
+    }
+
+    function imageSrc(item) {
+      if (!item.image) return "";
+      if (/^(data:|https?:)/i.test(item.image)) return item.image;
+      return assetUrl(item.image);
+    }
+
+    function sourceByKey(key) {
+      return officialSources.find(source => source.key === key) || researchSources[key];
+    }
+
+    function termByKey(key) {
+      return searchTerms().find(term => term.key === key) || (key === "imo" ? { key: "imo", label: "IMO", value: state.review.imo } : null);
+    }
+
+    function normalize(value) {
+      return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function downloadName(item) {
+      return `${item.sourceKey}-${item.termKey}-${item.capturedAt.slice(0, 10)}.jpg`;
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+    }
+
     function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
       }[char]));
     }
 
@@ -849,66 +1611,101 @@
       return `"${String(value ?? "").replace(/"/g, '""')}"`;
     }
 
-    document.getElementById("addEntity").addEventListener("click", () => {
-      addEntities([els.entityName.value]);
-      els.entityName.value = "";
-    });
-
-    els.entityName.addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        document.getElementById("addEntity").click();
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (target.dataset.review) {
+        state.review[target.dataset.review] = target.value;
+        if (target.id === "imo") {
+          target.value = target.value.replace(/\D/g, "").slice(0, 7);
+          state.review.imo = target.value;
+          evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {}, equasis: {} };
+          renderProgressiveStages();
+        }
+        dirty();
       }
     });
 
-    document.getElementById("addBulk").addEventListener("click", () => {
-      addEntities(els.bulkEntities.value.split(/\n+/));
-      els.bulkEntities.value = "";
+    document.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      if (button.dataset.openSource) {
+        openSource(button.dataset.openSource);
+      } else if (button.dataset.copyTerm) {
+        const term = termByKey(button.dataset.copyTerm);
+        copyValue(term ? term.value : "");
+      } else if (button.dataset.copyValue) {
+        copyValue(button.dataset.copyValue);
+      } else if (button.dataset.captureSource) {
+        captureEvidence(button.dataset.captureSource, button.dataset.captureTerm);
+      } else if (button.dataset.uploadSource) {
+        pendingUpload = { sourceKey: button.dataset.uploadSource, termKey: button.dataset.uploadTerm };
+        els.uploadEvidence.click();
+      } else if (button.dataset.deleteEvidence) {
+        state.evidence = state.evidence.filter(item => item.id !== button.dataset.deleteEvidence);
+        save();
+        render();
+      }
     });
 
-    document.getElementById("loadSample").addEventListener("click", () => addEntities(sampleEntities));
-    document.getElementById("exportCsv").addEventListener("click", exportCsv);
-    document.getElementById("resetAll").addEventListener("click", () => {
-      if (!confirm("Reset all local checklist data?")) return;
-      localStorage.removeItem("sanctionsChecklist");
-      state.entities = [];
-      state.activeId = "";
-      state.audit = [];
-      state.reviewer = "";
+    els.uploadEvidence.addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file || !pendingUpload) return;
+      const source = sourceByKey(pendingUpload.sourceKey);
+      const term = termByKey(pendingUpload.termKey);
+      const reader = new FileReader();
+      reader.onload = () => {
+        addEvidence(source, term, String(reader.result));
+        pendingUpload = null;
+        els.uploadEvidence.value = "";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("loadTraverse").addEventListener("click", () => {
+      state.review = { ...defaultReview, ...traverseSample };
+      state.evidence = [];
       save();
       render();
     });
 
-    document.getElementById("completeEntity").addEventListener("click", completeCurrent);
+    document.getElementById("scrapeEquasis").addEventListener("click", scrapeEquasis);
 
-    document.addEventListener("input", event => {
-      const entity = activeEntity();
-      if (!entity) return;
-
-      const target = event.target;
-      if (target.dataset.source) {
-        const check = entity.checks[target.dataset.source];
-        check[target.dataset.field] = target.type === "checkbox" ? target.checked : target.value;
-      } else if (target.id === "entityType") {
-        entity.type = target.value;
-      } else if (target.id === "riskLevel") {
-        entity.risk = target.value;
-      } else if (target.id === "reviewer") {
-        state.reviewer = target.value;
-      } else if (target.id === "notes") {
-        entity.notes = target.value;
-      } else if (target.name === "decision") {
-        entity.decision = target.value;
+    document.getElementById("exportJson").addEventListener("click", exportJson);
+    document.getElementById("exportCsv").addEventListener("click", exportCsv);
+    document.getElementById("resetAll").addEventListener("click", async () => {
+      if (!window.confirm("Reset all locally saved review data and screenshots?")) return;
+      localStorage.removeItem("marineUwWorkbench");
+      state.review = { ...defaultReview };
+      state.evidence = [];
+      if (backendAvailable) {
+        await fetch(apiUrl(`/api/reviews/${encodeURIComponent(reviewId)}`), { method: "DELETE" }).catch(() => {});
       }
-      entity.updatedAt = new Date().toISOString();
-      dirty();
+      save();
+      render();
     });
 
-    if (!state.entities.length) {
-      addEntities(sampleEntities.slice(0, 2));
-    } else {
-      render();
+    document.getElementById("managerFleetTab").addEventListener("click", () => {
+      activeFleet = "manager";
+      renderFleet();
+    });
+
+    document.getElementById("ownerFleetTab").addEventListener("click", () => {
+      activeFleet = "owner";
+      renderFleet();
+    });
+
+    const handoffParams = new URLSearchParams(window.location.search);
+    const handoffImo = String(handoffParams.get("imo") || "").replace(/\D/g, "");
+    if (/^\d{7}$/.test(handoffImo)) {
+      state.review.imo = handoffImo;
+      if (handoffParams.get("broker") && !state.review.broker) state.review.broker = handoffParams.get("broker");
+      dirty();
     }
+
+    render();
+    loadStaticData();
+    loadBackendState();
   </script>
 </body>
 </html>
