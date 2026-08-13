@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import json
+import base64
 import mimetypes
 import os
 import sqlite3
+import subprocess
+import sys
+import tempfile
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +15,7 @@ from typing import Any, Iterator
 
 from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import HTMLResponse
+from starlette.concurrency import run_in_threadpool
 
 
 ROOT = Path(__file__).resolve().parent
@@ -19,6 +24,52 @@ DATABASE_PATH = Path(os.getenv("DATABASE_PATH", DATA_DIR / "underwriting.sqlite3
 MAX_STATE_BYTES = int(os.getenv("MAX_STATE_BYTES", str(25 * 1024 * 1024)))
 
 app = FastAPI(title="Marine UW Sanctions Workbench", version="1.0.0")
+
+
+def run_equasis_lookup(imo: str) -> dict[str, Any]:
+    if len(imo) != 7 or not imo.isdigit():
+        raise HTTPException(status_code=400, detail="IMO must contain exactly seven digits")
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="equasis-lookup-", dir=DATA_DIR) as temporary:
+        temp = Path(temporary)
+        manifest = temp / "manifest.json"
+        output = temp / "evidence"
+        command = [
+            sys.executable, str(ROOT / "scripts" / "run_uw_web_evidence.py"),
+            "--imo", imo, "--vessel-name", "", "--commercial-manager", "",
+            "--registered-owner", "", "--sources", "equasis,sanctions", "--headless", "true",
+            "--manifest", str(manifest), "--output-dir", str(output),
+        ]
+        try:
+            completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=600, check=False)
+        except subprocess.TimeoutExpired as exc:
+            raise HTTPException(status_code=504, detail="Equasis lookup timed out") from exc
+        if not manifest.exists():
+            detail = (completed.stderr or completed.stdout or "Equasis lookup failed")[-1000:]
+            raise HTTPException(status_code=502, detail=detail)
+        payload = json.loads(manifest.read_text(encoding="utf-8"))
+        result = next((item for item in payload.get("source_results", []) if item.get("source_key") == "equasis"), {})
+        if result.get("status") != "captured":
+            raise HTTPException(status_code=502, detail=result.get("error") or "Equasis did not return accessible ship details")
+        equasis = payload.get("equasis") or {}
+        screenshots = []
+        for item in payload.get("screenshots", []):
+            relative = str(item.get("image") or "")
+            image_path = (ROOT / relative).resolve()
+            if relative and image_path.is_relative_to(output.resolve()) and image_path.is_file():
+                encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
+                item = {**item, "image": f"data:image/png;base64,{encoded}", "raw_text_file": ""}
+            screenshots.append(item)
+        return {
+            "imo": imo,
+            "details": equasis.get("details") or {},
+            "shipFields": equasis.get("ship_fields") or {},
+            "management": equasis.get("management") or [],
+            "generatedAt": payload.get("generated_at"),
+            "summary": payload.get("summary") or {},
+            "sourceResults": payload.get("source_results") or [],
+            "screenshots": screenshots,
+        }
 
 
 def utc_now() -> str:
@@ -68,6 +119,11 @@ async def health() -> dict[str, str]:
     with database() as connection:
         connection.execute("SELECT 1").fetchone()
     return {"status": "ok", "storage": "sqlite"}
+
+
+@app.post("/api/equasis/{imo}")
+async def equasis_lookup(imo: str) -> dict[str, Any]:
+    return await run_in_threadpool(run_equasis_lookup, imo)
 
 
 @app.get("/api/reviews/{review_id}")

@@ -6,7 +6,7 @@ Self-service
 Dansk
 Safety at seaSurvey & registrationSeafarers & manningRecreationalInstitutional sailingGrowth & frameworkEnvironment & climate
 Position
-Frontpage Growth & framework conditions Maritime sanctions Sanctions against Russia and Belarus EU Vessel designations
+Frontpage Growth & framework conditions Maritime sanctions General information EU Vessel designations
 Growth & framework conditions
 Maritime business policy
 Growth in Blue Denmark
@@ -20,10 +20,8 @@ International Maritime Organization
 Setting up a maritime business
 Maritime sanctions
 General information
-Sanctions against Russia and Belarus
-Sale of tankers
-Register sale of oil tankers
 EU Vessel designations
+Sanctions against Russia and Belarus
 Other sanctions
 Sanctions against Iran
 DMA Regulatory Future Lab
@@ -41,8 +39,8 @@ Maritime Regulation and Legal Affairs
 Sanctions team
 E:sanktioner@dma.dk
 Import versions
-List of designated vessels 24-04-2026 (.xlsx)
-List of designated vessels 24-04-2026 (.csv)
+List of designated vessels 24-07-2026 (.xlsx)
+List of designated vessels 24-07-2026 (.csv)
 
 
 Danish Maritime Authority

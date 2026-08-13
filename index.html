@@ -586,13 +586,39 @@
       }
     }
   </style>
+  <style>
+    /* Progressive IMO screening view. Legacy review controls remain available to
+       the state model but are intentionally removed from the primary workflow. */
+    .metrics, .topbar .actions, .workflow .step:not(:first-child),
+    .workflow .step:first-child .step-actions > :not(#scrapeEquasis),
+    .note, #automationSummary, .right-column > .panel:not(#sanctionsEvidencePanel),
+    #sourceTasksPanel, .internal-fields { display: none !important; }
+    .topbar { min-height: auto; }
+    .brand p { margin-bottom: 0; }
+    .layout { display: block; max-width: 1120px; margin: 0 auto; }
+    .layout > .panel { margin-bottom: 18px; }
+    .imo-entry { display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 12px; align-items: end; }
+    .imo-entry button { min-height: 42px; }
+    .progress-stage[hidden] { display: none !important; }
+    .ship-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .ship-summary div { background: #f5f8fc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .ship-summary span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+    .management-table td { vertical-align: top; }
+    .sanctions-groups { display: grid; gap: 18px; }
+    .sanctions-group { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .sanctions-group h3 { margin: 0; padding: 12px 14px; background: #eef4fa; font-size: 16px; }
+    .sanctions-group .evidence-grid { padding: 14px; }
+    @media (max-width: 780px) {
+      .imo-entry, .ship-summary { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>Marine UW Sanctions Evidence Workbench</h1>
-        <p>IMO research, Equasis fleet info, HiFleet review, official sanctions screenshots</p>
+        <h1>IMO Sanctions Screening</h1>
+        <p>Enter an IMO or open this page from Outlook to retrieve Equasis management and sanctions evidence.</p>
       </div>
       <section class="metrics" aria-label="Review status">
         <div class="metric"><span>Source tasks</span><strong id="metricTasks">0</strong></div>
@@ -611,11 +637,18 @@
     <main class="layout">
       <section class="panel">
         <div class="panel-header">
-          <h2>Workbook Inputs</h2>
-          <span class="badge info">UW Info</span>
+          <h2>1. Vessel IMO</h2>
+          <span class="badge info" id="imoState">Waiting for IMO</span>
         </div>
         <div class="panel-body stack">
-          <div class="field-grid">
+          <div class="imo-entry">
+            <div>
+              <label for="imo">IMO</label>
+              <input id="imo" data-review="imo" inputmode="numeric" maxlength="7" placeholder="Enter 7-digit IMO">
+            </div>
+            <button class="btn-primary" id="scrapeEquasis" type="button" disabled>Retrieve Equasis &amp; screen sanctions</button>
+          </div>
+          <div class="field-grid internal-fields" aria-hidden="true">
             <div>
               <label for="quotationRef">Quotation Ref no.</label>
               <input id="quotationRef" data-review="quotationRef" placeholder="ART-YYYYMMDDNN-MW">
@@ -636,10 +669,6 @@
               <label for="vesselName">Vessel Name</label>
               <input id="vesselName" data-review="vesselName" placeholder="MV TRAVERSE SINGAPORE">
             </div>
-            <div>
-              <label for="imo">IMO</label>
-              <input id="imo" data-review="imo" placeholder="9342865">
-            </div>
             <div class="span-2">
               <label for="commercialManager">Commercial Manager</label>
               <input id="commercialManager" data-review="commercialManager" placeholder="Commercial manager from Equasis">
@@ -647,6 +676,14 @@
             <div class="span-2">
               <label for="registeredOwner">Registered Owner</label>
               <input id="registeredOwner" data-review="registeredOwner" placeholder="Registered owner from Equasis">
+            </div>
+            <div class="span-2">
+              <label for="ismManager">ISM Manager</label>
+              <input id="ismManager" data-review="ismManager" placeholder="ISM manager from Equasis" readonly>
+            </div>
+            <div class="span-2">
+              <label for="equasisManagement">Equasis Management Table</label>
+              <textarea id="equasisManagement" data-review="equasisManagement" placeholder="IMO number | Role | Company | Address | Date of effect" readonly></textarea>
             </div>
             <div class="span-2">
               <label for="ownerAddress">Owner / Manager Address</label>
@@ -707,7 +744,27 @@
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel progress-stage" id="equasisStage" hidden>
+        <div class="panel-header">
+          <h2>2. Equasis Ship &amp; Management</h2>
+          <span class="badge clear">Retrieved</span>
+        </div>
+        <div class="panel-body">
+          <div class="ship-summary">
+            <div><span>Ship name</span><strong id="summaryVessel">—</strong></div>
+            <div><span>IMO</span><strong id="summaryImo">—</strong></div>
+            <div><span>Flag</span><strong id="summaryFlag">—</strong></div>
+          </div>
+          <div class="table-scroll">
+            <table class="management-table">
+              <thead><tr><th>Company IMO</th><th>Role</th><th>Company</th><th>Address</th><th>Date of effect</th></tr></thead>
+              <tbody id="managementRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="sourceTasksPanel">
         <div class="panel-header">
           <h2>Official Source Search & Screenshots</h2>
           <span class="badge pending" id="captureState">Ready</span>
@@ -716,7 +773,7 @@
       </section>
 
       <aside class="right-column stack">
-        <section class="panel">
+        <section class="panel progress-stage" id="sanctionsEvidencePanel" hidden>
           <div class="panel-header">
           <h2>Returned Sanctions Matches</h2>
             <span class="badge info" id="snapshotDate">Loading</span>
@@ -755,10 +812,10 @@
 
         <section class="panel">
           <div class="panel-header">
-            <h2>Screenshot Evidence</h2>
+            <h2>3. OFAC, UK &amp; EU Results</h2>
             <span class="badge clear" id="evidenceCount">0 saved</span>
           </div>
-          <div class="panel-body evidence-grid" id="evidenceGrid"></div>
+          <div class="panel-body sanctions-groups" id="evidenceGrid"></div>
         </section>
 
         <section class="panel">
@@ -865,6 +922,8 @@
       imo: "",
       commercialManager: "",
       registeredOwner: "",
+      ismManager: "",
+      equasisManagement: "",
       ownerAddress: "",
       reviewer: "",
       decision: "Pending",
@@ -980,6 +1039,57 @@
       }, 200);
     }
 
+    async function scrapeEquasis() {
+      const imo = String(state.review.imo || "").replace(/\D/g, "");
+      if (!/^\d{7}$/.test(imo)) {
+        window.alert("Enter a seven-digit IMO first.");
+        return;
+      }
+      const button = document.getElementById("scrapeEquasis");
+      button.disabled = true;
+      button.textContent = "Scraping…";
+      try {
+        const response = await fetch(`/api/equasis/${encodeURIComponent(imo)}`, { method: "POST" });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || "Equasis lookup failed");
+        const details = payload.details || {};
+        const management = payload.management || [];
+        const roleRow = role => management.find(row => String(row.role || "").toLowerCase().includes(role));
+        const ism = roleRow("ism manager");
+        const commercial = roleRow("commercial manager") || roleRow("ship manager");
+        const owner = roleRow("registered owner");
+        state.review.imo = payload.imo || imo;
+        state.review.vesselName = details.vesselName || state.review.vesselName;
+        state.review.flag = details.flag || payload.shipFields?.Flag || state.review.flag;
+        state.review.ismManager = ism?.company || "";
+        state.review.commercialManager = commercial?.company || details.commercialManager || "";
+        state.review.registeredOwner = owner?.company || details.registeredOwner || "";
+        state.review.ownerAddress = owner?.address || commercial?.address || details.ownerAddress || "";
+        state.review.equasisManagement = management.map(row =>
+          [row.company_imo, row.role, row.company, row.address, row.date_of_effect].filter(value => value !== undefined).join(" | ")
+        ).join("\n");
+        evidenceManifest = {
+          generated_at: payload.generatedAt || new Date().toISOString(),
+          summary: payload.summary || {},
+          screenshots: payload.screenshots || [],
+          source_results: payload.sourceResults || [],
+          fleet: {
+            manager: management.filter(row => String(row.role || "").toLowerCase().includes("manager")),
+            owner: management.filter(row => String(row.role || "").toLowerCase().includes("owner"))
+          },
+          review: { ...state.review },
+          equasis: { details, ship_fields: payload.shipFields || {}, management }
+        };
+        save();
+        render();
+      } catch (error) {
+        window.alert(error.message || String(error));
+      } finally {
+        button.disabled = false;
+        button.textContent = "Retrieve Equasis & screen sanctions";
+      }
+    }
+
     function assetUrl(path) {
       const cleanPath = String(path || "").replace(/^\/+/, "");
       const marker = "/Underwriting/";
@@ -994,9 +1104,11 @@
           fetch(assetUrl("data/evidence_manifest.json"), { cache: "no-store" })
         ]);
         if (snapshotResponse.ok) sanctionsData = await snapshotResponse.json();
-        if (evidenceResponse.ok) evidenceManifest = await evidenceResponse.json();
-        if (evidenceManifest.review) {
-          state.review = { ...state.review, ...evidenceManifest.review };
+        if (evidenceResponse.ok) {
+          const published = await evidenceResponse.json();
+          const requestedImo = String(state.review.imo || "").replace(/\D/g, "");
+          const publishedImo = String(published.review?.imo || "").replace(/\D/g, "");
+          if (requestedImo && requestedImo === publishedImo) evidenceManifest = published;
         }
       } catch (error) {
         sanctionsData.status = "unavailable";
@@ -1122,25 +1234,57 @@
 
     function renderEvidence() {
       renderAutomationSummary();
-      const evidence = allEvidence();
+      const evidence = allEvidence().filter(item => ["ofac", "uk_reg", "eu_tracker", "eu_vessel_designations"].includes(item.sourceKey));
       if (!evidence.length) {
-        els.evidenceGrid.innerHTML = '<div class="empty">No screenshots saved yet. Run the Playwright evidence runner or open a source manually, run the search, then click Capture or Upload.</div>';
+        els.evidenceGrid.innerHTML = "";
         return;
       }
-      els.evidenceGrid.innerHTML = evidence.map(item => `
+      const groups = [
+        { label: "OFAC", keys: ["ofac"] },
+        { label: "UK Sanctions List", keys: ["uk_reg"] },
+        { label: "European Union", keys: ["eu_tracker", "eu_vessel_designations"] }
+      ];
+      const card = item => `
         <article class="evidence-card">
           <img src="${imageSrc(item)}" alt="${escapeAttr(item.sourceName)} screenshot for ${escapeAttr(item.termValue)}">
           <div class="evidence-card-body">
             <strong>${escapeHtml(item.sourceName)} - ${escapeHtml(item.termLabel)}</strong>
-            <span class="entity-meta">${escapeHtml(item.termValue)} | ${escapeHtml(formatDate(item.capturedAt))} ${item.automated ? "| automated" : "| manual"}</span>
-            ${item.status ? `<span class="badge ${item.manualReviewRequired ? "review" : "clear"}">${escapeHtml(item.status)}</span>` : ""}
+            <span class="entity-meta">${escapeHtml(item.termValue)}</span>
+            ${item.status ? `<span class="badge ${item.manualReviewRequired ? "review" : item.status === "match_found" ? "review" : "clear"}">${escapeHtml(item.status === "no_match" ? "No match returned" : item.status)}</span>` : ""}
             <div class="task-actions">
               <a class="btn-secondary" href="${imageSrc(item)}" download="${downloadName(item)}">Download</a>
-              ${item.automated ? "" : `<button class="btn-danger" data-delete-evidence="${item.id}" type="button">Delete</button>`}
             </div>
           </div>
         </article>
-      `).join("");
+      `;
+      els.evidenceGrid.innerHTML = groups.map(group => {
+        const items = evidence.filter(item => group.keys.includes(item.sourceKey));
+        if (!items.length) return "";
+        return `<section class="sanctions-group"><h3>${escapeHtml(group.label)}</h3><div class="evidence-grid">${items.map(card).join("")}</div></section>`;
+      }).join("");
+    }
+
+    function renderProgressiveStages() {
+      const imo = String(state.review.imo || "").replace(/\D/g, "");
+      const validImo = /^\d{7}$/.test(imo);
+      const button = document.getElementById("scrapeEquasis");
+      button.disabled = !validImo;
+      document.getElementById("imoState").textContent = validImo ? "IMO ready" : "Waiting for IMO";
+      document.getElementById("imoState").className = `badge ${validImo ? "clear" : "info"}`;
+
+      const management = evidenceManifest.equasis?.management || [];
+      const hasEquasis = management.length > 0 && String(evidenceManifest.review?.imo || state.review.imo) === String(state.review.imo);
+      document.getElementById("equasisStage").hidden = !hasEquasis;
+      if (hasEquasis) {
+        document.getElementById("summaryVessel").textContent = state.review.vesselName || "—";
+        document.getElementById("summaryImo").textContent = state.review.imo || "—";
+        document.getElementById("summaryFlag").textContent = state.review.flag || "—";
+        document.getElementById("managementRows").innerHTML = management.map(row => `
+          <tr><td>${escapeHtml(row.company_imo || "")}</td><td><strong>${escapeHtml(row.role || "")}</strong></td><td>${escapeHtml(row.company || "")}</td><td>${escapeHtml(row.address || "")}</td><td>${escapeHtml(row.date_of_effect || "")}</td></tr>
+        `).join("");
+      }
+      const hasSanctions = (evidenceManifest.screenshots || []).some(item => ["ofac", "uk_reg", "eu_tracker", "eu_vessel_designations"].includes(item.source_key));
+      document.getElementById("sanctionsEvidencePanel").hidden = !hasSanctions;
     }
 
     function renderFleet() {
@@ -1212,6 +1356,7 @@
       renderEvidence();
       renderFleet();
       renderSourceStatus();
+      renderProgressiveStages();
     }
 
     async function captureEvidence(sourceKey, termKey) {
@@ -1439,6 +1584,12 @@
       const target = event.target;
       if (target.dataset.review) {
         state.review[target.dataset.review] = target.value;
+        if (target.id === "imo") {
+          target.value = target.value.replace(/\D/g, "").slice(0, 7);
+          state.review.imo = target.value;
+          evidenceManifest = { generated_at: "", summary: {}, screenshots: [], source_results: [], fleet: { manager: [], owner: [] }, review: {}, equasis: {} };
+          renderProgressiveStages();
+        }
         dirty();
       }
     });
@@ -1487,6 +1638,8 @@
       render();
     });
 
+    document.getElementById("scrapeEquasis").addEventListener("click", scrapeEquasis);
+
     document.getElementById("exportJson").addEventListener("click", exportJson);
     document.getElementById("exportCsv").addEventListener("click", exportCsv);
     document.getElementById("resetAll").addEventListener("click", async () => {
@@ -1510,6 +1663,14 @@
       activeFleet = "owner";
       renderFleet();
     });
+
+    const handoffParams = new URLSearchParams(window.location.search);
+    const handoffImo = String(handoffParams.get("imo") || "").replace(/\D/g, "");
+    if (/^\d{7}$/.test(handoffImo)) {
+      state.review.imo = handoffImo;
+      if (handoffParams.get("broker") && !state.review.broker) state.review.broker = handoffParams.get("broker");
+      dirty();
+    }
 
     render();
     loadStaticData();

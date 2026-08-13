@@ -14,3 +14,6 @@ output/
 evidence/
 playwright-profile/
 .ms-playwright/
+outlook-addin/config.js
+outlook-addin/node_modules/
+outlook-addin/dist/

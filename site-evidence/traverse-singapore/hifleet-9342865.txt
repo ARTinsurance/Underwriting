@@ -2,8 +2,10 @@ Map
 Performance
 Vessels
 Ports
+Schedule
 Distance
 Chartering
+Estimator
 S&P
 Shipping
 Community
@@ -18,13 +20,33 @@ FAQ
 SYM
 Global Map
 DM
-12°4.596 N
-121°30.000 E
+12°4.596′ N
+121°30.000′ E
 0 vessel
 UTC+8 Click
 MapWorld GS（2024）0568
-© 2013-2026 HiFleet.com版权所有沪ICP备14001702号-2沪公网安备 31011502008480号
-Ver.5.4.410
-New
 Search
+9342865
+ship
+371868000
+ship
+525106005
+ship
+477721200
+ship
+229868000
+ship
+636020988
+ship
+636092685
+ship
+249875000
+ship
 3000 nm
+HiFleet全球船位查询与AIS船舶动态跟踪
+首页 船位 性能 船舶 港口 航程 租船 S&P 航运 社区 账号 数据 SDK 基站 DTU 视频监控 服务商 我们 帮助 个人中心
+How to use
+FAQ
+© 2013-2026 HiFleet.comAll rights reserved沪ICP备14001702号-2沪公网安备 31011502008480号
+Ver.5.4.466
+New

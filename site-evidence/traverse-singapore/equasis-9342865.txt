@@ -40,7 +40,7 @@ In Service/Commission
 
 
 
-Last update of ship particulars 24/06/2026
+Last update of ship particulars 2026-08-11
 
   See picture on VesselTracker
   See picture on MarineTraffic
@@ -67,7 +67,7 @@ Tokyo MOU
  
  
 
-???shipInfo.overview.flagPerf.high???
+White
 
 Flag targeting
 

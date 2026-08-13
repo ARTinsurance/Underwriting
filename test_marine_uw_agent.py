@@ -15,7 +15,7 @@ from marine_uw_agent.restrictions import cargo_restriction_review
 from marine_uw_agent.run import run_workflow
 from marine_uw_agent.sanctions import LocalSanctionsIndex
 from marine_uw_agent.workbook import WorkbookPopulationError, populate_workbook
-from scripts.run_uw_web_evidence import eu_tracker_terms_from_manifest
+from scripts.run_uw_web_evidence import eu_tracker_terms_from_manifest, extract_equasis_ship_fields, management_rows_from_dom
 
 
 class MarineUWAgentTests(unittest.TestCase):
@@ -59,10 +59,47 @@ class MarineUWAgentTests(unittest.TestCase):
         self.assertIn("TRAVERSE SINGAPORE", values)
         self.assertIn("Goldenking Ship Management", values)
         self.assertIn("Second Management Company", values)
-        self.assertIn("7654321", values)
-        self.assertIn("1234567", values)
-        self.assertIn("1 Harbour Road, Singapore", values)
+        self.assertNotIn("7654321", values)
+        self.assertNotIn("1 Harbour Road, Singapore", values)
         self.assertEqual(values.count("Traverse Shipping Co Ltd"), 1)
+
+    def test_sanctions_terms_keep_same_company_for_distinct_equasis_roles(self):
+        args = SimpleNamespace(imo="9342865", vessel_name="", commercial_manager="", registered_owner="")
+        manifest = {
+            "review": {"imo": "9342865", "vesselName": "TRAVERSE SINGAPORE"},
+            "equasis": {"management": [
+                {"role": "Ship manager/Commercial manager", "company": "GOLDENKING SHIP MANAGEMENT"},
+                {"role": "ISM Manager", "company": "GOLDENKING SHIP MANAGEMENT"},
+                {"role": "Registered owner", "company": "TRAVERSE SHIPPING CO LTD-MAI"},
+            ]},
+        }
+        terms = eu_tracker_terms_from_manifest(manifest, args)
+        goldenking = [term for term in terms if term.value == "GOLDENKING SHIP MANAGEMENT"]
+        self.assertEqual([term.label for term in goldenking], ["Ship manager/Commercial manager", "ISM Manager"])
+
+    def test_equasis_dom_management_table_keeps_roles_and_fields(self):
+        args = SimpleNamespace(imo="9342865", vessel_name="Fallback", flag="Panama")
+        dom = {"tables": [{
+            "headers": ["IMO number", "Role", "Name of company", "Address", "Date of effect", "Details"],
+            "rows": [
+                ["6212304", "Ship manager/Commercial manager", "GOLDENKING SHIP MANAGEMENT", "Guangzhou, China", "since 16/10/2025", ""],
+                ["6212304", "ISM Manager", "GOLDENKING SHIP MANAGEMENT", "Guangzhou, China", "since 16/10/2025", ""],
+                ["0358925", "Registered owner", "TRAVERSE SHIPPING CO LTD-MAI", "Guangzhou, China", "since 16/10/2025", ""],
+            ],
+        }]}
+        rows = management_rows_from_dom(dom, {"vesselName": "TRAVERSE SINGAPORE", "flag": "Panama"}, args)
+        self.assertEqual([row["role"] for row in rows], ["Ship manager/Commercial manager", "ISM Manager", "Registered owner"])
+        self.assertEqual(rows[2]["company_imo"], "0358925")
+        self.assertEqual(rows[0]["address"], "Guangzhou, China")
+
+    def test_equasis_ship_particular_fields_are_scraped(self):
+        raw = """Flag\n(Panama)\nCall Sign\n3EDM7\nMMSI\n371626000\nGross tonnage\n39738
+        (since 01/12/2005)\nDWT\n76619\nType of ship\nBulk Carrier\nYear of build\n2005
+        Status\nIn Service/Commission\nLast update of ship particulars\n2026-08-11"""
+        fields = extract_equasis_ship_fields(raw)
+        self.assertEqual(fields["Flag"], "Panama")
+        self.assertEqual(fields["MMSI"], "371626000")
+        self.assertEqual(fields["Type of ship"], "Bulk Carrier")
 
     def test_quotation_text_extraction(self):
         text = """

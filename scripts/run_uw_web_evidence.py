@@ -73,8 +73,8 @@ SOURCES = [
     SourceDef("uk_reg", "UK Sanctions List Search", "https://search-uk-sanctions-list.service.gov.uk/", "search"),
     SourceDef(
         "eu_tracker",
-        "EU Sanctions Tracker",
-        "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
+        "EU Sanctions Map",
+        "https://www.sanctionsmap.eu/#/main",
         "search",
     ),
     SourceDef(
@@ -127,7 +127,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
             run_in_fresh_browser(playwright, args, headless, lambda context: capture_research_source(context, args, manifest, "hifleet"))
         if "sanctions" in selected_sources:
             for source in SOURCES:
-                terms = eu_tracker_terms_from_manifest(manifest, args) if source.key == "eu_tracker" else search_terms_from_manifest(manifest, args)
+                terms = sanctions_terms_from_manifest(manifest, args)
                 for term in terms:
                     run_in_fresh_browser(
                         playwright,
@@ -187,6 +187,9 @@ def build_initial_manifest(args: argparse.Namespace) -> Dict[str, Any]:
         "equasis": {
             "management_identified": False,
             "details": {},
+            "ship_fields": {},
+            "management": [],
+            "tables": [],
             "missing_fields": [],
             "error": "",
         },
@@ -215,47 +218,47 @@ def search_terms_from_manifest(manifest: Dict[str, Any], args: argparse.Namespac
     return [term for term in terms if term.value]
 
 
-def eu_tracker_terms_from_manifest(manifest: Dict[str, Any], args: argparse.Namespace) -> List[SearchTerm]:
-    """Build EU Tracker searches from all useful Equasis vessel/management fields."""
-    terms = search_terms_from_manifest(manifest, args)
+def sanctions_terms_from_manifest(manifest: Dict[str, Any], args: argparse.Namespace) -> List[SearchTerm]:
+    """Build all sanctions-source searches from Equasis vessel and management fields."""
+    review = manifest.get("review") or {}
+    terms = [
+        SearchTerm("imo", "IMO", str(review.get("imo") or args.imo or "")),
+        SearchTerm("vessel", "Ship name", str(review.get("vesselName") or args.vessel_name or "")),
+    ]
     details = ((manifest.get("equasis") or {}).get("details") or {})
-    for key, label, field in (
-        ("imo", "IMO", "imo"),
-        ("vessel", "Ship name", "vesselName"),
-        ("manager", "Commercial manager", "commercialManager"),
-        ("manager_address", "Commercial manager address", "managerAddress"),
-        ("owner", "Registered owner", "registeredOwner"),
-        ("owner_address", "Registered owner address", "ownerAddress"),
-    ):
-        value = str(details.get(field) or "").strip()
-        if value:
-            terms.append(SearchTerm(key, label, value))
-
-    for fleet_group in ("manager", "owner"):
-        rows = ((manifest.get("fleet") or {}).get(fleet_group) or [])
-        for index, row in enumerate(rows, start=1):
-            if not isinstance(row, dict):
-                continue
-            role = str(row.get("role") or fleet_group).strip()
-            company = str(row.get("company") or "").strip()
-            company_imo = str(row.get("company_imo") or "").strip()
-            address = str(row.get("address") or "").strip()
-            if company:
-                terms.append(SearchTerm(f"equasis_{fleet_group}_{index}", f"Equasis {role}", company))
-            if company_imo:
-                terms.append(SearchTerm(f"equasis_{fleet_group}_imo_{index}", f"Equasis {role} company IMO", company_imo))
-            if address:
-                terms.append(SearchTerm(f"equasis_{fleet_group}_address_{index}", f"Equasis {role} address", address))
+    structured_management = ((manifest.get("equasis") or {}).get("management") or [])
+    management = structured_management
+    if not management:
+        fleet = manifest.get("fleet") or {}
+        management = [*(fleet.get("manager") or []), *(fleet.get("owner") or [])]
+    for index, row in enumerate(management, start=1):
+        if not isinstance(row, dict):
+            continue
+        role = str(row.get("role") or "Management company").strip()
+        company = str(row.get("company") or "").strip()
+        if company:
+            terms.append(SearchTerm(f"equasis_role_{index}", role, company))
+    if not structured_management:
+        existing_companies = {normalize(str(row.get("company") or "")) for row in management if isinstance(row, dict)}
+        for key, label, field in (("manager", "Commercial manager", "commercialManager"), ("owner", "Registered owner", "registeredOwner")):
+            value = str(details.get(field) or "").strip()
+            if value and normalize(value) not in existing_companies:
+                terms.append(SearchTerm(key, label, value))
 
     unique: List[SearchTerm] = []
     seen = set()
     for term in terms:
-        normalized = normalize(term.value)
-        if not normalized or normalized in seen:
+        identity = (term.key, normalize(term.value))
+        if not identity[1] or identity in seen:
             continue
-        seen.add(normalized)
+        seen.add(identity)
         unique.append(term)
     return unique
+
+
+# Backwards-compatible name used by integrations/tests written before all sources
+# were expanded to the complete Equasis term set.
+eu_tracker_terms_from_manifest = sanctions_terms_from_manifest
 
 
 def capture_research_source(context: Any, args: argparse.Namespace, manifest: Dict[str, Any], source_key: str) -> None:
@@ -308,6 +311,7 @@ def capture_research_source(context: Any, args: argparse.Namespace, manifest: Di
             search_hifleet_imo(page, args.imo)
         safe_wait(page, 3500)
         raw_text = body_text(page)
+        equasis_dom = extract_equasis_dom(page) if source_key == "equasis" else {}
         challenge = has_manual_challenge(raw_text)
         if page:
             result["final_url"] = page.url
@@ -324,7 +328,8 @@ def capture_research_source(context: Any, args: argparse.Namespace, manifest: Di
             result["status"] = "captured"
             result["result_label"] = "Ship details captured" if source_key == "equasis" else "IMO search captured"
         if source_key == "equasis":
-            merge_equasis_data(manifest, raw_text, args)
+            merge_equasis_data(manifest, raw_text, args, equasis_dom)
+            capture_equasis_table_screenshots(page, args, manifest)
         save_result_files(page, args, manifest, result, source["key"], args.imo, raw_text)
     except Exception as exc:
         result["status"] = "failed"
@@ -730,8 +735,97 @@ def expand_equasis_management_detail(page: Any) -> None:
             continue
 
 
+def extract_equasis_dom(page: Any) -> Dict[str, Any]:
+    """Extract Equasis label/value blocks and HTML tables before text flattening loses columns."""
+    try:
+        return page.evaluate(
+            r"""
+            () => {
+              const clean = value => String(value || '').replace(/\s+/g, ' ').trim();
+              const shipFields = {};
+              const shipSection = document.querySelector('section.grey_white_boxes:has(h4.color-gris-bleu-copyright)');
+              (shipSection || document).querySelectorAll('.donnee').forEach(labelNode => {
+                const row = labelNode.parentElement;
+                const valueNode = row && row.querySelector(':scope > .valeur');
+                const label = clean(labelNode.textContent);
+                const value = clean(valueNode && valueNode.textContent);
+                if (label && value && !shipFields[label]) shipFields[label] = value;
+              });
+              const tables = [...document.querySelectorAll('table')].map((table, index) => {
+                const headers = [...table.querySelectorAll('thead th')].map(node => clean(node.textContent));
+                const rows = [...table.querySelectorAll('tbody tr')].map(row =>
+                  [...row.querySelectorAll(':scope > td')].map(cell => clean(cell.textContent))
+                ).filter(row => row.some(Boolean));
+                const nearbyHeading = table.closest('.collapse')?.previousElementSibling?.textContent ||
+                  table.closest('section')?.querySelector('h2,h3,h4')?.textContent || '';
+                return { index, heading: clean(nearbyHeading), headers, rows };
+              }).filter(table => table.headers.length || table.rows.length);
+              const heading = clean(document.querySelector('h4.color-gris-bleu-copyright')?.textContent);
+              return { heading, ship_fields: shipFields, tables };
+            }
+            """
+        )
+    except Exception:
+        return {}
+
+
+def management_rows_from_dom(dom: Dict[str, Any], details: Dict[str, str], args: argparse.Namespace) -> List[Dict[str, str]]:
+    rows: List[Dict[str, str]] = []
+    vessel = details.get("vesselName") or args.vessel_name or args.imo
+    for table in dom.get("tables", []):
+        headers = [normalize(str(item)) for item in table.get("headers", [])]
+        if "role" not in headers or not any("name of company" in item for item in headers):
+            continue
+        for cells in table.get("rows", []):
+            padded = [clean_equasis_value(str(value)) for value in cells] + [""] * 6
+            company_imo, role, company, address, effect = padded[:5]
+            if not company or not role:
+                continue
+            rows.append({
+                "ship": f"({args.imo}) {vessel}", "gross_tonnage": "", "type": "Management detail",
+                "flag": details.get("flag", args.flag), "role": role, "company_imo": company_imo,
+                "company": company, "address": address, "date_of_effect": effect,
+                "acting_as": f"{role}: {company}; {address}; {effect}",
+            })
+    return rows
+
+
+def capture_equasis_table_screenshots(page: Any, args: argparse.Namespace, manifest: Dict[str, Any]) -> None:
+    targets = (
+        ("equasis_ship_details", page.locator('section.grey_white_boxes:has(h4.color-gris-bleu-copyright)').first),
+        ("equasis_management_table", page.locator('table:has(th:text-is("Name of company")):has(th:text-is("Role"))').first),
+    )
+    for key, locator in targets:
+        try:
+            if not visible(locator):
+                continue
+            locator.scroll_into_view_if_needed()
+            path = args.output_dir / f"{key}-{slug(args.imo)}.png"
+            locator.screenshot(path=str(path), timeout=15000)
+            manifest["screenshots"].append({
+                "id": f"{key}-{slug(args.imo)}", "source_key": "equasis", "source_name": "Equasis",
+                "term_key": "imo", "term_label": "IMO", "term_value": args.imo,
+                "status": "captured", "result_label": "Structured Equasis table captured",
+                "match_found": False, "captured_at": now_iso(), "image": site_path(path),
+                "raw_text_file": "", "manual_review_required": False, "error": "",
+            })
+        except Exception:
+            continue
+
+
 def search_eu_tracker(page: Any, term: SearchTerm) -> bool:
-    """Type one Equasis-derived value into the EU Tracker search bar."""
+    """Open the EU Sanctions Map search and type one Equasis-derived value."""
+    click_first_visible(
+        page,
+        (
+            'button[aria-label*="search" i]',
+            'a[aria-label*="search" i]',
+            'button:has-text("Search")',
+            'a:has-text("Search")',
+            '[class*="search" i] button',
+        ),
+    )
+    safe_wait(page, 700)
     selectors = (
         'input[type="search"]',
         'input[placeholder*="search" i]',
@@ -895,12 +989,36 @@ def save_result_files(page: Any, args: argparse.Namespace, manifest: Dict[str, A
     )
 
 
-def merge_equasis_data(manifest: Dict[str, Any], raw_text: str, args: argparse.Namespace) -> None:
+def merge_equasis_data(manifest: Dict[str, Any], raw_text: str, args: argparse.Namespace, dom: Optional[Dict[str, Any]] = None) -> None:
+    dom = dom or {}
     details = extract_equasis_details(raw_text)
+    heading_match = re.search(r"(.+?)\s*-\s*IMO\s*n?[°o]?\s*(\d{7})", str(dom.get("heading") or ""), re.IGNORECASE)
+    if heading_match:
+        details["vesselName"] = clean_equasis_value(heading_match.group(1))
+        details["imo"] = heading_match.group(2)
+    ship_fields = extract_equasis_ship_fields(raw_text)
+    ship_fields.update({clean_equasis_value(str(key)): clean_equasis_value(str(value)) for key, value in (dom.get("ship_fields") or {}).items()})
+    for label, value in ship_fields.items():
+        folded = normalize(label)
+        if folded == "flag":
+            details["flag"] = re.sub(r"^.*?\(([^)]+)\).*$", r"\1", value)
+    missing_fields = [field for field in ("registeredOwner", "commercialManager") if not details.get(field)]
+    management_rows = management_rows_from_dom(dom, details, args) or extract_equasis_management_rows(raw_text, details, args)
+    for row in management_rows:
+        role = normalize(row.get("role", ""))
+        if "registered owner" in role:
+            details["registeredOwner"] = row["company"]
+            details["ownerAddress"] = row.get("address", "")
+        if "commercial manager" in role or "ship manager" in role:
+            details.setdefault("commercialManager", row["company"])
+            details.setdefault("managerAddress", row.get("address", ""))
     missing_fields = [field for field in ("registeredOwner", "commercialManager") if not details.get(field)]
     manifest["equasis"] = {
         "management_identified": not missing_fields,
         "details": details,
+        "ship_fields": ship_fields,
+        "management": management_rows,
+        "tables": dom.get("tables", []),
         "missing_fields": missing_fields,
         "error": "" if not missing_fields else f"Could not identify: {', '.join(missing_fields)}",
     }
@@ -917,10 +1035,33 @@ def merge_equasis_data(manifest: Dict[str, Any], raw_text: str, args: argparse.N
         review["commercialManager"] = details["commercialManager"]
     if details.get("ownerAddress"):
         review["ownerAddress"] = details["ownerAddress"]
-    management_rows = extract_equasis_management_rows(raw_text, details, args)
     if management_rows:
         manifest["fleet"]["manager"] = [row for row in management_rows if "manager" in row.get("role", "").casefold()]
         manifest["fleet"]["owner"] = [row for row in management_rows if "owner" in row.get("role", "").casefold()]
+
+
+def extract_equasis_ship_fields(raw_text: str) -> Dict[str, str]:
+    """Extract the stable label/value ship-particular fields shown above Equasis management detail."""
+    compact = "\n".join(line.strip() for line in raw_text.splitlines() if line.strip())
+    patterns = {
+        "Call Sign": r"Call Sign\s*\n([^\n]+)",
+        "MMSI": r"MMSI\s*\n(\d{9})",
+        "Gross tonnage": r"Gross tonnage\s*\n([\d,]+)",
+        "DWT": r"DWT\s*\n([\d,]+)",
+        "Type of ship": r"Type of ship\s*\n([^\n]+)",
+        "Year of build": r"Year of build\s*\n(\d{4})",
+        "Status": r"Status\s*\n([^\n]+)",
+        "Last update of ship particulars": r"Last update of ship particulars\s*\n([^\n]+)",
+    }
+    fields: Dict[str, str] = {}
+    flag = re.search(r"\bFlag\s*\n\s*\(([^)]+)\)", compact, re.IGNORECASE)
+    if flag:
+        fields["Flag"] = clean_equasis_value(flag.group(1))
+    for label, pattern in patterns.items():
+        match = re.search(pattern, compact, re.IGNORECASE)
+        if match:
+            fields[label] = clean_equasis_value(match.group(1))
+    return fields
 
 
 def equasis_capture_has_ship_data(raw_text: str, imo: str) -> bool:

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T09:26:23Z",
+  "generated_at": "2026-08-12T03:44:37Z",
   "review": {
     "quotationRef": "ART-2026070209-MW",
     "listedArea": "Gulf of Aden/Red Sea/Indian Ocean",
@@ -11,12 +11,44 @@
     "ownerAddress": "C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China."
   },
   "summary": {
-    "total_screenshots": 18,
-    "completed_sources": 18,
+    "total_screenshots": 19,
+    "completed_sources": 17,
     "matches_found": 0,
     "manual_review_required": 0
   },
   "screenshots": [
+    {
+      "id": "equasis_ship_details-9342865",
+      "source_key": "equasis",
+      "source_name": "Equasis",
+      "term_key": "imo",
+      "term_label": "IMO",
+      "term_value": "9342865",
+      "status": "captured",
+      "result_label": "Structured Equasis table captured",
+      "match_found": false,
+      "captured_at": "2026-08-12T03:43:09Z",
+      "image": "site-evidence/traverse-singapore/equasis_ship_details-9342865.png",
+      "raw_text_file": "",
+      "manual_review_required": false,
+      "error": ""
+    },
+    {
+      "id": "equasis_management_table-9342865",
+      "source_key": "equasis",
+      "source_name": "Equasis",
+      "term_key": "imo",
+      "term_label": "IMO",
+      "term_value": "9342865",
+      "status": "captured",
+      "result_label": "Structured Equasis table captured",
+      "match_found": false,
+      "captured_at": "2026-08-12T03:43:09Z",
+      "image": "site-evidence/traverse-singapore/equasis_management_table-9342865.png",
+      "raw_text_file": "",
+      "manual_review_required": false,
+      "error": ""
+    },
     {
       "id": "equasis-9342865",
       "source_key": "equasis",
@@ -27,25 +59,9 @@
       "status": "captured",
       "result_label": "Ship details captured",
       "match_found": false,
-      "captured_at": "2026-07-17T09:24:48Z",
+      "captured_at": "2026-08-12T03:43:10Z",
       "image": "site-evidence/traverse-singapore/equasis-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/equasis-9342865.txt",
-      "manual_review_required": false,
-      "error": ""
-    },
-    {
-      "id": "hifleet-9342865",
-      "source_key": "hifleet",
-      "source_name": "HiFleet",
-      "term_key": "imo",
-      "term_label": "IMO",
-      "term_value": "9342865",
-      "status": "captured",
-      "result_label": "Ship details captured",
-      "match_found": false,
-      "captured_at": "2026-07-17T09:24:54Z",
-      "image": "site-evidence/traverse-singapore/hifleet-9342865.png",
-      "raw_text_file": "site-evidence/traverse-singapore/hifleet-9342865.txt",
       "manual_review_required": false,
       "error": ""
     },
@@ -59,7 +75,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:00Z",
+      "captured_at": "2026-08-12T03:43:15Z",
       "image": "site-evidence/traverse-singapore/ofac-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-imo-9342865.txt",
       "manual_review_required": false,
@@ -75,7 +91,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:06Z",
+      "captured_at": "2026-08-12T03:43:21Z",
       "image": "site-evidence/traverse-singapore/ofac-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -91,7 +107,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:12Z",
+      "captured_at": "2026-08-12T03:43:27Z",
       "image": "site-evidence/traverse-singapore/ofac-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -107,7 +123,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:17Z",
+      "captured_at": "2026-08-12T03:43:32Z",
       "image": "site-evidence/traverse-singapore/ofac-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -116,14 +132,14 @@
     {
       "id": "uk_reg-imo-9342865",
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "imo",
       "term_label": "IMO",
       "term_value": "9342865",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:23Z",
+      "captured_at": "2026-08-12T03:43:36Z",
       "image": "site-evidence/traverse-singapore/uk_reg-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-imo-9342865.txt",
       "manual_review_required": false,
@@ -132,14 +148,14 @@
     {
       "id": "uk_reg-vessel-traverse-singapore",
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "vessel",
       "term_label": "Ship name",
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:28Z",
+      "captured_at": "2026-08-12T03:43:41Z",
       "image": "site-evidence/traverse-singapore/uk_reg-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -148,14 +164,14 @@
     {
       "id": "uk_reg-manager-goldenking-ship-management",
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "manager",
       "term_label": "Commercial manager",
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:33Z",
+      "captured_at": "2026-08-12T03:43:44Z",
       "image": "site-evidence/traverse-singapore/uk_reg-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -164,14 +180,14 @@
     {
       "id": "uk_reg-owner-traverse-shipping-co-ltd-mai",
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "owner",
       "term_label": "Registered owner",
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:39Z",
+      "captured_at": "2026-08-12T03:43:49Z",
       "image": "site-evidence/traverse-singapore/uk_reg-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -180,14 +196,14 @@
     {
       "id": "eu_tracker-imo-9342865",
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "imo",
       "term_label": "IMO",
       "term_value": "9342865",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:46Z",
+      "captured_at": "2026-08-12T03:43:56Z",
       "image": "site-evidence/traverse-singapore/eu_tracker-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-imo-9342865.txt",
       "manual_review_required": false,
@@ -196,14 +212,14 @@
     {
       "id": "eu_tracker-vessel-traverse-singapore",
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "vessel",
       "term_label": "Ship name",
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:53Z",
+      "captured_at": "2026-08-12T03:44:04Z",
       "image": "site-evidence/traverse-singapore/eu_tracker-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -212,14 +228,14 @@
     {
       "id": "eu_tracker-manager-goldenking-ship-management",
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "manager",
       "term_label": "Commercial manager",
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:25:59Z",
+      "captured_at": "2026-08-12T03:44:12Z",
       "image": "site-evidence/traverse-singapore/eu_tracker-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -228,14 +244,14 @@
     {
       "id": "eu_tracker-owner-traverse-shipping-co-ltd-mai",
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "owner",
       "term_label": "Registered owner",
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:26:06Z",
+      "captured_at": "2026-08-12T03:44:19Z",
       "image": "site-evidence/traverse-singapore/eu_tracker-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -251,7 +267,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:26:12Z",
+      "captured_at": "2026-08-12T03:44:26Z",
       "image": "site-evidence/traverse-singapore/eu_vessel_designations-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-imo-9342865.txt",
       "manual_review_required": false,
@@ -267,7 +283,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:26:16Z",
+      "captured_at": "2026-08-12T03:44:30Z",
       "image": "site-evidence/traverse-singapore/eu_vessel_designations-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -283,7 +299,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:26:20Z",
+      "captured_at": "2026-08-12T03:44:33Z",
       "image": "site-evidence/traverse-singapore/eu_vessel_designations-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -299,7 +315,7 @@
       "status": "no_match",
       "result_label": "No match returned",
       "match_found": false,
-      "captured_at": "2026-07-17T09:26:23Z",
+      "captured_at": "2026-08-12T03:44:37Z",
       "image": "site-evidence/traverse-singapore/eu_vessel_designations-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -359,6 +375,1671 @@
       "registeredOwner": "TRAVERSE SHIPPING CO LTD-MAI",
       "ownerAddress": "C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China."
     },
+    "ship_fields": {
+      "Flag": "Panama",
+      "Call Sign": "3EDM7",
+      "MMSI": "371626000",
+      "Gross tonnage": "39738",
+      "DWT": "76619",
+      "Type of ship": "Bulk Carrier",
+      "Year of build": "2005",
+      "Status": "In Service/Commission"
+    },
+    "management": [
+      {
+        "ship": "(9342865) TRAVERSE SINGAPORE",
+        "gross_tonnage": "",
+        "type": "Management detail",
+        "flag": "Panama",
+        "role": "Ship manager/Commercial manager",
+        "company_imo": "6212304",
+        "company": "GOLDENKING SHIP MANAGEMENT",
+        "address": "106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+        "date_of_effect": "since 16/10/2025",
+        "acting_as": "Ship manager/Commercial manager: GOLDENKING SHIP MANAGEMENT; 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.; since 16/10/2025"
+      },
+      {
+        "ship": "(9342865) TRAVERSE SINGAPORE",
+        "gross_tonnage": "",
+        "type": "Management detail",
+        "flag": "Panama",
+        "role": "ISM Manager",
+        "company_imo": "6212304",
+        "company": "GOLDENKING SHIP MANAGEMENT",
+        "address": "106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+        "date_of_effect": "since 16/10/2025",
+        "acting_as": "ISM Manager: GOLDENKING SHIP MANAGEMENT; 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.; since 16/10/2025"
+      },
+      {
+        "ship": "(9342865) TRAVERSE SINGAPORE",
+        "gross_tonnage": "",
+        "type": "Management detail",
+        "flag": "Panama",
+        "role": "Registered owner",
+        "company_imo": "0358925",
+        "company": "TRAVERSE SHIPPING CO LTD-MAI",
+        "address": "C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+        "date_of_effect": "since 16/10/2025",
+        "acting_as": "Registered owner: TRAVERSE SHIPPING CO LTD-MAI; C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.; since 16/10/2025"
+      }
+    ],
+    "tables": [
+      {
+        "index": 0,
+        "heading": "",
+        "headers": [
+          "IMO number",
+          "Role",
+          "Name of company",
+          "Address",
+          "Date of effect",
+          "Details"
+        ],
+        "rows": [
+          [
+            "6212304",
+            "Ship manager/Commercial manager",
+            "GOLDENKING SHIP MANAGEMENT",
+            "106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+            "since 16/10/2025",
+            ""
+          ],
+          [
+            "6212304",
+            "ISM Manager",
+            "GOLDENKING SHIP MANAGEMENT",
+            "106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+            "since 16/10/2025",
+            ""
+          ],
+          [
+            "0358925",
+            "Registered owner",
+            "TRAVERSE SHIPPING CO LTD-MAI",
+            "C/O: Goldenking Ship Management (Guangzhou) Co Ltd 106, Fengze Donglu, Nansha Xinqu, Guangzhou, Guangdong, China.",
+            "since 16/10/2025",
+            ""
+          ]
+        ]
+      },
+      {
+        "index": 1,
+        "heading": "Safety management certificate (Recognised Organisations)",
+        "headers": [
+          "Classification society",
+          "Date survey",
+          "Date expiry",
+          "Date change status",
+          "Status",
+          "Reason",
+          "Top C/V"
+        ],
+        "rows": [
+          [
+            "Nippon Kaiji Kyokai (IACS)",
+            "2026-04-16",
+            "2031-04-15",
+            "2025-10-20",
+            "Delivered",
+            "",
+            "Convention"
+          ],
+          [
+            "Bureau Veritas (IACS)",
+            "2022-07-23",
+            "2027-07-22",
+            "2025-10-16",
+            "Withdrawn",
+            "",
+            "Convention"
+          ]
+        ]
+      },
+      {
+        "index": 2,
+        "heading": "Geographical Information",
+        "headers": [
+          "Date of record",
+          "Area where the ship was seen",
+          "Source"
+        ],
+        "rows": [
+          [
+            "July 2026",
+            "Mediterranean Sea, South Asia, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "July 2026",
+            "Mediterranean Sea, South Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2026",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "June 2026",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "May 2026",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "May 2026",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "April 2026",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "April 2026",
+            "South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "April 2026",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "March 2026",
+            "Mediterranean Sea, North Europe, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2026",
+            "Mediterranean Sea, South Asia, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "February 2026",
+            "North Europe",
+            "MarineTraffic"
+          ],
+          [
+            "January 2026",
+            "North Europe",
+            "MarineTraffic"
+          ],
+          [
+            "December 2025",
+            "Mediterranean Sea, North Europe, South Asia, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "December 2025",
+            "Mediterranean Sea, North Europe, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "November 2025",
+            "Malacca Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "November 2025",
+            "East Asia, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "November 2025",
+            "South Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2025",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "October 2025",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "September 2025",
+            "Makassar Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "September 2025",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "September 2025",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "August 2025",
+            "South East Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "July 2025",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "July 2025",
+            "South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "June 2025",
+            "East Africa, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "June 2025",
+            "East Africa",
+            "VesselTracker"
+          ],
+          [
+            "May 2025",
+            "Makassar Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "May 2025",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "May 2025",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "April 2025",
+            "Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "April 2025",
+            "East Africa, South Asia, South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "April 2025",
+            "East Africa, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "March 2025",
+            "Middle America and Gulf of Mexico",
+            "MarineTraffic"
+          ],
+          [
+            "February 2025",
+            "Middle America and Gulf of Mexico, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "February 2025",
+            "Middle America and Gulf of Mexico",
+            "VesselTracker"
+          ],
+          [
+            "January 2025",
+            "West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "January 2025",
+            "West Europe",
+            "VesselTracker"
+          ],
+          [
+            "December 2024",
+            "South_Africa, West Africa",
+            "MarineTraffic"
+          ],
+          [
+            "December 2024",
+            "South_Africa, West Africa",
+            "VesselTracker"
+          ],
+          [
+            "November 2024",
+            "East Africa, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "November 2024",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2024",
+            "South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "October 2024",
+            "South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "September 2024",
+            "North America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2024",
+            "North America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "August 2024",
+            "Mediterranean Sea, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "August 2024",
+            "West Europe",
+            "VesselTracker"
+          ],
+          [
+            "July 2024",
+            "Mediterranean Sea, South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "July 2024",
+            "Mediterranean Sea, West Africa",
+            "VesselTracker"
+          ],
+          [
+            "June 2024",
+            "South America East Coast, West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "June 2024",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "May 2024",
+            "South America East Coast, West Africa",
+            "MarineTraffic"
+          ],
+          [
+            "May 2024",
+            "West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "April 2024",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "April 2024",
+            "South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "March 2024",
+            "Makassar Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "March 2024",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2024",
+            "East Africa",
+            "VesselTracker"
+          ],
+          [
+            "February 2024",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "February 2024",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "January 2024",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "January 2024",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "January 2024",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "December 2023",
+            "Mediterranean Sea, South Asia, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "December 2023",
+            "Mediterranean Sea, South Asia",
+            "VesselTracker"
+          ],
+          [
+            "November 2023",
+            "West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "November 2023",
+            "West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "October 2023",
+            "South America East Coast, West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "October 2023",
+            "West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "September 2023",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2023",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "August 2023",
+            "East Africa, South Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "August 2023",
+            "South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "July 2023",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2023",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2023",
+            "Mediterranean Sea",
+            "MarineTraffic"
+          ],
+          [
+            "May 2023",
+            "Mediterranean Sea, Middle America and Gulf of Mexico",
+            "MarineTraffic"
+          ],
+          [
+            "May 2023",
+            "Mediterranean Sea",
+            "VesselTracker"
+          ],
+          [
+            "April 2023",
+            "North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "April 2023",
+            "Middle America and Gulf of Mexico, North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "March 2023",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "February 2023",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "February 2023",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "January 2023",
+            "Makassar Strait",
+            "AXS Marine"
+          ],
+          [
+            "January 2023",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "January 2023",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "December 2022",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "December 2022",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "November 2022",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "November 2022",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2022",
+            "North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "October 2022",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "September 2022",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "September 2022",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "August 2022",
+            "Indian Ocean, Java Sea",
+            "AXS Marine"
+          ],
+          [
+            "August 2022",
+            "South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "August 2022",
+            "South East Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "July 2022",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "July 2022",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "June 2022",
+            "South Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "June 2022",
+            "South Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "May 2022",
+            "Makassar Strait, Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "May 2022",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "May 2022",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "April 2022",
+            "Makassar Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "April 2022",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2022",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "March 2022",
+            "South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "March 2022",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "February 2022",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "February 2022",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "January 2022",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "January 2022",
+            "East Africa, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "January 2022",
+            "East Africa, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "December 2021",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "December 2021",
+            "South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "December 2021",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "November 2021",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "November 2021",
+            "South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "October 2021",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2021",
+            "South America East Coast, South America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2021",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "August 2021",
+            "Australia and New Zeeland",
+            "MarineTraffic"
+          ],
+          [
+            "July 2021",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2021",
+            "Australia and New Zeeland, East Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2021",
+            "Indian Ocean, Java Sea",
+            "AXS Marine"
+          ],
+          [
+            "June 2021",
+            "South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "June 2021",
+            "South East Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "May 2021",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "May 2021",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "April 2021",
+            "East Africa, South Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "April 2021",
+            "East Africa, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "March 2021",
+            "Makassar Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "March 2021",
+            "East Asia, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2021",
+            "South Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "February 2021",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "January 2021",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "December 2020",
+            "Java Sea",
+            "AXS Marine"
+          ],
+          [
+            "December 2020",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "December 2020",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "November 2020",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "October 2020",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "October 2020",
+            "East Africa, South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "September 2020",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "September 2020",
+            "South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "September 2020",
+            "South Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "August 2020",
+            "Australia and New Zeeland, East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "August 2020",
+            "Australia and New Zeeland",
+            "VesselTracker"
+          ],
+          [
+            "July 2020",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "July 2020",
+            "East Africa, East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2020",
+            "East Africa, East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2020",
+            "South_Africa, West Africa",
+            "MarineTraffic"
+          ],
+          [
+            "June 2020",
+            "South_Africa, West Africa",
+            "VesselTracker"
+          ],
+          [
+            "May 2020",
+            "North Europe, West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "May 2020",
+            "North Europe, West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "April 2020",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "April 2020",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "March 2020",
+            "East Africa, South Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "March 2020",
+            "East Africa, South Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "February 2020",
+            "East Africa, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "February 2020",
+            "East Africa, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "January 2020",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "January 2020",
+            "South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "January 2020",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "December 2019",
+            "Malacca Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "December 2019",
+            "Mediterranean Sea, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "December 2019",
+            "South Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "November 2019",
+            "Mediterranean Sea, Middle America and Gulf of Mexico",
+            "MarineTraffic"
+          ],
+          [
+            "November 2019",
+            "Mediterranean Sea, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "October 2019",
+            "Mediterranean Sea, Middle America and Gulf of Mexico, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "October 2019",
+            "Middle America and Gulf of Mexico, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "September 2019",
+            "Mediterranean Sea, South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2019",
+            "Mediterranean Sea, West Africa",
+            "VesselTracker"
+          ],
+          [
+            "August 2019",
+            "East Africa, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "August 2019",
+            "East Africa, South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "July 2019",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "July 2019",
+            "South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2019",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2019",
+            "Malacca Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "June 2019",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "June 2019",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "May 2019",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "May 2019",
+            "South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "April 2019",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "April 2019",
+            "South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "March 2019",
+            "Indian Ocean, Java Sea, Malacca Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "March 2019",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2019",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "February 2019",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "January 2019",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "December 2018",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "December 2018",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "November 2018",
+            "Australia and New Zeeland, South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "October 2018",
+            "Australia and New Zeeland, East Asia, New Guinea Pacific",
+            "MarineTraffic"
+          ],
+          [
+            "October 2018",
+            "Australia and New Zeeland",
+            "VesselTracker"
+          ],
+          [
+            "September 2018",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "September 2018",
+            "East Asia, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "September 2018",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "August 2018",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "August 2018",
+            "Mediterranean Sea, South Asia",
+            "VesselTracker"
+          ],
+          [
+            "July 2018",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2018",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2018",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "June 2018",
+            "Mediterranean Sea",
+            "VesselTracker"
+          ],
+          [
+            "May 2018",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "May 2018",
+            "Mediterranean Sea, South Asia",
+            "VesselTracker"
+          ],
+          [
+            "April 2018",
+            "North Europe, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "April 2018",
+            "West Europe",
+            "VesselTracker"
+          ],
+          [
+            "March 2018",
+            "South America East Coast, West Africa, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "March 2018",
+            "North Europe, West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "February 2018",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "February 2018",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "January 2018",
+            "South America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "January 2018",
+            "South America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "December 2017",
+            "Australia and New Zeeland, East Asia, New Guinea Pacific",
+            "MarineTraffic"
+          ],
+          [
+            "December 2017",
+            "Australia and New Zeeland",
+            "VesselTracker"
+          ],
+          [
+            "November 2017",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "November 2017",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2017",
+            "East Asia, North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "October 2017",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "September 2017",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "September 2017",
+            "East Asia, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "September 2017",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "August 2017",
+            "Mediterranean Sea, South Asia",
+            "MarineTraffic"
+          ],
+          [
+            "August 2017",
+            "Mediterranean Sea, South Asia",
+            "VesselTracker"
+          ],
+          [
+            "July 2017",
+            "Indian Ocean, Java Sea",
+            "AXS Marine"
+          ],
+          [
+            "July 2017",
+            "South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2017",
+            "South Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2017",
+            "Java Sea, Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "June 2017",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "June 2017",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "May 2017",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "May 2017",
+            "East Africa, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "April 2017",
+            "South America East Coast, South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "April 2017",
+            "East Africa, South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "March 2017",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "March 2017",
+            "East Africa, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "February 2017",
+            "East Africa, South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "February 2017",
+            "South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "January 2017",
+            "Middle America and Gulf of Mexico",
+            "MarineTraffic"
+          ],
+          [
+            "January 2017",
+            "Middle America and Gulf of Mexico",
+            "VesselTracker"
+          ],
+          [
+            "December 2016",
+            "North America East Coast, West Europe",
+            "MarineTraffic"
+          ],
+          [
+            "December 2016",
+            "West Europe",
+            "VesselTracker"
+          ],
+          [
+            "November 2016",
+            "Middle America and Gulf of Mexico, North America East Coast, South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "November 2016",
+            "Middle America and Gulf of Mexico, North America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "October 2016",
+            "Mediterranean Sea, South America East Coast, West Africa",
+            "MarineTraffic"
+          ],
+          [
+            "October 2016",
+            "Mediterranean Sea, South America East Coast, West Africa, West Europe",
+            "VesselTracker"
+          ],
+          [
+            "September 2016",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "September 2016",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "August 2016",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "August 2016",
+            "East Africa, South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "August 2016",
+            "East Africa, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "July 2016",
+            "East Africa, South Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "July 2016",
+            "South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "June 2016",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "May 2016",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "May 2016",
+            "South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "April 2016",
+            "Indian Ocean, Java Sea",
+            "AXS Marine"
+          ],
+          [
+            "April 2016",
+            "South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "April 2016",
+            "East Africa, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "March 2016",
+            "South America East Coast, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "February 2016",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "January 2016",
+            "South America East Coast, South America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "January 2016",
+            "South America East Coast, South America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "December 2015",
+            "Australia and New Zeeland, New Guinea Pacific",
+            "MarineTraffic"
+          ],
+          [
+            "December 2015",
+            "Australia and New Zeeland",
+            "VesselTracker"
+          ],
+          [
+            "November 2015",
+            "Makassar Strait",
+            "AXS Marine"
+          ],
+          [
+            "November 2015",
+            "East Asia, South East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "November 2015",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2015",
+            "East Asia, North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "October 2015",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "September 2015",
+            "Middle America and Gulf of Mexico",
+            "MarineTraffic"
+          ],
+          [
+            "August 2015",
+            "Middle America and Gulf of Mexico, North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "August 2015",
+            "Middle America and Gulf of Mexico",
+            "VesselTracker"
+          ],
+          [
+            "July 2015",
+            "East Asia, North America West Coast",
+            "MarineTraffic"
+          ],
+          [
+            "July 2015",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "June 2015",
+            "East Asia",
+            "MarineTraffic"
+          ],
+          [
+            "June 2015",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "May 2015",
+            "Malacca Strait, Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "May 2015",
+            "South East Asia, South_Africa",
+            "MarineTraffic"
+          ],
+          [
+            "May 2015",
+            "South East Asia, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "April 2015",
+            "South America East Coast",
+            "MarineTraffic"
+          ],
+          [
+            "April 2015",
+            "South America East Coast, South_Africa",
+            "VesselTracker"
+          ],
+          [
+            "March 2015",
+            "Malacca Strait, Singapore Strait, South China Sea",
+            "AXS Marine"
+          ],
+          [
+            "March 2015",
+            "South Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "February 2015",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "January 2015",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "November 2014",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2014",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "September 2014",
+            "Singapore Strait",
+            "AXS Marine"
+          ],
+          [
+            "September 2014",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "July 2014",
+            "South America East Coast",
+            "VesselTracker"
+          ],
+          [
+            "June 2014",
+            "Australia and New Zeeland, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "May 2014",
+            "East Asia, South East Asia",
+            "VesselTracker"
+          ],
+          [
+            "March 2014",
+            "South America East Coast, South America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "February 2014",
+            "North America West Coast",
+            "VesselTracker"
+          ],
+          [
+            "January 2014",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "December 2013",
+            "Australia and New Zeeland",
+            "VesselTracker"
+          ],
+          [
+            "November 2013",
+            "East Asia",
+            "VesselTracker"
+          ],
+          [
+            "October 2013",
+            "Middle America and Gulf of Mexico",
+            "VesselTracker"
+          ]
+        ]
+      },
+      {
+        "index": 3,
+        "heading": "Convention, Association and Manning",
+        "headers": [],
+        "rows": [
+          [
+            "",
+            "IMO Conventions signed by the state"
+          ],
+          [
+            "",
+            "International Labour Organization"
+          ],
+          [
+            "",
+            "International Transport Worker's Federation"
+          ],
+          [
+            "",
+            "Intercargo"
+          ]
+        ]
+      }
+    ],
     "missing_fields": [],
     "error": ""
   },
@@ -371,7 +2052,7 @@
       "term_value": "9342865",
       "status": "captured",
       "url": "https://www.equasis.org/EquasisWeb/public/HomePage",
-      "captured_at": "2026-07-17T09:24:48Z",
+      "captured_at": "2026-08-12T03:43:10Z",
       "screenshot": "site-evidence/traverse-singapore/equasis-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/equasis-9342865.txt",
       "manual_review_required": false,
@@ -381,22 +2062,6 @@
       "html_file": "site-evidence/traverse-singapore/equasis-9342865.html"
     },
     {
-      "source_key": "hifleet",
-      "source_name": "HiFleet",
-      "term_key": "imo",
-      "term_label": "IMO",
-      "term_value": "9342865",
-      "status": "captured",
-      "url": "https://www.hifleet.com",
-      "captured_at": "2026-07-17T09:24:54Z",
-      "screenshot": "site-evidence/traverse-singapore/hifleet-9342865.png",
-      "raw_text_file": "site-evidence/traverse-singapore/hifleet-9342865.txt",
-      "manual_review_required": false,
-      "error": "",
-      "final_url": "https://www.hifleet.com/",
-      "result_label": "Ship details captured"
-    },
-    {
       "source_key": "ofac",
       "source_name": "OFAC Sanctions Search",
       "term_key": "imo",
@@ -404,7 +2069,7 @@
       "term_value": "9342865",
       "status": "no_match",
       "url": "https://sanctionssearch.ofac.treas.gov/",
-      "captured_at": "2026-07-17T09:25:00Z",
+      "captured_at": "2026-08-12T03:43:15Z",
       "screenshot": "site-evidence/traverse-singapore/ofac-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-imo-9342865.txt",
       "manual_review_required": false,
@@ -420,7 +2085,7 @@
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
       "url": "https://sanctionssearch.ofac.treas.gov/",
-      "captured_at": "2026-07-17T09:25:06Z",
+      "captured_at": "2026-08-12T03:43:21Z",
       "screenshot": "site-evidence/traverse-singapore/ofac-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -436,7 +2101,7 @@
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
       "url": "https://sanctionssearch.ofac.treas.gov/",
-      "captured_at": "2026-07-17T09:25:12Z",
+      "captured_at": "2026-08-12T03:43:27Z",
       "screenshot": "site-evidence/traverse-singapore/ofac-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -452,7 +2117,7 @@
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
       "url": "https://sanctionssearch.ofac.treas.gov/",
-      "captured_at": "2026-07-17T09:25:17Z",
+      "captured_at": "2026-08-12T03:43:32Z",
       "screenshot": "site-evidence/traverse-singapore/ofac-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/ofac-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -462,13 +2127,13 @@
     },
     {
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "imo",
       "term_label": "IMO",
       "term_value": "9342865",
       "status": "no_match",
-      "url": "https://www.legislation.gov.uk/uksi/2019/855",
-      "captured_at": "2026-07-17T09:25:23Z",
+      "url": "https://search-uk-sanctions-list.service.gov.uk/",
+      "captured_at": "2026-08-12T03:43:36Z",
       "screenshot": "site-evidence/traverse-singapore/uk_reg-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-imo-9342865.txt",
       "manual_review_required": false,
@@ -478,13 +2143,13 @@
     },
     {
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "vessel",
       "term_label": "Ship name",
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
-      "url": "https://www.legislation.gov.uk/uksi/2019/855",
-      "captured_at": "2026-07-17T09:25:28Z",
+      "url": "https://search-uk-sanctions-list.service.gov.uk/",
+      "captured_at": "2026-08-12T03:43:41Z",
       "screenshot": "site-evidence/traverse-singapore/uk_reg-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -494,13 +2159,13 @@
     },
     {
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "manager",
       "term_label": "Commercial manager",
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
-      "url": "https://www.legislation.gov.uk/uksi/2019/855",
-      "captured_at": "2026-07-17T09:25:33Z",
+      "url": "https://search-uk-sanctions-list.service.gov.uk/",
+      "captured_at": "2026-08-12T03:43:44Z",
       "screenshot": "site-evidence/traverse-singapore/uk_reg-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -510,13 +2175,13 @@
     },
     {
       "source_key": "uk_reg",
-      "source_name": "UK Russia Regulations 2019/855",
+      "source_name": "UK Sanctions List Search",
       "term_key": "owner",
       "term_label": "Registered owner",
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
-      "url": "https://www.legislation.gov.uk/uksi/2019/855",
-      "captured_at": "2026-07-17T09:25:39Z",
+      "url": "https://search-uk-sanctions-list.service.gov.uk/",
+      "captured_at": "2026-08-12T03:43:49Z",
       "screenshot": "site-evidence/traverse-singapore/uk_reg-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/uk_reg-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -526,13 +2191,13 @@
     },
     {
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "imo",
       "term_label": "IMO",
       "term_value": "9342865",
       "status": "no_match",
-      "url": "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
-      "captured_at": "2026-07-17T09:25:46Z",
+      "url": "https://www.sanctionsmap.eu/#/main",
+      "captured_at": "2026-08-12T03:43:56Z",
       "screenshot": "site-evidence/traverse-singapore/eu_tracker-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-imo-9342865.txt",
       "manual_review_required": false,
@@ -542,13 +2207,13 @@
     },
     {
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "vessel",
       "term_label": "Ship name",
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
-      "url": "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
-      "captured_at": "2026-07-17T09:25:53Z",
+      "url": "https://www.sanctionsmap.eu/#/main",
+      "captured_at": "2026-08-12T03:44:04Z",
       "screenshot": "site-evidence/traverse-singapore/eu_tracker-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -558,13 +2223,13 @@
     },
     {
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "manager",
       "term_label": "Commercial manager",
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
-      "url": "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
-      "captured_at": "2026-07-17T09:25:59Z",
+      "url": "https://www.sanctionsmap.eu/#/main",
+      "captured_at": "2026-08-12T03:44:12Z",
       "screenshot": "site-evidence/traverse-singapore/eu_tracker-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -574,13 +2239,13 @@
     },
     {
       "source_key": "eu_tracker",
-      "source_name": "EU Sanctions Tracker",
+      "source_name": "EU Sanctions Map",
       "term_key": "owner",
       "term_label": "Registered owner",
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
-      "url": "https://data.europa.eu/apps/eusanctionstracker/entities/%20",
-      "captured_at": "2026-07-17T09:26:06Z",
+      "url": "https://www.sanctionsmap.eu/#/main",
+      "captured_at": "2026-08-12T03:44:19Z",
       "screenshot": "site-evidence/traverse-singapore/eu_tracker-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_tracker-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,
@@ -596,7 +2261,7 @@
       "term_value": "9342865",
       "status": "no_match",
       "url": "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
-      "captured_at": "2026-07-17T09:26:12Z",
+      "captured_at": "2026-08-12T03:44:26Z",
       "screenshot": "site-evidence/traverse-singapore/eu_vessel_designations-imo-9342865.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-imo-9342865.txt",
       "manual_review_required": false,
@@ -612,7 +2277,7 @@
       "term_value": "TRAVERSE SINGAPORE",
       "status": "no_match",
       "url": "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
-      "captured_at": "2026-07-17T09:26:16Z",
+      "captured_at": "2026-08-12T03:44:30Z",
       "screenshot": "site-evidence/traverse-singapore/eu_vessel_designations-vessel-traverse-singapore.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-vessel-traverse-singapore.txt",
       "manual_review_required": false,
@@ -628,7 +2293,7 @@
       "term_value": "GOLDENKING SHIP MANAGEMENT",
       "status": "no_match",
       "url": "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
-      "captured_at": "2026-07-17T09:26:20Z",
+      "captured_at": "2026-08-12T03:44:33Z",
       "screenshot": "site-evidence/traverse-singapore/eu_vessel_designations-manager-goldenking-ship-management.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-manager-goldenking-ship-management.txt",
       "manual_review_required": false,
@@ -644,7 +2309,7 @@
       "term_value": "TRAVERSE SHIPPING CO LTD-MAI",
       "status": "no_match",
       "url": "https://www.dma.dk/growth-and-framework-conditions/maritime-sanctions/sanctions-against-russia-and-belarus/eu-vessel-designations",
-      "captured_at": "2026-07-17T09:26:23Z",
+      "captured_at": "2026-08-12T03:44:37Z",
       "screenshot": "site-evidence/traverse-singapore/eu_vessel_designations-owner-traverse-shipping-co-ltd-mai.png",
       "raw_text_file": "site-evidence/traverse-singapore/eu_vessel_designations-owner-traverse-shipping-co-ltd-mai.txt",
       "manual_review_required": false,

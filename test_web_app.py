@@ -38,5 +38,9 @@ class WebAppStorageTests(unittest.TestCase):
         with self.assertRaises(Exception):
             web_app.validate_review_id("../bad")
 
+    def test_equasis_lookup_rejects_invalid_imo_before_subprocess(self) -> None:
+        with self.assertRaises(Exception):
+            web_app.run_equasis_lookup("93428")
+
 if __name__ == "__main__":
     unittest.main()
